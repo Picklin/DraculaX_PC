@@ -1,0 +1,49 @@
+#pragma once
+#ifndef _EFFECTSMANAGER_INCLUDE
+#define _EFFECTSMANAGER_INCLUDE
+
+#include <functional>
+#include <vector>
+#include "Effect.h"
+#include "ShaderProgram.h"
+
+class EffectsManager
+{
+public:
+	static EffectsManager& instance();
+	void init(glm::ivec2& tileMapDispl, ShaderProgram& program);
+	void update(int deltaTime);
+	void render();
+	void free();
+	void freeTextures();
+	const vector<Effect*>& getBackgroundEffectsList() const { return backgroundEffects; }
+
+private:
+	EffectsManager();
+	void initEffect(Effect* e, const glm::vec2& pos, const glm::vec4& color);
+
+private:
+	vector<Effect*> effects;
+	vector<Effect*> backgroundEffects;
+	glm::ivec2 tileMapDispl;
+	ShaderProgram* program = nullptr;
+
+	struct ExplosionClusterSettings
+	{
+		int explosionsTimer = 0;
+		int numExplosions = 0;
+		int offset = 32;
+		bool bigExplosion = false;
+		bool background = false;
+		glm::vec4 explosionColor;
+		const glm::vec2* entityPos = nullptr;
+		glm::vec2 entityOffset;	//offset para que se sitúe en el centro de la entidad. Ej: colocarse en el centro de un enemigo
+		int timeBetweenExplosions = 125;	//en milisegundos
+	};
+	vector<ExplosionClusterSettings> explSet;
+
+	Texture fragsTex;
+	Texture pointsTex;
+};
+
+#endif // !_EFFECTSMANAGER_INCLUDE

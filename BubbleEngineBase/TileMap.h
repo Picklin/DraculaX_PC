@@ -1,0 +1,66 @@
+#ifndef _TILE_MAP_INCLUDE
+#define _TILE_MAP_INCLUDE
+
+
+#include <glm/glm.hpp>
+#include <vector>
+#include "Texture.h"
+#include "ShaderProgram.h"
+#include "Hitbox.h"
+
+
+// Class Tilemap is capable of loading a tile map from a text file in a very
+// simple format (see level01.txt for an example). With this information
+// it builds a single VBO that contains all tiles. As a result the render
+// method draws the whole map independently of what is visible.
+
+
+class TileMap
+{
+
+private:
+	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
+
+public:
+	// Tile maps can only be created inside an OpenGL context
+	static TileMap* createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
+
+	~TileMap();
+
+	void render() const;
+	void free();
+
+	int getTileSize() const { return tileSize; }
+	const glm::ivec2& getMapSize() const { return mapSize; }
+
+	const bool collisionMoveLeft(const Hitbox& hitbox, float* posX) const;
+	const bool collisionMoveRight(const Hitbox& hitbox, float* posX) const;
+	const bool collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) const;
+	const bool collisionMoveUp(const Hitbox& hitbox, float* posY) const;
+
+	void addCollision(const Hitbox& hitbox);
+	void removeCollision(const Hitbox& hitbox);
+	void setColor(const glm::vec4& color) { this->color = color; }
+
+private:
+	bool loadLevel(const string& levelFile);
+	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+
+private:
+	GLuint vao;
+	GLuint vbo;
+	GLint posLocation, texCoordLocation;
+	int nTiles;
+	glm::ivec2 position, mapSize, tilesheetSize;
+	int tileSize, blockSize;
+	Texture tilesheet;
+	glm::vec2 tileTexSize;
+	int* map;
+	ShaderProgram* shaderProgram;
+	glm::vec4 color;
+};
+
+
+#endif // _TILE_MAP_INCLUDE
+
+
