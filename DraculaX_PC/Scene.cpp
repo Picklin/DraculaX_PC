@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Scene.h"
 #include "Game.h"
 
 Scene::~Scene()

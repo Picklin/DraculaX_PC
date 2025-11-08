@@ -20,6 +20,21 @@ protected:
 	void setAnimations();
 	void setHitboxes();
 	void childUpdate(int deltaTime);
+
+private:
+	const Hitbox getTerrainCollisionBox() const;
+
+private:
+	vector<Hitbox> terrainCollisionBoxes;
+
+	int jumpAngle = 0;
+
+	float velocityX = 0.f;
+	float startY = 0.f;
+
+	bool bJumping = false;
+	bool prevGrounded = true;
+	bool grounded = true;
 };
 
 

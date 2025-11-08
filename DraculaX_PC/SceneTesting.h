@@ -6,7 +6,7 @@
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
-#define INIT_PLAYER_X_TILES 10
+#define INIT_PLAYER_X_TILES 8
 #define INIT_PLAYER_Y_TILES 16
 
 
