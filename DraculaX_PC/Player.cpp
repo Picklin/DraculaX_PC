@@ -16,7 +16,7 @@ enum PlayerAnims
 void Player::render()
 {
 	program->use();
-	program->setUniform1i("flip", lookingLeft ? 1 : 0);
+	program->setUniform1i("flip", lookingLeft);
 	sprite->render();
 }
 
