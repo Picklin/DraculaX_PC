@@ -49,10 +49,10 @@ Scene::~Scene()
 }
 
 
-void Scene::init(Player& player, ShaderProgram& texProgram, ShaderProgram& playerShader)
+void Scene::init(Player& player, ShaderProgram& spriteShader, ShaderProgram& basicShader)
 {
-	this->texProgram = &texProgram;
-	this->playerShader = &playerShader;
+	this->spriteShader = &spriteShader;
+	this->basicShader = &basicShader;
 	map = setTileMap();
 	platforms = setPlatformMap();
 	initManagers();
@@ -73,13 +73,13 @@ void Scene::update(int deltaTime)
 
 void Scene::render()
 {
-	texProgram->use();
-	texProgram->setUniformMatrix4f("projection", projection);
+	basicShader->use();
+	basicShader->setUniformMatrix4f("projection", projection);
 	glm::mat4 modelview = glm::mat4(1.0f);
-	texProgram->setUniformMatrix4f("modelview", modelview);
+	basicShader->setUniformMatrix4f("modelview", modelview);
 	map->render();
-	playerShader->use();
-	playerShader->setUniformMatrix4f("projection", projection);
+	spriteShader->use();
+	spriteShader->setUniformMatrix4f("projection", projection);
 	player->render();
 }
 
@@ -170,7 +170,7 @@ void Scene::updateEffects(int deltaTime)
 
 void Scene::initManagers()
 {
-	ItemManager::instance().init(MAP_OFFSET, *texProgram, map, platforms);
-	EffectsManager::instance().init(MAP_OFFSET, *texProgram);
-	EnemyManager::instance().init(MAP_OFFSET, *texProgram, map, platforms);
+	ItemManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
+	EffectsManager::instance().init(MAP_OFFSET, *spriteShader);
+	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
 }

@@ -1,8 +1,8 @@
 #include "Enemy.h"
 
-void Enemy::init(const glm::ivec2& tileMapDispl, ShaderProgram& program)
+void Enemy::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader)
 {
-	Entity::init(tileMapDispl, program);
+	Entity::init(tileMapDispl, shader);
 	MAXHEALTH = setMaxHealth();
 	contactDamage = setContactDamage();
 	currentHealth = MAXHEALTH;

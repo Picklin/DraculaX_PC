@@ -11,7 +11,7 @@ class EffectsManager
 {
 public:
 	static EffectsManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& program);
+	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader);
 	void update(int deltaTime);
 	void render();
 	void free();
@@ -26,7 +26,7 @@ private:
 	vector<Effect*> effects;
 	vector<Effect*> backgroundEffects;
 	glm::ivec2 tileMapDispl;
-	ShaderProgram* program = nullptr;
+	ShaderProgram* shader = nullptr;
 
 	struct ExplosionClusterSettings
 	{

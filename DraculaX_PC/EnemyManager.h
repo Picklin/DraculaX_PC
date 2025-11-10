@@ -14,7 +14,7 @@ class EnemyManager
 {
 public:
 	static EnemyManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, TileMap* platforms);
+	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms);
 	void setPlayer(glm::vec2* playerPos, const glm::vec2& playerCenter);
 	Enemy* getEnemy(const glm::vec2& pos, int id);
 
@@ -24,7 +24,7 @@ private:
 
 private:
 	glm::ivec2 tileMapDispl;
-	ShaderProgram* program;
+	ShaderProgram* shader;
 	TileMap* map;
 	TileMap* platforms;
 	glm::vec2* playerPos;

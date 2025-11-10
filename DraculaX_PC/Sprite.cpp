@@ -4,21 +4,21 @@
 #include "Sprite.h"
 
 
-Sprite* Sprite::createSprite(const glm::ivec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program)
+Sprite* Sprite::createSprite(const glm::ivec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* shader)
 {
-	Sprite* quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
+	Sprite* quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, shader);
 
 	return quad;
 }
 
-Sprite* Sprite::createSprite(const glm::ivec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture* spritesheet, ShaderProgram* program)
+Sprite* Sprite::createSprite(const glm::ivec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture* spritesheet, ShaderProgram* shader)
 {
-	Sprite* quad = new Sprite(quadSize, topLeft, bottomRight, spritesheet, program);
+	Sprite* quad = new Sprite(quadSize, topLeft, bottomRight, spritesheet, shader);
 
 	return quad;
 }
 
-Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* program)
+Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Texture* spritesheet, ShaderProgram* shader)
 {
 	float vertices[24] = { 0.f, 0.f, 0.f, 0.f,
 												quadSize.x, 0.f, sizeInSpritesheet.x, 0.f,
@@ -32,10 +32,10 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Te
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
-	posLocation = program->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
-	texCoordLocation = program->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	posLocation = shader->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = shader->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	texture = spritesheet;
-	shaderProgram = program;
+	shaderProgram = shader;
 	this->quadSize = quadSize;
 	center = glm::vec2(quadSize.x / 2, quadSize.y / 2);
 	currentAnimation = -1;
@@ -44,7 +44,7 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Te
 	position = glm::vec2(0.f);
 }
 
-Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture* spritesheet, ShaderProgram* program)
+Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture* spritesheet, ShaderProgram* shader)
 {
 	float vertices[24] = { 0.f,0.f,topLeft.x,topLeft.y,
 														quadSize.x, 0.f, bottomRight.x, topLeft.y,
@@ -57,10 +57,10 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::v
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
-	posLocation = program->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
-	texCoordLocation = program->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	posLocation = shader->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = shader->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	texture = spritesheet;
-	shaderProgram = program;
+	shaderProgram = shader;
 	this->quadSize = quadSize;
 	center = glm::vec2(quadSize.x / 2, quadSize.y / 2);
 	currentAnimation = -1;

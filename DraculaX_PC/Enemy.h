@@ -10,7 +10,7 @@
 class Enemy : public Entity
 {
 public:
-	virtual void init(const glm::ivec2& tileMapDispl, ShaderProgram& program);
+	virtual void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader);
 	virtual void render();
 	virtual void end();
 	void setPlayerPos(glm::vec2* playerPos);

@@ -42,7 +42,7 @@ protected:
 	bool ended = false;
 	bool flicker = false;
 	bool renderAltern = true;
-	ShaderProgram* program;
+	ShaderProgram* shader;
 };
 
 #endif // !_EFFECT_INCLUDE

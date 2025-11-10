@@ -14,7 +14,7 @@ Entity::~Entity()
 void Entity::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram)
 {
 	this->tileMapDispl = tileMapDispl;
-	this->program = &shaderProgram;
+	this->shader = &shaderProgram;
 	string name = getName();
 	if (TextureManager::instance().exists(name))
 	{

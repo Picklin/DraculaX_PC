@@ -1,7 +1,7 @@
 #include "ItemManager.h"
 #include "TextureManager.h"
 
-ItemManager::ItemManager() : map(nullptr), platforms(nullptr), program(nullptr)
+ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
 {
     initializeRandom();
 
@@ -20,7 +20,7 @@ void ItemManager::initializeRandom()
 
 void ItemManager::initItem(Item* item, const glm::vec2& pos, const glm::vec2& topLeft, const glm::vec2& bottomRight)
 {
-    item->init(tileMapDispl, *program, topLeft, bottomRight, *itemsTex);
+    item->init(tileMapDispl, *shader, topLeft, bottomRight, *itemsTex);
     item->setTileMap(*map);
     item->setPlatformMap(platforms);
     item->setPosition(pos);
@@ -32,10 +32,10 @@ ItemManager& ItemManager::instance()
     return im;
 }
 
-void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, TileMap* platforms)
+void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms)
 {
     this->tileMapDispl = tileMapDispl;
-    this->program = &program;
+    this->shader = &shader;
     this->map = map;
     this->platforms = platforms;
 }

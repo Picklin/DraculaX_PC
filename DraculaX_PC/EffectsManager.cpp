@@ -17,10 +17,10 @@ EffectsManager& EffectsManager::instance()
 	return em;
 }
 
-void EffectsManager::init(glm::ivec2& tileMapDispl, ShaderProgram& program)
+void EffectsManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader)
 {
 	this->tileMapDispl = tileMapDispl;
-	this->program = &program;
+	this->shader = &shader;
 }
 
 void EffectsManager::update(int deltaTime)
@@ -71,7 +71,7 @@ void EffectsManager::freeTextures()
 
 void EffectsManager::initEffect(Effect* e, const glm::vec2& pos, const glm::vec4& color)
 {
-	e->init(tileMapDispl, *program);
+	e->init(tileMapDispl, *shader);
 	e->setPosition(pos);
 	e->setColor(color);
 }

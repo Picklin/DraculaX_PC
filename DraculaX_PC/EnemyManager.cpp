@@ -1,6 +1,6 @@
 #include "EnemyManager.h"
 
-EnemyManager::EnemyManager() : program(nullptr), map(nullptr), platforms(nullptr), playerPos(nullptr)
+EnemyManager::EnemyManager() : shader(nullptr), map(nullptr), platforms(nullptr), playerPos(nullptr)
 {
     
 }
@@ -11,10 +11,10 @@ EnemyManager& EnemyManager::instance()
     return em;
 }
 
-void EnemyManager::init(glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, TileMap* platforms)
+void EnemyManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms)
 {
     this->tileMapDispl = tileMapDispl;
-    this->program = &program;
+    this->shader = &shader;
     this->map = map;
     this->platforms = platforms;
 }
@@ -32,7 +32,7 @@ Enemy* EnemyManager::getEnemy(const glm::vec2& pos, int id)
 
 void EnemyManager::initEnemy(Enemy& e, const glm::vec2& pos)
 {
-    e.init(tileMapDispl, *program);
+    e.init(tileMapDispl, *shader);
     e.setPosition(pos);
     e.setPlayerPos(playerPos);
     e.setPlayerCenter(playerCenter);

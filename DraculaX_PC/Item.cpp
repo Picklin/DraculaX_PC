@@ -2,11 +2,11 @@
 
 #define FALL_SPEED 3.f
 
-void Item::init(const glm::ivec2& tileMapDispl, ShaderProgram& program, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex)
+void Item::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex)
 {
     this->tileMapDispl = tileMapDispl;
     this->quadSize = glm::ivec2((bottomRight.x - topLeft.x) * itemsTex.width(), (bottomRight.y - topLeft.y) * itemsTex.height());
-    sprite = Sprite::createSprite(quadSize, topLeft, bottomRight, &itemsTex, &program);
+    sprite = Sprite::createSprite(quadSize, topLeft, bottomRight, &itemsTex, &shader);
 }
 
 void Item::setTileMap(TileMap& map)

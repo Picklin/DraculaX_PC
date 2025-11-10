@@ -4,18 +4,18 @@
 #include "TileMap.h"
 
 
-TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
+TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader)
 {
-	TileMap* map = new TileMap(levelFile, minCoords, program);
+	TileMap* map = new TileMap(levelFile, minCoords, shader);
 
 	return map;
 }
 
-TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
+TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader)
 {
 	loadLevel(levelFile);
-	prepareArrays(minCoords, program);
-	this->shaderProgram = &program;
+	prepareArrays(minCoords, shader);
+	this->shaderProgram = &shader;
 	color = glm::vec4(1.f);
 }
 
@@ -97,7 +97,7 @@ bool TileMap::loadLevel(const string& levelFile)
 	return true;
 }
 
-void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
+void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& shader)
 {
 	int tile;
 	glm::vec2 posTile, texCoordTile[2], halfTexel;
@@ -147,8 +147,8 @@ void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 24 * nTiles * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-	posLocation = program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
-	texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	posLocation = shader.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = shader.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 }
 
 // Collision tests for axis aligned bounding boxes.

@@ -19,11 +19,11 @@ class TileMap
 {
 
 private:
-	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
+	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader);
 
 public:
 	// Tile maps can only be created inside an OpenGL context
-	static TileMap* createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
+	static TileMap* createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader);
 
 	~TileMap();
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	bool loadLevel(const string& levelFile);
-	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& shader);
 
 private:
 	GLuint vao;

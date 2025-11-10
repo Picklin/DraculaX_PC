@@ -13,10 +13,10 @@ void Game::init()
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	initShaders();
-	player.init(MAP_OFFSET, playerShader);
+	player.init(MAP_OFFSET, spriteShader);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
-	//titScreen.init(texProgram);
-	st.init(player, texProgram, playerShader);
+	//titScreen.init(basicShader);
+	st.init(player, spriteShader, basicShader);
 }
 
 bool Game::update(int deltaTime)
@@ -29,7 +29,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[nextLevel][nextScene]();
-			scene->init(player, texProgram, playerShader);
+			scene->init(player, spriteShader, basicShader);
 			currentLevel = nextLevel;
 			currentScene = nextScene;
 			next = false;
@@ -38,7 +38,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[currentLevel][currentScene]();
-			scene->init(player, texProgram, playerShader);
+			scene->init(player, spriteShader, basicShader);
 			restart = false;
 		}
 
@@ -114,7 +114,7 @@ void Game::start()
 {
 	gameStarted = true;
 	scene = scenesFactory[currentLevel][currentScene]();
-	scene->init(player, texProgram, playerShader);
+	scene->init(player, spriteShader, basicShader);
 }
 
 void Game::keyPressed(int key)
@@ -183,7 +183,7 @@ void Game::initShaders()
 {
 	Shader vShader, fShader;
 
-	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
+	vShader.initFromFile(VERTEX_SHADER, "shaders/texture_sprites.vert");
 	if (!vShader.isCompiled())
 	{
 		cout << "Vertex Shader Error" << endl;
@@ -195,34 +195,34 @@ void Game::initShaders()
 		cout << "Fragment Shader Error" << endl;
 		cout << "" << fShader.log() << endl << endl;
 	}
-	texProgram.init();
-	texProgram.addShader(vShader);
-	texProgram.addShader(fShader);
-	texProgram.link();
-	if (!texProgram.isLinked())
+	spriteShader.init();
+	spriteShader.addShader(vShader);
+	spriteShader.addShader(fShader);
+	spriteShader.link();
+	if (!spriteShader.isLinked())
 	{
 		cout << "Shader Linking Error" << endl;
-		cout << "" << texProgram.log() << endl << endl;
+		cout << "" << spriteShader.log() << endl << endl;
 	}
-	texProgram.bindFragmentOutput("outColor");
+	spriteShader.bindFragmentOutput("outColor");
 
 	vShader.free();
-	vShader.initFromFile(VERTEX_SHADER, "shaders/player.vert");
+	vShader.initFromFile(VERTEX_SHADER, "shaders/texture_basic.vert");
 	if (!vShader.isCompiled())
 	{
 		cout << "Vertex Shader Error" << endl;
 		cout << "" << vShader.log() << endl << endl;
 	}
-	playerShader.init();
-	playerShader.addShader(vShader);
-	playerShader.addShader(fShader);
-	playerShader.link();
-	if (!playerShader.isLinked())
+	basicShader.init();
+	basicShader.addShader(vShader);
+	basicShader.addShader(fShader);
+	basicShader.link();
+	if (!basicShader.isLinked())
 	{
 		cout << "Shader Linking Error" << endl;
-		cout << "" << playerShader.log() << endl << endl;
+		cout << "" << basicShader.log() << endl << endl;
 	}
-	playerShader.bindFragmentOutput("outColor");
+	basicShader.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
 }
@@ -231,7 +231,7 @@ void Game::reset()
 {
 	currentLevel = 0;
 	currentScene = 0;
-	player.init(MAP_OFFSET, playerShader);
+	player.init(MAP_OFFSET, basicShader);
 }
 
 void Game::gameOver()

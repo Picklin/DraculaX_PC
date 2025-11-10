@@ -55,6 +55,6 @@ protected:
 	int endTimer = 1;
 	TileMap* tileMap;
 	vector<vector<vector<Hitbox>>> hitboxes; //hitboxes de cada frame de cada animacion
-	ShaderProgram* program;
+	ShaderProgram* shader;
 };
 #endif // _ENTITY_INCLUDE

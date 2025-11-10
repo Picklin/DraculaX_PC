@@ -7,7 +7,7 @@
 class Item
 {
 public:
-	void init(const glm::ivec2& tileMapDispl, ShaderProgram& program, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex);
+	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex);
 	void setTileMap(TileMap& map);
 	void update(int deltaTime);
 	void render();

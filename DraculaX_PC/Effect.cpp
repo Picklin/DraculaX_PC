@@ -14,7 +14,7 @@ Effect::~Effect()
 void Effect::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram)
 {
 	this->tileMapDispl = tileMapDispl;
-	this->program = &shaderProgram;
+	this->shader = &shaderProgram;
 	string name = getName();
 	if (TextureManager::instance().exists(name))
 	{
@@ -38,11 +38,11 @@ void Effect::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram)
 void Effect::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const TexInfo& ti)
 {
 	this->tileMapDispl = tileMapDispl;
-	this->program = &shaderProgram;
+	this->shader = &shaderProgram;
 
 	quadSize.x = int(ti.tex->width() * (ti.bottomRight.x - ti.topLeft.x));
 	quadSize.y = int(ti.tex->height() * (ti.bottomRight.y - ti.topLeft.y));
-	sprite = Sprite::createSprite(quadSize, ti.topLeft, ti.bottomRight, ti.tex, program);
+	sprite = Sprite::createSprite(quadSize, ti.topLeft, ti.bottomRight, ti.tex, shader);
 }
 
 void Effect::update(int deltaTime)

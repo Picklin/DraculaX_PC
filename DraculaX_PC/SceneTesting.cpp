@@ -20,5 +20,5 @@ void SceneTesting::update(int deltaTime)
 
 TileMap* SceneTesting::setTileMap()
 {
-	return TileMap::createTileMap("levels/level02.txt", MAP_OFFSET, *texProgram);;
+	return TileMap::createTileMap("levels/level02.txt", MAP_OFFSET, *spriteShader);;
 }
