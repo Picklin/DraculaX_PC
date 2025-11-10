@@ -11,6 +11,8 @@
 
 class Player : public Entity
 {
+public:
+	void render();
 
 protected:
 	string getName() const;
@@ -35,6 +37,7 @@ private:
 	bool bJumping = false;
 	bool prevGrounded = true;
 	bool grounded = true;
+	bool lookingLeft = false;
 };
 
 

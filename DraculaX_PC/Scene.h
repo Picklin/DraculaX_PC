@@ -24,7 +24,7 @@ class Scene
 
 public:
 	virtual ~Scene();
-	virtual void init(Player& player, ShaderProgram& texProgram);
+	virtual void init(Player& player, ShaderProgram& texProgram, ShaderProgram& playerShader);
 	virtual void update(int deltaTime);
 	virtual void render();
 	void setScreenWidth(int width);
@@ -58,6 +58,7 @@ protected:
 	TileMap* platforms;
 	Player* player;
 	ShaderProgram* texProgram;
+	ShaderProgram* playerShader;
 	float currentTime;
 	glm::mat4 projection;
 	glm::vec2 cameraPos;

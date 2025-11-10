@@ -13,10 +13,10 @@ void Game::init()
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	initShaders();
-	player.init(MAP_OFFSET, texProgram);
+	player.init(MAP_OFFSET, playerShader);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	//titScreen.init(texProgram);
-	st.init(player, texProgram);
+	st.init(player, texProgram, playerShader);
 }
 
 bool Game::update(int deltaTime)
@@ -29,7 +29,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[nextLevel][nextScene]();
-			scene->init(player, texProgram);
+			scene->init(player, texProgram, playerShader);
 			currentLevel = nextLevel;
 			currentScene = nextScene;
 			next = false;
@@ -38,7 +38,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[currentLevel][currentScene]();
-			scene->init(player, texProgram);
+			scene->init(player, texProgram, playerShader);
 			restart = false;
 		}
 
@@ -114,7 +114,7 @@ void Game::start()
 {
 	gameStarted = true;
 	scene = scenesFactory[currentLevel][currentScene]();
-	scene->init(player, texProgram);
+	scene->init(player, texProgram, playerShader);
 }
 
 void Game::keyPressed(int key)
@@ -205,13 +205,33 @@ void Game::initShaders()
 		cout << "" << texProgram.log() << endl << endl;
 	}
 	texProgram.bindFragmentOutput("outColor");
+
+	vShader.free();
+	vShader.initFromFile(VERTEX_SHADER, "shaders/player.vert");
+	if (!vShader.isCompiled())
+	{
+		cout << "Vertex Shader Error" << endl;
+		cout << "" << vShader.log() << endl << endl;
+	}
+	playerShader.init();
+	playerShader.addShader(vShader);
+	playerShader.addShader(fShader);
+	playerShader.link();
+	if (!playerShader.isLinked())
+	{
+		cout << "Shader Linking Error" << endl;
+		cout << "" << playerShader.log() << endl << endl;
+	}
+	playerShader.bindFragmentOutput("outColor");
+	vShader.free();
+	fShader.free();
 }
 
 void Game::reset()
 {
 	currentLevel = 0;
 	currentScene = 0;
-	player.init(MAP_OFFSET, texProgram);
+	player.init(MAP_OFFSET, playerShader);
 }
 
 void Game::gameOver()

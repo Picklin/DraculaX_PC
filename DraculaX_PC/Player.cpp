@@ -8,6 +8,18 @@
 #define JUMP_HEIGHT 64
 #define FALL_SPEED 4
 
+enum PlayerAnims
+{
+	IDLE
+};
+
+void Player::render()
+{
+	program->use();
+	program->setUniform1i("flip", lookingLeft ? 1 : 0);
+	sprite->render();
+}
+
 string Player::getName() const
 {
 	return "Player";
@@ -15,21 +27,27 @@ string Player::getName() const
 
 const string Player::getSpritesheet() const
 {
-	return "images/samus3.png";
+	return "images/Richter/Richter.png";
 }
 
 const glm::vec2 Player::getSizeInSpritesheet() const
 {
-	return glm::vec2(0.2f,0.125f);
+	return glm::vec2(0.1f,0.1f);
 }
 
 const glm::ivec2 Player::getQuadSize() const
 {
-	return glm::ivec2(32);
+	return glm::ivec2(64);
 }
 
 void Player::setAnimations()
 {
+	sprite->setNumberAnimations(1);
+
+	sprite->setAnimationSpeed(IDLE, 8);
+	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
+
+	sprite->changeAnimation(IDLE);
 }
 
 void Player::setHitboxes()
@@ -66,6 +84,11 @@ void Player::childUpdate(int deltaTime)
 			startY = position.y;
 		}
 	}
+	
+	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
+	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT);
+	lookingLeft = leftPressed || (lookingLeft && !rightPressed);
+	position.x += (rightPressed - leftPressed) * 1.f;
 	setPosition(position);
 	sprite->update(deltaTime);
 }
