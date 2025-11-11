@@ -1,6 +1,7 @@
 #ifndef _PLAYER_INCLUDE
 #define _PLAYER_INCLUDE
 
+#include <chrono>
 #include "TileMap.h"
 #include "Entity.h"
 
@@ -24,9 +25,15 @@ protected:
 	void childUpdate(int deltaTime);
 
 private:
+	void registerInput(int key);
 	const Hitbox getTerrainCollisionBox() const;
 
 private:
+	struct InputEvent {
+		int key;
+		std::chrono::steady_clock::time_point timestamp;
+	};
+	vector<InputEvent> commandBuffer;
 	vector<Hitbox> terrainCollisionBoxes;
 
 	int jumpAngle = 0;
