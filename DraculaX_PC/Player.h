@@ -38,6 +38,7 @@ private:
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
+	bool downPressed = false;
 };
 
 
