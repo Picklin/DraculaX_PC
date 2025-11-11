@@ -11,7 +11,7 @@
 
 enum PlayerAnims
 {
-	IDLE, WALK, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH
+	IDLE, WALK, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP
 };
 
 enum Inputs
@@ -64,7 +64,7 @@ const glm::ivec2 Player::getQuadSize() const
 
 void Player::setAnimations()
 {
-	sprite->setNumberAnimations(7);
+	sprite->setNumberAnimations(10);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -92,9 +92,20 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(FALL_FINAL, 0);
 	sprite->addKeyframe(FALL_FINAL, glm::vec2(0.9f, 0.f));
 
+	sprite->setAnimationSpeed(CROUCH, 8);
+	sprite->animatorX(CROUCH, 3, 0.7f, 0.1f, 0.2f);
+
+	sprite->setAnimationSpeed(CROUCH_FINAL, 0);
+	sprite->addKeyframe(CROUCH_FINAL, glm::vec2(0.9f, 0.2f));
+
+	sprite->setAnimationSpeed(GETUP, 8);
+	sprite->animatorX(GETUP, 3, 0.9f, -0.1f, 0.2f);
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
+	sprite->setTransition(CROUCH, CROUCH_FINAL);
+	sprite->setTransition(GETUP, IDLE);
 
 	sprite->changeAnimation(IDLE);
 }
