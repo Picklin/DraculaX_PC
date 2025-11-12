@@ -26,6 +26,7 @@ protected:
 
 private:
 	void registerInput(int key);
+	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
 	const Hitbox getTerrainCollisionBox() const;
 
 private:
@@ -45,7 +46,9 @@ private:
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
-	bool downPressed = false;
+	bool prevRightPressed = false;
+	bool prevLeftPressed = false;
+	bool prevDownPressed = false;
 };
 
 
