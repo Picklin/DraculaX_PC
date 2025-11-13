@@ -11,7 +11,7 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_SKIDDING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING,
 };
 
 enum PlayerAnims
@@ -21,7 +21,7 @@ enum PlayerAnims
 
 enum Inputs
 {
-	RIGHT, LEFT, DOWN, UNPRESS_DOWN, UP, A, X
+	RIGHT, LEFT, DOWN, UP, A, X
 };
 
 std::map<int, int> inputMap = {
@@ -29,9 +29,8 @@ std::map<int, int> inputMap = {
 	{ LEFT, 1},
 	{ A, 2 },
 	{ DOWN, 4 },
-	{ UNPRESS_DOWN, 8 },
-	{ X, 16 },
-	{ UP, 32 },
+	{ X, 8 },
+	{ UP, 16 },
 };
 
 struct Command
@@ -56,25 +55,23 @@ std::map<int, int> animMap = {
 	{ 2, PlayerAnims::JUMP },
 	{ 3, PlayerAnims::JUMP_FW },
 	{ 4, PlayerAnims::CROUCH },
-	{ 8, PlayerAnims::GETUP },
-	{ 16, PlayerAnims::ATTACK },
-	{ 17, PlayerAnims::ATTACK },
-	{ 18, PlayerAnims::ATTACK },
-	{ 20, PlayerAnims::ATTACK_CROUCH },
-	{ 32, PlayerAnims::PREP_ATK},
-	{ 33, PlayerAnims::WALK },
-	{ 34, PlayerAnims::JUMP },
-	{ 35, PlayerAnims::JUMP_FW },
-	{ 36, PlayerAnims::CROUCH },
-	{ 40, PlayerAnims::GETUP },
-	{ 48, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 49, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 50, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 64, PlayerAnims::FALL },
-	{ 65, PlayerAnims::FALL },
-	{ 129, PlayerAnims::RUN},
-	{ 131, PlayerAnims::JUMP_FW},
-	{ 160, PlayerAnims::RUN},
+	{ 8, PlayerAnims::ATTACK },
+	{ 9, PlayerAnims::ATTACK },
+	{ 10, PlayerAnims::ATTACK },
+	{ 12, PlayerAnims::ATTACK_CROUCH },
+	{ 16, PlayerAnims::PREP_ATK},
+	{ 17, PlayerAnims::WALK },
+	{ 18, PlayerAnims::JUMP },
+	{ 19, PlayerAnims::JUMP_FW },
+	{ 20, PlayerAnims::CROUCH },
+	{ 24, PlayerAnims::ATTACK_SUBWEAPON },
+	{ 25, PlayerAnims::ATTACK_SUBWEAPON },
+	{ 26, PlayerAnims::ATTACK_SUBWEAPON },
+	{ 32, PlayerAnims::FALL },
+	{ 33, PlayerAnims::FALL },
+	{ 65, PlayerAnims::RUN },
+	{ 67, PlayerAnims::JUMP_FW},
+	{ 81, PlayerAnims::RUN },
 };
 
 std::map<int, int> animToStateMap = {
@@ -93,7 +90,7 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::ATTACK, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::ATTACK_CROUCH, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::ATTACK_SUBWEAPON, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::SKID, PlayerStates::STATE_SKIDDING },
+	{ PlayerAnims::SKID, PlayerStates::STATE_IDLE },
 };
 
 void Player::render()
@@ -200,6 +197,7 @@ void Player::setAnimations()
 	sprite->setTransition(ATTACK, IDLE);
 	sprite->setTransition(ATTACK_CROUCH, CROUCH_FINAL);
 	sprite->setTransition(ATTACK_SUBWEAPON, IDLE);
+	sprite->setTransition(SKID, IDLE);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -214,12 +212,16 @@ void Player::childUpdate(int deltaTime)
 	int state = animToStateMap[anim];
 	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !loseMomentum;
 	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !loseMomentum;
+	bool getup = prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP;
 	timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
 
 	lookingLeft = leftPressed || (lookingLeft && !rightPressed);
 	if (loseMomentum)
 	{
-		if (anim != SKID) sprite->changeAnimation(SKID);
+		if (anim != SKID)
+		{
+			sprite->changeAnimation(SKID);
+		}
 		velocityX *= 0.9f;
 		if (abs(velocityX) < 0.1f) velocityX = 0.f;
 		loseMomentum = velocityX != 0.f;
@@ -254,28 +256,30 @@ void Player::childUpdate(int deltaTime)
 			sprite->changeAnimation(ATTACK+Game::instance().getKey(GLFW_KEY_UP));
 		}
 	}
+	else if (getup)
+	{
+		sprite->changeAnimation(GETUP);
+	}
 	else if (!loseMomentum)
 	{
-		bool getup = prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN);
 		int inputIndex = 0;
 		inputIndex += inputMap[RIGHT] * rightPressed
 			+ inputMap[LEFT] * leftPressed
 			+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
 			+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-			+ inputMap[UNPRESS_DOWN] * getup
 			+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
 			+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X)
-			+ 64 * !grounded;
+			+ 32 * !grounded;
 		registerInput(
 			GLFW_KEY_RIGHT * (prevRightPressed && !rightPressed)
 			+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
 		);
 		int commandInputIndex = 0;
-		commandInputIndex = 128 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-			+ 128 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed);
+		commandInputIndex = 64 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
+			+ 64 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed);
 		if (commandInputIndex > 0 || (gainMomentum && (rightPressed || leftPressed)))
 		{
-			commandInputIndex = 128;
+			commandInputIndex = 64;
 			//timeRunning = 0.f;
 			commandBuffer.clear();
 		}
