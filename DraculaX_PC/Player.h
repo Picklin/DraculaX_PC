@@ -41,6 +41,7 @@ private:
 
 	float velocityX = 0.f;
 	float startY = 0.f;
+	float timeRunning = 0.f;
 
 	bool bJumping = false;
 	bool prevGrounded = true;
@@ -49,6 +50,8 @@ private:
 	bool prevRightPressed = false;
 	bool prevLeftPressed = false;
 	bool prevDownPressed = false;
+	bool gainMomentum = false;
+	bool loseMomentum = false;
 };
 
 

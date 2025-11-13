@@ -11,12 +11,12 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_SKIDDING
 };
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK,  ATTACK_SUBWEAPON, ATTACK_CROUCH,
+	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK,  ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID
 };
 
 enum Inputs
@@ -72,7 +72,8 @@ std::map<int, int> animMap = {
 	{ 50, PlayerAnims::ATTACK_SUBWEAPON },
 	{ 64, PlayerAnims::FALL },
 	{ 65, PlayerAnims::FALL },
-	{ 128, PlayerAnims::RUN},
+	{ 129, PlayerAnims::RUN},
+	{ 131, PlayerAnims::JUMP_FW},
 	{ 160, PlayerAnims::RUN},
 };
 
@@ -92,6 +93,7 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::ATTACK, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::ATTACK_CROUCH, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::ATTACK_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+	{ PlayerAnims::SKID, PlayerStates::STATE_SKIDDING },
 };
 
 void Player::render()
@@ -126,7 +128,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 16;
 
-	sprite->setNumberAnimations(15);
+	sprite->setNumberAnimations(16);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -182,6 +184,14 @@ void Player::setAnimations()
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 
+	sprite->setAnimationSpeed(SKID, 16);
+	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.2f));
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
@@ -202,11 +212,25 @@ void Player::childUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
 	int state = animToStateMap[anim];
-	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
-	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
+	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !loseMomentum;
+	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !loseMomentum;
+	timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
 
 	lookingLeft = leftPressed || (lookingLeft && !rightPressed);
-	position.x += ((rightPressed - leftPressed) * (1.f + 1.f * (anim == RUN))) * ((state != STATE_ATTACKING && state != STATE_CROUCHING) || bJumping);
+	if (loseMomentum)
+	{
+		if (anim != SKID) sprite->changeAnimation(SKID);
+		velocityX *= 0.9f;
+		if (abs(velocityX) < 0.1f) velocityX = 0.f;
+		loseMomentum = velocityX != 0.f;
+	}
+	else
+	{
+		loseMomentum = (timeRunning >= .5f) && !bJumping && gainMomentum && !(rightPressed || leftPressed);
+		gainMomentum = gainMomentum && (rightPressed || leftPressed);
+		velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * gainMomentum)) * ((state != STATE_ATTACKING && state != STATE_CROUCHING) || bJumping);
+	}
+	position.x += velocityX;
 
 	if (bJumping)
 	{
@@ -230,7 +254,7 @@ void Player::childUpdate(int deltaTime)
 			sprite->changeAnimation(ATTACK+Game::instance().getKey(GLFW_KEY_UP));
 		}
 	}
-	else
+	else if (!loseMomentum)
 	{
 		bool getup = prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN);
 		int inputIndex = 0;
@@ -247,10 +271,12 @@ void Player::childUpdate(int deltaTime)
 			+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
 		);
 		int commandInputIndex = 0;
-		commandInputIndex = 127 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-			+ 127 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed);
-		if (commandInputIndex > 0)
+		commandInputIndex = 128 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
+			+ 128 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed);
+		if (commandInputIndex > 0 || (gainMomentum && (rightPressed || leftPressed)))
 		{
+			commandInputIndex = 128;
+			//timeRunning = 0.f;
 			commandBuffer.clear();
 		}
 		inputIndex += commandInputIndex;
@@ -260,6 +286,7 @@ void Player::childUpdate(int deltaTime)
 		{
 			sprite->changeAnimation(it->second);
 		}
+		gainMomentum = anim == RUN;
 		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
 		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
 		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
@@ -297,7 +324,7 @@ void Player::registerInput(int key)
 		commandBuffer.end());
 	//cout << commandBuffer.size() << endl;
 	
-	if (commandBuffer.size()>1) cout << commandBuffer[commandBuffer.size()-2].key << ' ' << commandBuffer[commandBuffer.size() - 1].key << endl;
+	//if (commandBuffer.size()>1) cout << commandBuffer[commandBuffer.size()-2].key << ' ' << commandBuffer[commandBuffer.size() - 1].key << endl;
 	
 }
 
