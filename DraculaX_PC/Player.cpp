@@ -69,6 +69,11 @@ std::map<int, int> animMap = {
 	{ 26, PlayerAnims::ATTACK_SUBWEAPON },
 	{ 32, PlayerAnims::FALL },
 	{ 33, PlayerAnims::FALL },
+	{ 40, PlayerAnims::ATTACK },
+	{ 41, PlayerAnims::ATTACK },
+	{ 44, PlayerAnims::ATTACK },
+	{ 56, PlayerAnims::ATTACK_SUBWEAPON },
+	{ 57, PlayerAnims::ATTACK_SUBWEAPON },
 	{ 65, PlayerAnims::RUN },
 	{ 67, PlayerAnims::JUMP_FW},
 	{ 81, PlayerAnims::RUN },
@@ -280,10 +285,10 @@ void Player::childUpdate(int deltaTime)
 		);
 		int commandInputIndex = 0;
 		commandInputIndex = 64 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-			+ 64 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed);
-		if (commandInputIndex > 0 || (gainMomentum && (rightPressed || leftPressed)))
+			+ 64 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
+			+ 64 * (gainMomentum && (rightPressed || leftPressed));
+		if (commandInputIndex > 0)
 		{
-			commandInputIndex = 64;
 			commandBuffer.clear();
 		}
 		inputIndex += commandInputIndex;
