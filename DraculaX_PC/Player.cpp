@@ -181,11 +181,15 @@ void Player::setAnimations()
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 
-	sprite->setAnimationSpeed(SKID, 16);
+	sprite->setAnimationSpeed(SKID, 32);
 	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.2f));
 
@@ -210,15 +214,15 @@ void Player::childUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
 	int state = animToStateMap[anim];
-	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !loseMomentum;
-	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !loseMomentum;
+	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
+	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
 	bool getup = prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP;
 	timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
 
 	lookingLeft = leftPressed || (lookingLeft && !rightPressed);
 	if (loseMomentum)
 	{
-		if (anim != SKID)
+		if (abs(velocityX) == 1 && anim != SKID)
 		{
 			sprite->changeAnimation(SKID);
 		}
@@ -260,7 +264,7 @@ void Player::childUpdate(int deltaTime)
 	{
 		sprite->changeAnimation(GETUP);
 	}
-	else if (!loseMomentum)
+	else
 	{
 		int inputIndex = 0;
 		inputIndex += inputMap[RIGHT] * rightPressed
@@ -280,10 +284,10 @@ void Player::childUpdate(int deltaTime)
 		if (commandInputIndex > 0 || (gainMomentum && (rightPressed || leftPressed)))
 		{
 			commandInputIndex = 64;
-			//timeRunning = 0.f;
 			commandBuffer.clear();
 		}
 		inputIndex += commandInputIndex;
+		loseMomentum = loseMomentum && (inputIndex == 0);
 		//cout << "Input Index: " << inputIndex << endl;
 		auto it = animMap.find(inputIndex);
 		if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING)
