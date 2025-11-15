@@ -28,6 +28,7 @@ private:
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
 	const Hitbox getTerrainCollisionBox() const;
+	void calcIncrement(float& valToInc, float targetVal, float factor);
 
 private:
 	struct InputEvent {
@@ -42,8 +43,10 @@ private:
 	float velocityX = 0.f;
 	float startY = 0.f;
 	float timeRunning = 0.f;
+	float dashDistance = 0.f;
 
 	bool bJumping = false;
+	bool bDashing = false;
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;

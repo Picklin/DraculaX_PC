@@ -11,12 +11,12 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING,
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING
 };
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK,  ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID
+	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK,  ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, DASH1, DASH1_FINAL
 };
 
 enum Inputs
@@ -37,16 +37,19 @@ struct Command
 {
 	vector<int> sequence;
 	std::chrono::milliseconds timeWindow;
+	int index;
 };
 
 const Command RIGHT_RUN_COMMAND = {
 	{GLFW_KEY_RIGHT,},
-	std::chrono::milliseconds(128)
+	std::chrono::milliseconds(128),
+	64
 };
 
 const Command LEFT_RUN_COMMAND = {
 	{GLFW_KEY_LEFT,},
-	std::chrono::milliseconds(128)
+	std::chrono::milliseconds(128),
+	64
 };
 
 std::map<int, int> animMap = {
@@ -55,6 +58,7 @@ std::map<int, int> animMap = {
 	{ 2, PlayerAnims::JUMP },
 	{ 3, PlayerAnims::JUMP_FW },
 	{ 4, PlayerAnims::CROUCH },
+	{ 6, PlayerAnims::DASH1 },
 	{ 8, PlayerAnims::ATTACK },
 	{ 9, PlayerAnims::ATTACK },
 	{ 10, PlayerAnims::ATTACK },
@@ -96,6 +100,8 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::ATTACK_CROUCH, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::ATTACK_SUBWEAPON, PlayerStates::STATE_ATTACKING },
 	{ PlayerAnims::SKID, PlayerStates::STATE_IDLE },
+	{ PlayerAnims::DASH1, PlayerStates::STATE_DASHING },
+	{ PlayerAnims::DASH1_FINAL, PlayerStates::STATE_DASHING },
 };
 
 void Player::render()
@@ -130,7 +136,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 16;
 
-	sprite->setNumberAnimations(16);
+	sprite->setNumberAnimations(18);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -198,6 +204,12 @@ void Player::setAnimations()
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.2f));
 
+	sprite->setAnimationSpeed(DASH1, 16);
+	sprite->animatorX(DASH1, 5, 0.f, 0.1f, 0.5f);
+
+	sprite->setAnimationSpeed(DASH1_FINAL, 0);
+	sprite->addKeyframe(DASH1_FINAL, glm::vec2(0.4f, 0.5f));
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
@@ -207,6 +219,7 @@ void Player::setAnimations()
 	sprite->setTransition(ATTACK_CROUCH, CROUCH_FINAL);
 	sprite->setTransition(ATTACK_SUBWEAPON, IDLE);
 	sprite->setTransition(SKID, IDLE);
+	sprite->setTransition(DASH1, DASH1_FINAL);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -219,9 +232,10 @@ void Player::childUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
 	int state = animToStateMap[anim];
-	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
-	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
-	bool getup = prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP;
+	bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
+	bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
+	bool getup = (prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && state != STATE_DASHING)
+		|| (state == STATE_DASHING && !bDashing);
 	timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
 
 	lookingLeft = leftPressed || (lookingLeft && !rightPressed);
@@ -235,11 +249,16 @@ void Player::childUpdate(int deltaTime)
 		if (abs(velocityX) < 0.1f) velocityX = 0.f;
 		loseMomentum = velocityX != 0.f;
 	}
-	else
+	else if (state != STATE_DASHING)
 	{
 		loseMomentum = (timeRunning >= .5f) && !bJumping && gainMomentum && !(rightPressed || leftPressed);
 		gainMomentum = gainMomentum && (rightPressed || leftPressed);
 		velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * gainMomentum)) * ((state != STATE_ATTACKING && state != STATE_CROUCHING) || bJumping);
+	}
+	else
+	{
+		calcIncrement(velocityX, 0.f, 0.075f);
+		bDashing = velocityX != 0;
 	}
 	position.x += velocityX;
 
@@ -269,7 +288,7 @@ void Player::childUpdate(int deltaTime)
 	{
 		sprite->changeAnimation(GETUP);
 	}
-	else
+	else if (state != STATE_DASHING)
 	{
 		int inputIndex = 0;
 		inputIndex += inputMap[RIGHT] * rightPressed
@@ -284,15 +303,16 @@ void Player::childUpdate(int deltaTime)
 			+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
 		);
 		int commandInputIndex = 0;
-		commandInputIndex = 64 * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-			+ 64 * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
-			+ 64 * (gainMomentum && (rightPressed || leftPressed));
+		commandInputIndex = RIGHT_RUN_COMMAND.index * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
+			+ LEFT_RUN_COMMAND.index * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
+			+ RIGHT_RUN_COMMAND.index * (gainMomentum && (rightPressed || leftPressed));
 		if (commandInputIndex > 0)
 		{
 			commandBuffer.clear();
 		}
 		inputIndex += commandInputIndex;
 		loseMomentum = loseMomentum && (inputIndex == 0);
+		velocityX = velocityX * (inputIndex != 6) + ((!lookingLeft - lookingLeft) * 8) * (inputIndex == 6);
 		//cout << "Input Index: " << inputIndex << endl;
 		auto it = animMap.find(inputIndex);
 		if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING)
@@ -306,7 +326,7 @@ void Player::childUpdate(int deltaTime)
 		
 		position.y += FALL_SPEED;
 		grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
-		if (Game::instance().getKey(GLFW_KEY_Z) && grounded)
+		if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded)
 		{
 			bJumping = true;
 			grounded = false;
@@ -314,6 +334,7 @@ void Player::childUpdate(int deltaTime)
 			startY = position.y;
 		}
 	}
+	else Game::instance().keyReleased(GLFW_KEY_Z);
 	Game::instance().keyReleased(GLFW_KEY_X);
 	
 	//cout << jumpAngle << endl;
@@ -366,4 +387,10 @@ const Hitbox Player::getTerrainCollisionBox() const
 	box.min = position + glm::vec2(22, 21);
 	box.max = position + glm::vec2(43, 64);
 	return box;
+}
+
+void Player::calcIncrement(float& valToInc, float targetVal, float factor)
+{
+	if (abs(valToInc - targetVal) > 0.2f) valToInc = valToInc + (targetVal - valToInc) * factor;
+	else valToInc = targetVal;
 }
