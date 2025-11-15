@@ -55,6 +55,7 @@ private:
 	bool prevDownPressed = false;
 	bool gainMomentum = false;
 	bool loseMomentum = false;
+	bool dashOffLedge = false;
 };
 
 
