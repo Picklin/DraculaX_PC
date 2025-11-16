@@ -11,12 +11,13 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING
 };
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, DASH1, DASH1_FINAL, DASH1_GETUP
+	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, 
+	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL
 };
 
 enum Inputs
@@ -106,6 +107,8 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::DASH1, PlayerStates::STATE_DASHING },
 	{ PlayerAnims::DASH1_FINAL, PlayerStates::STATE_DASHING },
 	{ PlayerAnims::DASH1_GETUP, PlayerStates::STATE_DASHING },
+	{ PlayerAnims::DASH_KICK, PlayerStates::STATE_DASHKICKING },
+	{ PlayerAnims::DASH_KICK_FINAL, PlayerStates::STATE_DASHKICKING },
 };
 
 void Player::render()
@@ -140,7 +143,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 16;
 
-	sprite->setNumberAnimations(19);
+	sprite->setNumberAnimations(21);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -210,7 +213,7 @@ void Player::setAnimations()
 
 	sprite->setAnimationSpeed(DASH1, 24);
 	sprite->addKeyframe(DASH1, glm::vec2(0.9f, 0.f));
-	sprite->animatorX(DASH1, 5, 0.f, 0.1f, 0.5f);
+	sprite->animatorX(DASH1, 4, 0.f, 0.1f, 0.5f);
 
 	sprite->setAnimationSpeed(DASH1_FINAL, 0);
 	sprite->addKeyframe(DASH1_FINAL, glm::vec2(0.4f, 0.5f));
@@ -220,6 +223,24 @@ void Player::setAnimations()
 	sprite->addKeyframe(DASH1_GETUP, glm::vec2(0.8f, 0.2f));
 	sprite->addKeyframe(DASH1_GETUP, glm::vec2(0.8f, 0.2f));
 	sprite->addKeyframe(DASH1_GETUP, glm::vec2(0.8f, 0.2f));
+
+	sprite->setAnimationSpeed(DASH_KICK, 16);
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.5f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.5f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.5f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.5f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.4f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.4f));
+
+	sprite->setAnimationSpeed(DASH_KICK_FINAL, 0);
+	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.4f));
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
@@ -232,6 +253,7 @@ void Player::setAnimations()
 	sprite->setTransition(SKID, IDLE);
 	sprite->setTransition(DASH1, DASH1_FINAL);
 	sprite->setTransition(DASH1_GETUP, CROUCH_FINAL);
+	sprite->setTransition(DASH_KICK, DASH_KICK_FINAL);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -260,8 +282,8 @@ void Player::childUpdate(int deltaTime)
 		loseMomentum = velocityX != 0.f;
 	}
 	
-	bool getup = (prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && state != STATE_DASHING)
-		|| (state == STATE_DASHING && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN));
+	bool getup = (prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
+		|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN));
 
 	if (bJumping)
 	{
@@ -326,7 +348,11 @@ void Player::childUpdate(int deltaTime)
 		inputIndex += commandInputIndex;
 		loseMomentum = loseMomentum && (inputIndex == 0);
 		velocityX = velocityX * (inputIndex != 6) + ((!lookingLeft - lookingLeft) * 8) * (inputIndex == 6);
-		bDashing = (inputIndex == 6);
+		if (inputIndex == 6)
+		{
+			bDashing = true;
+			Game::instance().keyReleased(GLFW_KEY_Z);
+		}
 		//cout << "Input Index: " << inputIndex << endl;
 		auto it = animMap.find(inputIndex);
 		if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING)
@@ -350,17 +376,35 @@ void Player::childUpdate(int deltaTime)
 	}
 	else
 	{
-		calcIncrement(velocityX, 0.f, 0.075f);
-		bDashing = velocityX != 0;
-		if (bDashing && anim == DASH1_FINAL && Game::instance().getKey(GLFW_KEY_Z))
+		if (state == STATE_DASHING)
 		{
-			sprite->changeAnimation(DASH1);
-			velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+			calcIncrement(velocityX, 0.f, 0.075f);
+			bDashing = velocityX != 0;
+			if (bDashing && anim == DASH1 && Game::instance().getKey(GLFW_KEY_Z))
+			{
+				sprite->changeAnimation(DASH_KICK);
+				velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+			}
+			else if (bDashing && anim == DASH1_FINAL && Game::instance().getKey(GLFW_KEY_Z))
+			{
+				sprite->changeAnimation(DASH1);
+				velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+			}
+			else if (anim != DASH1_GETUP && abs(velocityX) <= 1.f)
+			{
+				sprite->changeAnimation(DASH1_GETUP);
+			}
 		}
-		else if (anim != DASH1_GETUP && abs(velocityX) <= 1.f)
+		else if (state == STATE_DASHKICKING)
 		{
-			sprite->changeAnimation(DASH1_GETUP);
-		}
+			calcIncrement(velocityX, 0.f, 0.05f);
+			bDashing = velocityX != 0;
+			if (!bDashing)
+			{
+				lookingLeft = !lookingLeft;
+				sprite->changeAnimation(CROUCH_FINAL);
+			}
+		}		
 		Game::instance().keyReleased(GLFW_KEY_Z);
 		position.y += FALL_SPEED;
 		grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
