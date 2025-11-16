@@ -103,9 +103,9 @@ void Scene::updateCamera()
 	glm::vec2 playerPos = player->getPosition();
 	cameraPos = playerPos - glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / 2.f;
 	float minX = cameraPos.x + 50.f;
-	float minY = cameraPos.y;
+	float minY = 250.f;
 	float maxX = cameraPos.x + SCREEN_WIDTH + 50.f;
-	float maxY = cameraPos.y + SCREEN_HEIGHT;
+	float maxY = 250.f + SCREEN_HEIGHT;
 	projection = glm::ortho(minX, maxX, maxY, minY);
 }
 
