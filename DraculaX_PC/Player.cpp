@@ -10,13 +10,13 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_UPPERCUTING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING,
 };
 
 enum PlayerAnims
 {
 	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, 
-	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT
+	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, BACKFLIP_FINAL, BACKFLIP_SKID
 };
 
 enum Inputs
@@ -126,7 +126,10 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::DASH_KICK_FINAL, PlayerStates::STATE_DASHKICKING },
 	{ PlayerAnims::DASH_COMBO, PlayerStates::STATE_COMBO_DASHING },
 	{ PlayerAnims::DASH_COMBO_FINAL, PlayerStates::STATE_COMBO_DASHING },
-	{ PlayerAnims::UPPERCUT, PlayerStates::STATE_UPPERCUTING }
+	{ PlayerAnims::UPPERCUT, PlayerStates::STATE_JUMPING },
+	{ PlayerAnims::BACKFLIP, PlayerStates::STATE_JUMPING },
+	{ PlayerAnims::BACKFLIP_FINAL, PlayerStates::STATE_JUMPING },
+	{ PlayerAnims::BACKFLIP_SKID, PlayerStates::STATE_IDLE },
 };
 
 void Player::render()
@@ -161,7 +164,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 16;
 
-	sprite->setNumberAnimations(24);
+	sprite->setNumberAnimations(27);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -272,6 +275,15 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(UPPERCUT, 0);
 	sprite->addKeyframe(UPPERCUT, glm::vec2(0.9f, 0.7f));
 
+	sprite->setAnimationSpeed(BACKFLIP, 16);
+	sprite->animatorX(BACKFLIP, 7, 0.f, 0.1f, 0.7f);
+
+	sprite->setAnimationSpeed(BACKFLIP_FINAL, 0);
+	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.7f, 0.7f));
+
+	sprite->setAnimationSpeed(BACKFLIP_SKID, 0);
+	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.7f));
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
@@ -285,6 +297,7 @@ void Player::setAnimations()
 	sprite->setTransition(DASH1_GETUP, CROUCH_FINAL);
 	sprite->setTransition(DASH_KICK, DASH_KICK_FINAL);
 	sprite->setTransition(DASH_COMBO, DASH_COMBO_FINAL);
+	sprite->setTransition(BACKFLIP, BACKFLIP_FINAL);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -295,6 +308,7 @@ void Player::setHitboxes()
 
 void Player::childUpdate(int deltaTime)
 {
+	//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
 	int anim = sprite->animation();
 	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
 	int state = animToStateMap[anim];
@@ -321,7 +335,6 @@ void Player::childUpdate(int deltaTime)
 	if (bJumping)
 	{
 		velocityX = (rightPressed - leftPressed) * (1.f + 1.f * gainMomentum);
-		Game::instance().keyReleased(GLFW_KEY_Z);
 		int inputToRegister =
 			+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
 			+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
@@ -342,6 +355,15 @@ void Player::childUpdate(int deltaTime)
 		else
 		{
 			jumpAngle += JUMP_ANGLE_STEP;
+			if (jumpAngle < 45 && !backflipping && Game::instance().getKey(GLFW_KEY_Z))
+			{
+				backflipping = true;
+				sprite->changeAnimation(BACKFLIP);
+			}
+			if (backflipping)
+			{
+				velocityX = (lookingLeft - !lookingLeft) * 2.f;
+			}
 			if (jumpAngle >= 180)
 			{
 				jumpAngle = 0;
@@ -356,9 +378,10 @@ void Player::childUpdate(int deltaTime)
 				bJumping = jumpAngle < 90 || !tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
 				JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
 				JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
-				if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING) sprite->changeAnimation(FALL);
+				if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
 			}
-		}		
+		}
+		Game::instance().keyReleased(GLFW_KEY_Z);
 	}
 	else if (getup)
 	{
@@ -411,7 +434,7 @@ void Player::childUpdate(int deltaTime)
 		if (inputIndex == 6 || inputIndex == 128)
 		{
 			bDashing = true;
-			velocityX = ((!lookingLeft - lookingLeft) * (8.f + 2 * (inputIndex == 128)));
+			velocityX = (!lookingLeft - lookingLeft) * 8.f;
 			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 		//cout << "Input Index: " << inputIndex << endl;
@@ -437,8 +460,10 @@ void Player::childUpdate(int deltaTime)
 			}
 			bJumping = true;
 			grounded = false;
+			backflipping = false;
 			jumpAngle = 0;
 			startY = position.y;
+			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 	}
 	else

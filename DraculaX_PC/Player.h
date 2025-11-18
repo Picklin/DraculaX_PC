@@ -58,6 +58,7 @@ private:
 	bool gainMomentum = false;
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
+	bool backflipping = false;
 };
 
 
