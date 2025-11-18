@@ -39,6 +39,8 @@ private:
 	vector<Hitbox> terrainCollisionBoxes;
 
 	int jumpAngle = 0;
+	int JUMP_HEIGHT = 64;
+	int JUMP_ANGLE_STEP = 4;
 
 	float velocityX = 0.f;
 	float startY = 0.f;

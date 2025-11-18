@@ -5,14 +5,12 @@
 #include "Game.h"
 #include <map>
 
-#define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 64
 #define FALL_SPEED 4
 #define DASH_KICK_HEIGHT 32
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_UPPERCUT
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_UPPERCUTING
 };
 
 enum PlayerAnims
@@ -128,7 +126,7 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::DASH_KICK_FINAL, PlayerStates::STATE_DASHKICKING },
 	{ PlayerAnims::DASH_COMBO, PlayerStates::STATE_COMBO_DASHING },
 	{ PlayerAnims::DASH_COMBO_FINAL, PlayerStates::STATE_COMBO_DASHING },
-	{ PlayerAnims::UPPERCUT, PlayerStates::STATE_UPPERCUT }
+	{ PlayerAnims::UPPERCUT, PlayerStates::STATE_UPPERCUTING }
 };
 
 void Player::render()
@@ -177,31 +175,31 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(JUMP, 16);
 	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.f));
 	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.f));
-	sprite->addKeyframe(JUMP, glm::vec2(0.7f, 0.2f));
+	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.2f));
 
 	sprite->setAnimationSpeed(JUMP_FW, 16);
 	sprite->addKeyframe(JUMP_FW, glm::vec2(0.7f, 0.f));
 	sprite->addKeyframe(JUMP_FW, glm::vec2(0.7f, 0.f));
-	sprite->addKeyframe(JUMP_FW, glm::vec2(0.7f, 0.2f));
+	sprite->addKeyframe(JUMP_FW, glm::vec2(0.6f, 0.2f));
 
 	sprite->setAnimationSpeed(JUMP_FINAL, 0);
-	sprite->addKeyframe(JUMP_FINAL, glm::vec2(0.8f, 0.2f));
+	sprite->addKeyframe(JUMP_FINAL, glm::vec2(0.7f, 0.2f));
 
 	sprite->setAnimationSpeed(FALL, 16);
-	sprite->addKeyframe(FALL, glm::vec2(0.7f, 0.2f));
+	sprite->addKeyframe(FALL, glm::vec2(0.6f, 0.2f));
 	sprite->addKeyframe(FALL, glm::vec2(0.8f, 0.f));
 
 	sprite->setAnimationSpeed(FALL_FINAL, 0);
 	sprite->addKeyframe(FALL_FINAL, glm::vec2(0.9f, 0.f));
 
 	sprite->setAnimationSpeed(CROUCH, crouchSpeed);
-	sprite->animatorX(CROUCH, 3, 0.7f, 0.1f, 0.2f);
+	sprite->animatorX(CROUCH, 3, 0.6f, 0.1f, 0.2f);
 
 	sprite->setAnimationSpeed(CROUCH_FINAL, 0);
-	sprite->addKeyframe(CROUCH_FINAL, glm::vec2(0.9f, 0.2f));
+	sprite->addKeyframe(CROUCH_FINAL, glm::vec2(0.8f, 0.2f));
 
 	sprite->setAnimationSpeed(GETUP, crouchSpeed);
-	sprite->animatorX(GETUP, 3, 0.9f, -0.1f, 0.2f);
+	sprite->animatorX(GETUP, 3, 0.8f, -0.1f, 0.2f);
 
 	sprite->setAnimationSpeed(PREP_ATK, 0);
 	sprite->addKeyframe(PREP_ATK, glm::vec2(0.f, 0.1f));
@@ -272,7 +270,7 @@ void Player::setAnimations()
 	sprite->addKeyframe(DASH_COMBO_FINAL, glm::vec2(0.1f, 0.6f));
 
 	sprite->setAnimationSpeed(UPPERCUT, 0);
-	sprite->addKeyframe(UPPERCUT, glm::vec2(0.7f, 0.9f));
+	sprite->addKeyframe(UPPERCUT, glm::vec2(0.9f, 0.7f));
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
@@ -350,12 +348,15 @@ void Player::childUpdate(int deltaTime)
 				bJumping = false;
 				grounded = true;
 				position.y = startY;
+				JUMP_HEIGHT = 64;
 			}
 			else
 			{
 				position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
-				bJumping = jumpAngle > 90 || !tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
-				if (jumpAngle == 72 && state != STATE_ATTACKING) sprite->changeAnimation(FALL);
+				bJumping = jumpAngle < 90 || !tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+				JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
+				JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
+				if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING) sprite->changeAnimation(FALL);
 			}
 		}		
 	}
@@ -406,19 +407,11 @@ void Player::childUpdate(int deltaTime)
 				inputIndex = commandInputIndex;
 			}
 		}
-		else if (Game::instance().getKey(GLFW_KEY_Z))
-		{
-			if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
-			{
-				inputIndex = UPPERCUT_COMMAND.index;
-				commandBuffer.clear();
-			}
-		}
 		loseMomentum = loseMomentum && (inputIndex == 0);
 		if (inputIndex == 6 || inputIndex == 128)
 		{
 			bDashing = true;
-			velocityX = ((!lookingLeft - lookingLeft) * (8.f + 4 * (inputIndex == 136)));
+			velocityX = ((!lookingLeft - lookingLeft) * (8.f + 2 * (inputIndex == 128)));
 			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 		//cout << "Input Index: " << inputIndex << endl;
@@ -436,6 +429,12 @@ void Player::childUpdate(int deltaTime)
 		grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
 		if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded)
 		{
+			if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
+			{
+				JUMP_HEIGHT = 128;
+				sprite->changeAnimation(UPPERCUT);
+				Game::instance().keyReleased(GLFW_KEY_Z);
+			}
 			bJumping = true;
 			grounded = false;
 			jumpAngle = 0;
