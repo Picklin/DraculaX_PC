@@ -15,8 +15,8 @@ enum PlayerStates
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, 
-	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, BACKFLIP_FINAL, BACKFLIP_SKID
+	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, BACKFLIP_SKID, 
+	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP
 };
 
 enum Inputs
@@ -43,25 +43,25 @@ struct Command
 const Command RIGHT_RUN_COMMAND = {
 	{GLFW_KEY_RIGHT,},
 	std::chrono::milliseconds(128),
-	64
+	32
 };
 
 const Command LEFT_RUN_COMMAND = {
 	{GLFW_KEY_LEFT,},
 	std::chrono::milliseconds(128),
-	64
+	32
 };
 
 const Command DASH_COMMAND = {
 	{GLFW_KEY_UP, GLFW_KEY_DOWN},
 	std::chrono::milliseconds(512),
-	128
+	64
 };
 
 const Command UPPERCUT_COMMAND = {
 	{GLFW_KEY_DOWN, GLFW_KEY_UP},
 	std::chrono::milliseconds(128),
-	256
+	128
 };
 
 std::map<int, int> animMap = {
@@ -83,23 +83,10 @@ std::map<int, int> animMap = {
 	{ 24, PlayerAnims::ATTACK_SUBWEAPON },
 	{ 25, PlayerAnims::ATTACK_SUBWEAPON },
 	{ 26, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 32, PlayerAnims::FALL },
-	{ 33, PlayerAnims::FALL },
-	{ 34, PlayerAnims::FALL },
-	{ 36, PlayerAnims::FALL },
-	{ 38, PlayerAnims::FALL },
-	{ 40, PlayerAnims::ATTACK },
-	{ 41, PlayerAnims::ATTACK },
-	{ 44, PlayerAnims::ATTACK },
-	{ 56, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 57, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 64, PlayerAnims::RUN },
-	{ 67, PlayerAnims::JUMP_FW},
-	{ 97, PlayerAnims::FALL },
-	{ 81, PlayerAnims::RUN },
-	{ 113, PlayerAnims::FALL },
-	{ 128, PlayerAnims::DASH_COMBO },
-	{ 256, PlayerAnims::UPPERCUT },
+	{ 32, PlayerAnims::RUN },
+	{ 49, PlayerAnims::RUN },
+	{ 64, PlayerAnims::DASH_COMBO },
+	{ 128, PlayerAnims::UPPERCUT },
 };
 
 std::map<int, int> animToStateMap = {
@@ -230,7 +217,6 @@ void Player::setAnimations()
 	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.2f));
 
 	sprite->setAnimationSpeed(DASH1, 24);
 	sprite->addKeyframe(DASH1, glm::vec2(0.9f, 0.f));
@@ -281,7 +267,7 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(BACKFLIP_FINAL, 0);
 	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.7f, 0.7f));
 
-	sprite->setAnimationSpeed(BACKFLIP_SKID, 0);
+	sprite->setAnimationSpeed(BACKFLIP_SKID, 2);
 	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.7f));
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
@@ -298,6 +284,7 @@ void Player::setAnimations()
 	sprite->setTransition(DASH_KICK, DASH_KICK_FINAL);
 	sprite->setTransition(DASH_COMBO, DASH_COMBO_FINAL);
 	sprite->setTransition(BACKFLIP, BACKFLIP_FINAL);
+	sprite->setTransition(BACKFLIP_SKID, IDLE);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -318,15 +305,19 @@ void Player::childUpdate(int deltaTime)
 
 	if (loseMomentum)
 	{
-		if (abs(velocityX) == 1 && anim != SKID)
+		if (abs(velocityX) == (1 + backflipping) && anim != (SKID + backflipping))
 		{
-			sprite->changeAnimation(SKID);
-			anim = SKID;
+			sprite->changeAnimation(SKID+backflipping);
+			anim = SKID+backflipping;
 			state = STATE_IDLE;
+			backflipping = false;
 		}
 		velocityX *= 0.925f;
-		if (abs(velocityX) < 0.1f) velocityX = 0.f;
-		loseMomentum = velocityX != 0.f;
+		if (abs(velocityX) < 0.1f)
+		{
+			velocityX = 0.f;
+			loseMomentum = false;
+		}
 	}
 	
 	bool getup = (prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
@@ -367,11 +358,11 @@ void Player::childUpdate(int deltaTime)
 			}
 			if (jumpAngle >= 180)
 			{
-				jumpAngle = 0;
 				bJumping = false;
-				grounded = true;
+				loseMomentum = true;
 				position.y = startY;
 				JUMP_HEIGHT = 64;
+				jumpAngle = 0;
 			}
 			else
 			{
@@ -388,67 +379,8 @@ void Player::childUpdate(int deltaTime)
 	{
 		sprite->changeAnimation(GETUP);
 	}
-	else if (!bDashing)
+	else if (!bDashing && !backflipping)
 	{
-		timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
-		if (dashOffLedge)
-		{
-			calcIncrement(velocityX, 0.f, 0.075f);
-			dashOffLedge = velocityX != 0;
-		}
-		else if (!loseMomentum)
-		{
-			loseMomentum = (timeRunning >= .5f) && !bJumping && gainMomentum && !(rightPressed || leftPressed);
-			gainMomentum = gainMomentum && (rightPressed || leftPressed);
-			velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * gainMomentum)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
-		}
-		int inputIndex = 0;
-		inputIndex += inputMap[RIGHT] * rightPressed
-			+ inputMap[LEFT] * leftPressed
-			+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
-			+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-			+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
-			+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X)
-			+ 32 * !grounded;
-		int inputToRegister = GLFW_KEY_RIGHT * (prevRightPressed && !rightPressed)
-			+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
-			+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
-			+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
-		if (inputToRegister != 0) registerInput(inputToRegister);
-		if (rightPressed || leftPressed)
-		{
-			int commandInputIndex = RIGHT_RUN_COMMAND.index * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-				+ LEFT_RUN_COMMAND.index * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
-				+ RIGHT_RUN_COMMAND.index * (gainMomentum && (rightPressed || leftPressed));
-			
-			if (Game::instance().getKey(GLFW_KEY_X))
-			{
-				commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed));
-			}
-			if (commandInputIndex > 0)
-			{
-				commandBuffer.clear();
-				inputIndex = commandInputIndex;
-			}
-		}
-		loseMomentum = loseMomentum && (inputIndex == 0);
-		if (inputIndex == 6 || inputIndex == 128)
-		{
-			bDashing = true;
-			velocityX = (!lookingLeft - lookingLeft) * 8.f;
-			Game::instance().keyReleased(GLFW_KEY_Z);
-		}
-		//cout << "Input Index: " << inputIndex << endl;
-		auto it = animMap.find(inputIndex);
-		if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING)
-		{
-			sprite->changeAnimation(it->second);
-		}
-		gainMomentum = anim == RUN;
-		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
-		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
-		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
-		
 		position.y += FALL_SPEED;
 		grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
 		if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded)
@@ -467,6 +399,73 @@ void Player::childUpdate(int deltaTime)
 			startY = position.y;
 			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
+		else
+		{
+			timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
+			if (dashOffLedge)
+			{
+				calcIncrement(velocityX, 0.f, 0.075f);
+				dashOffLedge = velocityX != 0;
+			}
+			else if (!loseMomentum)
+			{
+				loseMomentum = (timeRunning >= .5f) && gainMomentum && !(rightPressed || leftPressed);
+				gainMomentum = gainMomentum && (rightPressed || leftPressed);
+				velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * gainMomentum)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+			}
+			// Calculate animation based on input
+			int inputIndex = 0;
+			inputIndex += inputMap[RIGHT] * rightPressed
+				+ inputMap[LEFT] * leftPressed
+				+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
+				+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
+				+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
+				+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
+			//Register inputs for command detection
+			int inputToRegister = GLFW_KEY_RIGHT * (prevRightPressed && !rightPressed)
+				+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
+				+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
+				+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
+			if (inputToRegister != 0) registerInput(inputToRegister);
+			if (rightPressed || leftPressed)
+			{
+				int commandInputIndex = RIGHT_RUN_COMMAND.index * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
+					+ LEFT_RUN_COMMAND.index * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
+					+ RIGHT_RUN_COMMAND.index * (gainMomentum && (rightPressed || leftPressed));
+
+				if (Game::instance().getKey(GLFW_KEY_X))
+				{
+					commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed));
+				}
+				if (commandInputIndex > 0)
+				{
+					commandBuffer.clear();
+					inputIndex = commandInputIndex;
+				}
+			}
+			loseMomentum = loseMomentum && (inputIndex == 0);
+			// Low dash or dash combo
+			if (inputIndex == 6 || inputIndex == DASH_COMMAND.index)
+			{
+				bDashing = true;
+				velocityX = (!lookingLeft - lookingLeft) * 8.f;
+				Game::instance().keyReleased(GLFW_KEY_Z);
+			}
+			//cout << "Input Index: " << inputIndex << endl;
+			auto it = animMap.find(inputIndex);
+			if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
+			{
+				sprite->changeAnimation(it->second);
+			}
+			else if (!grounded && state != STATE_FALLING)
+			{
+				sprite->changeAnimation(FALL+backflipping);
+			}
+			gainMomentum = anim == RUN;
+		}
+		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
+		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
+		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
 	}
 	else
 	{
