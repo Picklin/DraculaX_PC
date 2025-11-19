@@ -335,10 +335,6 @@ void Player::childUpdate(int deltaTime)
 	if (bJumping)
 	{
 		velocityX = (rightPressed - leftPressed) * (1.f + 1.f * gainMomentum);
-		int inputToRegister =
-			+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
-			+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
-		if (inputToRegister != 0) registerInput(inputToRegister);
 		if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 		{
 			if (checkCommand(DASH_COMMAND.sequence,DASH_COMMAND.timeWindow) && (rightPressed || leftPressed))
@@ -354,13 +350,18 @@ void Player::childUpdate(int deltaTime)
 		}
 		else
 		{
+			int inputToRegister =
+				+GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
+				+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
+			if (inputToRegister != 0) registerInput(inputToRegister);
+			
 			jumpAngle += JUMP_ANGLE_STEP;
 			if (jumpAngle < 45 && !backflipping && Game::instance().getKey(GLFW_KEY_Z))
 			{
 				backflipping = true;
 				sprite->changeAnimation(BACKFLIP);
 			}
-			if (backflipping)
+			else if (backflipping)
 			{
 				velocityX = (lookingLeft - !lookingLeft) * 2.f;
 			}
@@ -458,6 +459,7 @@ void Player::childUpdate(int deltaTime)
 				sprite->changeAnimation(UPPERCUT);
 				Game::instance().keyReleased(GLFW_KEY_Z);
 			}
+			else sprite->changeAnimation(JUMP + (rightPressed || leftPressed));
 			bJumping = true;
 			grounded = false;
 			backflipping = false;
