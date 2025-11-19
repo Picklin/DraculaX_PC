@@ -59,6 +59,7 @@ private:
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
 	bool backflipping = false;
+	bool ultColorAlternator = false;
 };
 
 
