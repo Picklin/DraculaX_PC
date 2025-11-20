@@ -273,6 +273,8 @@ void Player::setAnimations()
 	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.7f));
 
 	sprite->setAnimationSpeed(ULT, 16);
+	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
+	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
 	sprite->animatorX(ULT, 3, 0.f, 0.1f, 0.8f);
 
 	sprite->setAnimationSpeed(ULT_FINAL, 0);
@@ -562,9 +564,21 @@ void Player::childUpdate(int deltaTime)
 	}
 	else
 	{
-		ultTimeElapsed += deltaTime;
-		position.y = startY + ((ultTimeElapsed / (deltaTime * 2)) % 2 == 0);
-		bUlting = ultTimeElapsed < 3000;
+		if (startY - position.y < 64 && ultTimeElapsed == 0)
+		{
+			position.y -= 4;
+			if (startY - position.y == 64)
+			{
+				startY = position.y;
+				ultTimeElapsed++;
+			}
+		}
+		else
+		{
+			ultTimeElapsed += deltaTime;
+			position.y = startY + ((ultTimeElapsed / (deltaTime * 2)) % 2 == 0);
+			bUlting = ultTimeElapsed < 2000;
+		}
 	}
 	//cout << jumpAngle << endl;
 	setPosition(position);
