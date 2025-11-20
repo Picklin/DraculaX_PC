@@ -309,16 +309,17 @@ void Player::childUpdate(int deltaTime)
 	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
 	int state = animToStateMap[anim];
 
-	if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ULTING && state != STATE_ATTACKING && !bDashing)
+	if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
 	{
 		sprite->changeAnimation(ULT);
 		bJumping = false;
+		bUlting = true;
 		backflipping = false;
 		jumpAngle = 0;
 		startY = position.y;
 		Game::instance().keyReleased(GLFW_KEY_TAB);
 	}
-	else if (state != STATE_ULTING)
+	else if (!bUlting)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
@@ -557,11 +558,13 @@ void Player::childUpdate(int deltaTime)
 		}
 		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
+		ultTimeElapsed = 0;
 	}
 	else
 	{
-		position.y = startY + ultColorAlternator;
-		ultColorAlternator = !ultColorAlternator;
+		ultTimeElapsed += deltaTime;
+		position.y = startY + ((ultTimeElapsed / (deltaTime * 2)) % 2 == 0);
+		bUlting = ultTimeElapsed < 3000;
 	}
 	//cout << jumpAngle << endl;
 	setPosition(position);

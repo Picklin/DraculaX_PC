@@ -46,9 +46,11 @@ private:
 	float startY = 0.f;
 	float timeRunning = 0.f;
 	float dashDistance = 0.f;
+	int ultTimeElapsed = 0;
 
 	bool bJumping = false;
 	bool bDashing = false;
+	bool bUlting = false;
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
@@ -59,7 +61,6 @@ private:
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
 	bool backflipping = false;
-	bool ultColorAlternator = false;
 };
 
 
