@@ -125,7 +125,7 @@ void Player::render()
 {
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
-	if (gainMomentum || loseMomentum || bDashing || sprite->animation() == UPPERCUT) afterimages.render();
+	if (gainMomentum || (loseMomentum && sprite->animation() == SKID) || bDashing || sprite->animation() == UPPERCUT) afterimages.render();
 	sprite->render();
 }
 

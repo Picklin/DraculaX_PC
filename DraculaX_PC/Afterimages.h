@@ -5,7 +5,7 @@
 struct Afterimages
 {
 	std::vector<Afterimage> lastImages;
-	const int MAX_IMAGES = 5;
+	const int MAX_IMAGES = 4;
 	const float timeImageInterval = 0.05f;
 	float timeSinceLastImage = 0.f;
 	Sprite* sprite;

@@ -122,13 +122,13 @@ void Game::keyPressed(int key)
 	if (key == -1) return;
 	if (key == GLFW_KEY_ESCAPE) // Escape code
 		bPlay = false;
-	keys[key] = true;
+	keys[key].pressed = true;
 }
 
 void Game::keyReleased(int key)
 {
 	if (key == -1) return;
-	keys[key] = false;
+	keys[key].pressed = false;
 }
 
 void Game::mouseMove(int x, int y)
@@ -164,18 +164,22 @@ void Game::updateGameInputs()
 		const float axisThreshold = .5f;
 		float axisX = gamepadState.axes[GLFW_GAMEPAD_AXIS_LEFT_X];
 		float axisY = gamepadState.axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
-		keys[GLFW_KEY_UP] = axisY < -axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP];
-		keys[GLFW_KEY_DOWN] = axisY > axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN];
-		keys[GLFW_KEY_RIGHT] = axisX > axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT];
-		keys[GLFW_KEY_LEFT] = axisX < -axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT];
-		keys[GLFW_KEY_A] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == GLFW_PRESS;
-		keys[GLFW_KEY_S] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == GLFW_PRESS;
-		keys[GLFW_KEY_Z] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS;
-		keys[GLFW_KEY_X] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS;
-		keys[GLFW_KEY_C] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_Y] == GLFW_PRESS;
-		keys[GLFW_KEY_SPACE] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS;
-		keys[GLFW_KEY_TAB] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS;
-		keys[GLFW_KEY_ENTER] = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_PRESS;
+		keys[GLFW_KEY_UP].pressed = axisY < -axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP];
+		keys[GLFW_KEY_DOWN].pressed = axisY > axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN];
+		keys[GLFW_KEY_RIGHT].pressed = axisX > axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT];
+		keys[GLFW_KEY_LEFT].pressed = axisX < -axisThreshold || gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT];
+		keys[GLFW_KEY_A].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == GLFW_PRESS;
+		keys[GLFW_KEY_S].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == GLFW_PRESS;
+		keys[GLFW_KEY_Z].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS && keys[GLFW_KEY_Z].released;
+		keys[GLFW_KEY_Z].released = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_RELEASE;
+		keys[GLFW_KEY_X].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS && keys[GLFW_KEY_X].released;
+		keys[GLFW_KEY_X].released = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_RELEASE;
+		keys[GLFW_KEY_C].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_Y] == GLFW_PRESS;
+		keys[GLFW_KEY_SPACE].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS;
+		keys[GLFW_KEY_TAB].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS && keys[GLFW_KEY_TAB].released;
+		keys[GLFW_KEY_TAB].released = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_RELEASE;
+		keys[GLFW_KEY_ENTER].pressed = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_PRESS && keys[GLFW_KEY_ENTER].released;
+		keys[GLFW_KEY_ENTER].released = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_RELEASE;
 	}
 }
 
@@ -243,7 +247,7 @@ void Game::gameOver()
 
 bool Game::getKey(int key) const
 {
-	return keys[key];
+	return keys[key].pressed;
 }
 
 Game::Game()

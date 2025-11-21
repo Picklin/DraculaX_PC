@@ -57,25 +57,31 @@ private:
 	void gameOver();
 
 private:
+	SceneTesting st;
+	Player player;
+	ShaderProgram spriteShader, basicShader;
+	using SceneCreator = std::function<Scene* ()>;
+	vector<vector<SceneCreator>> scenesFactory;
+	Scene* scene;
+
+	int currentLevel = 0;
+	int currentScene = 0;
+	int nextLevel;
+	int nextScene;
+
+	struct Key
+	{
+		bool pressed = false;
+		bool released = true;
+	};
+
+	Key keys[GLFW_KEY_LAST + 1]; // Store key states so that we can have access at any time
 	bool bPlay; // Continue to play game?
 	bool gameStarted = true;
 	bool paused = false;
 	bool startPressedLastFrame = false;
 	bool next = false;
 	bool restart = false;
-	bool keys[GLFW_KEY_LAST + 1]; // Store key states so that we can have access at any time
-
-	ShaderProgram spriteShader, basicShader;
-	Scene* scene;
-	SceneTesting st;
-	Player player;
-	using SceneCreator = std::function<Scene* ()>;
-	vector<vector<SceneCreator>> scenesFactory;
-
-	int currentLevel = 0;
-	int currentScene = 0;
-	int nextLevel;
-	int nextScene;
 };
 
 
