@@ -577,7 +577,8 @@ void Player::childUpdate(int deltaTime)
 		{
 			ultTimeElapsed += deltaTime;
 			position.y = startY + ((ultTimeElapsed / (deltaTime * 2)) % 2 == 0);
-			bUlting = ultTimeElapsed < 2000;
+			bUlting = ultTimeElapsed < 1500;
+			startY += (ultTimeElapsed > 1250);
 		}
 	}
 	//cout << jumpAngle << endl;
