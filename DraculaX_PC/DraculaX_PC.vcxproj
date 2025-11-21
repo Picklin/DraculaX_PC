@@ -153,6 +153,8 @@
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Afterimage.h" />
+    <ClInclude Include="Afterimages.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectsManager.h" />
     <ClInclude Include="Enemy.h" />

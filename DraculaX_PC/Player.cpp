@@ -125,7 +125,14 @@ void Player::render()
 {
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
+	if (gainMomentum || loseMomentum || bDashing || sprite->animation() == UPPERCUT) afterimages.render();
 	sprite->render();
+}
+
+void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
+{
+	Entity::init(tileMapPos, shaderProgram);
+	afterimages.sprite = sprite;
 }
 
 string Player::getName() const
@@ -251,7 +258,7 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(DASH_KICK_FINAL, 0);
 	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.4f));
 
-	sprite->setAnimationSpeed(DASH_COMBO, 24);
+	sprite->setAnimationSpeed(DASH_COMBO, 20);
 	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.0f, 0.6f));
 	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.1f, 0.6f));
 	sprite->animatorX(DASH_COMBO, 5, 0.2f, 0.1f, 0.6f);
@@ -344,7 +351,7 @@ void Player::childUpdate(int deltaTime)
 			}
 		}
 	
-		bool getup = (prevDownPressed && grounded && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
+		bool getup = (prevDownPressed && grounded && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
 			|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN));
 
 		if (bJumping)
@@ -558,6 +565,7 @@ void Player::childUpdate(int deltaTime)
 				dashOffLedge = true;
 			}
 		}
+		afterimages.updateAfterimage(deltaTime, glm::vec2(tileMapDispl) + position, anim, sprite->getCurrentKeyframe());
 		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
 		ultTimeElapsed = 0;

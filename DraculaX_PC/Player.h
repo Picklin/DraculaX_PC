@@ -4,6 +4,7 @@
 #include <chrono>
 #include "TileMap.h"
 #include "Entity.h"
+#include "Afterimages.h"
 
 
 // Player is basically a Sprite that represents the player. As such it has
@@ -14,6 +15,7 @@ class Player : public Entity
 {
 public:
 	void render();
+	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
 
 protected:
 	string getName() const;
@@ -31,12 +33,15 @@ private:
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 
 private:
+	Afterimages afterimages;
+
 	struct InputEvent {
 		int key;
 		std::chrono::steady_clock::time_point timestamp;
 	};
 	vector<InputEvent> commandBuffer;
 	vector<Hitbox> terrainCollisionBoxes;
+
 
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;
