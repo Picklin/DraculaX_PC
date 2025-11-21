@@ -66,27 +66,21 @@ const Command UPPERCUT_COMMAND = {
 
 std::map<int, int> animMap = {
 	{ 0, PlayerAnims::IDLE },
-	{ 1, PlayerAnims::WALK },
-	{ 2, PlayerAnims::JUMP },
-	{ 3, PlayerAnims::JUMP_FW },
-	{ 4, PlayerAnims::CROUCH },
-	{ 6, PlayerAnims::DASH1 },
-	{ 8, PlayerAnims::ATTACK },
-	{ 9, PlayerAnims::ATTACK },
-	{ 10, PlayerAnims::ATTACK },
-	{ 12, PlayerAnims::ATTACK_CROUCH },
-	{ 16, PlayerAnims::PREP_ATK},
-	{ 17, PlayerAnims::WALK },
-	{ 18, PlayerAnims::JUMP },
-	{ 19, PlayerAnims::JUMP_FW },
-	{ 20, PlayerAnims::CROUCH },
-	{ 24, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 25, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 26, PlayerAnims::ATTACK_SUBWEAPON },
-	{ 32, PlayerAnims::RUN },
-	{ 49, PlayerAnims::RUN },
-	{ 64, PlayerAnims::DASH_COMBO },
-	{ 128, PlayerAnims::UPPERCUT },
+	{ inputMap[RIGHT], PlayerAnims::WALK},
+	{ inputMap[DOWN], PlayerAnims::CROUCH},
+	{ inputMap[DOWN] | inputMap[A], PlayerAnims::DASH1},
+	{ inputMap[X], PlayerAnims::ATTACK},
+	{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
+	{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
+	{ inputMap[X] | inputMap[DOWN], PlayerAnims::ATTACK_CROUCH},
+	{ inputMap[UP], PlayerAnims::PREP_ATK},
+	{ inputMap[UP] | inputMap[RIGHT], PlayerAnims::WALK},
+	{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
+	{ inputMap[UP] | inputMap[X], PlayerAnims::ATTACK_SUBWEAPON},
+	{ inputMap[UP] | inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK_SUBWEAPON},
+	{ RIGHT_RUN_COMMAND.index, PlayerAnims::RUN },
+	{ DASH_COMMAND.index, PlayerAnims::DASH_COMBO },
+	{ UPPERCUT_COMMAND.index, PlayerAnims::UPPERCUT },
 };
 
 std::map<int, int> animToStateMap = {
@@ -208,6 +202,7 @@ void Player::setAnimations()
 
 	sprite->setAnimationSpeed(ATTACK_CROUCH, attackSpeed);
 	sprite->animatorX(ATTACK_CROUCH, 6, 0.f, 0.1f, 0.2f);
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
 
 	sprite->setAnimationSpeed(ATTACK_SUBWEAPON, 20);
 	sprite->animatorX(ATTACK_SUBWEAPON, 5, 0.f, 0.1f, 0.1f);
@@ -408,7 +403,13 @@ void Player::childUpdate(int deltaTime)
 		}
 		else if (getup)
 		{
-			sprite->changeAnimation(GETUP);
+			if (anim == ATTACK_CROUCH && !Game::instance().getKey(GLFW_KEY_DOWN))
+			{
+				int keyframe = sprite->getCurrentKeyframe();
+				sprite->changeAnimation(ATTACK);
+				sprite->setKeyframe(keyframe);
+			}
+			else sprite->changeAnimation(GETUP);
 		}
 		else if (!bDashing && !backflipping)
 		{
@@ -492,11 +493,14 @@ void Player::childUpdate(int deltaTime)
 				{
 					sprite->changeAnimation(FALL + backflipping);
 				}
+				else if (anim == ATTACK && Game::instance().getKey(GLFW_KEY_DOWN))
+				{
+					int keyframe = sprite->getCurrentKeyframe();
+					sprite->changeAnimation(ATTACK_CROUCH);
+					sprite->setKeyframe(keyframe);
+				}
 				gainMomentum = anim == RUN;
 			}
-			prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
-			prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
-			prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
 		}
 		else
 		{
@@ -569,6 +573,9 @@ void Player::childUpdate(int deltaTime)
 		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
 		ultTimeElapsed = 0;
+		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
+		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
+		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
 	}
 	else
 	{
