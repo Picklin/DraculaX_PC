@@ -41,14 +41,14 @@ struct Command
 };
 
 const Command RIGHT_RUN_COMMAND = {
-	{GLFW_KEY_RIGHT,},
-	std::chrono::milliseconds(128),
+	{GLFW_KEY_RIGHT, GLFW_KEY_RIGHT},
+	std::chrono::milliseconds(256),
 	32
 };
 
 const Command LEFT_RUN_COMMAND = {
-	{GLFW_KEY_LEFT,},
-	std::chrono::milliseconds(128),
+	{GLFW_KEY_LEFT, GLFW_KEY_LEFT},
+	std::chrono::milliseconds(256),
 	32
 };
 
@@ -453,16 +453,16 @@ void Player::childUpdate(int deltaTime)
 					+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
 					+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
 				//Register inputs for command detection
-				int inputToRegister = GLFW_KEY_RIGHT * (prevRightPressed && !rightPressed)
-					+ GLFW_KEY_LEFT * (prevLeftPressed && !leftPressed)
+				int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
+					+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
 					+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
 					+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
 				if (inputToRegister != 0) registerInput(inputToRegister);
 				if (rightPressed || leftPressed)
 				{
-					int commandInputIndex = RIGHT_RUN_COMMAND.index * (checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow) && rightPressed)
-						+ LEFT_RUN_COMMAND.index * (checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow) && leftPressed)
-						+ RIGHT_RUN_COMMAND.index * (gainMomentum && (rightPressed || leftPressed));
+					int commandInputIndex = RIGHT_RUN_COMMAND.index * checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow)
+						+ LEFT_RUN_COMMAND.index * checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow)
+						+ RIGHT_RUN_COMMAND.index * gainMomentum;
 
 					if (Game::instance().getKey(GLFW_KEY_X))
 					{
