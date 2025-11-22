@@ -35,6 +35,8 @@ private:
 private:
 	Afterimages afterimages;
 
+	Texture whipTex;
+	Sprite* whip;
 	struct InputEvent {
 		int key;
 		std::chrono::steady_clock::time_point timestamp;
@@ -59,6 +61,7 @@ private:
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
+	bool lookingLeftAtk = false;
 	bool prevRightPressed = false;
 	bool prevLeftPressed = false;
 	bool prevDownPressed = false;
@@ -66,6 +69,8 @@ private:
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
 	bool backflipping = false;
+	bool crouching = false;
+	bool whipping = false;
 };
 
 

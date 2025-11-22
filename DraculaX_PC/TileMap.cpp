@@ -181,7 +181,7 @@ const bool TileMap::collisionMoveRight(const Hitbox& hitbox, float* posX) const
 	int x, y0, y1;
 	x = (int)(hitbox.max.x) / tileSize;
 	y0 = (int)hitbox.min.y / tileSize;
-	y1 = (int)(hitbox.max.y) / tileSize;
+	y1 = (int)(hitbox.max.y - 1) / tileSize;
 	if (x >= mapSize.x || y0 < 0 || y1 >= mapSize.y) return true;
 	for (int y = y0; y <= y1; y++)
 	{

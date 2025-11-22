@@ -121,12 +121,26 @@ void Player::render()
 	shader->setUniform1i("flip", lookingLeft);
 	if (gainMomentum || (loseMomentum && sprite->animation() == SKID) || bDashing || sprite->animation() == UPPERCUT) afterimages.render();
 	sprite->render();
+	if (whipping)
+	{
+		whip->render();
+	}
 }
 
 void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 {
 	Entity::init(tileMapPos, shaderProgram);
 	afterimages.sprite = sprite;
+	whipTex.loadFromFile("images/Richter/whip.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	whipTex.setMagFilter(GL_NEAREST);
+	whip = Sprite::createSprite(glm::ivec2(128, 64), glm::vec2(0.1f, 1.f), &whipTex, &shaderProgram);
+	whip->setNumberAnimations(2);
+	whip->setAnimationSpeed(0, 30);
+	whip->animatorX(0, 6, 0.f, 0.1f, 0.f);
+	whip->setAnimationSpeed(1, 60);
+	whip->animatorX(1, 3, 0.6f, 0.1f, 0.f);
+	whip->setTransition(0, 1);
+	whip->changeAnimation(0);
 }
 
 string Player::getName() const
@@ -152,7 +166,7 @@ const glm::ivec2 Player::getQuadSize() const
 void Player::setAnimations()
 {
 	int crouchSpeed = 20;
-	int attackSpeed = 16;
+	int attackSpeed = 30;
 
 	sprite->setNumberAnimations(29);
 
@@ -198,10 +212,22 @@ void Player::setAnimations()
 	sprite->addKeyframe(PREP_ATK, glm::vec2(0.f, 0.1f));
 
 	sprite->setAnimationSpeed(ATTACK, attackSpeed);
-	sprite->animatorX(ATTACK, 7, 0.f, 0.1f, 0.1f);
+	sprite->animatorX(ATTACK, 6, 0.f, 0.1f, 0.1f);
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
 
 	sprite->setAnimationSpeed(ATTACK_CROUCH, attackSpeed);
-	sprite->animatorX(ATTACK_CROUCH, 6, 0.f, 0.1f, 0.2f);
+	sprite->animatorX(ATTACK_CROUCH, 5, 0.f, 0.1f, 0.2f);
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
 	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
 
 	sprite->setAnimationSpeed(ATTACK_SUBWEAPON, 20);
@@ -253,10 +279,9 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(DASH_KICK_FINAL, 0);
 	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.4f));
 
-	sprite->setAnimationSpeed(DASH_COMBO, 20);
+	sprite->setAnimationSpeed(DASH_COMBO, 16);
 	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.0f, 0.6f));
 	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.1f, 0.6f));
-	sprite->animatorX(DASH_COMBO, 5, 0.2f, 0.1f, 0.6f);
 	sprite->animatorX(DASH_COMBO, 5, 0.2f, 0.1f, 0.6f);
 
 	sprite->setAnimationSpeed(DASH_COMBO_FINAL, 0);
@@ -279,8 +304,9 @@ void Player::setAnimations()
 	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
 	sprite->animatorX(ULT, 3, 0.f, 0.1f, 0.8f);
 
-	sprite->setAnimationSpeed(ULT_FINAL, 0);
+	sprite->setAnimationSpeed(ULT_FINAL, 30);
 	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.3f, 0.8f));
+	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.4f, 0.8f));
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
@@ -327,7 +353,7 @@ void Player::childUpdate(int deltaTime)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
-		lookingLeft = leftPressed || (lookingLeft && !rightPressed);
+		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING) + lookingLeftAtk * (state == STATE_ATTACKING);
 
 		if (loseMomentum)
 		{
@@ -358,12 +384,15 @@ void Player::childUpdate(int deltaTime)
 				{
 					sprite->changeAnimation(DASH_COMBO);
 					velocityX = ((!lookingLeft - lookingLeft) * 12.f);
-					Game::instance().keyReleased(GLFW_KEY_Z);
 					bDashing = true;
 					bJumping = false;
 					commandBuffer.clear();
 				}
-				else sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
+				else
+				{
+					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
+					lookingLeftAtk = lookingLeft;
+				}
 			}
 			else
 			{
@@ -399,7 +428,6 @@ void Player::childUpdate(int deltaTime)
 					if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
 				}
 			}
-			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 		else if (getup)
 		{
@@ -415,13 +443,12 @@ void Player::childUpdate(int deltaTime)
 		{
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
-			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded)
+			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && state != STATE_ATTACKING)
 			{
 				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
 				{
 					JUMP_HEIGHT = 128;
 					sprite->changeAnimation(UPPERCUT);
-					Game::instance().keyReleased(GLFW_KEY_Z);
 				}
 				else sprite->changeAnimation(JUMP + (rightPressed || leftPressed));
 				bJumping = true;
@@ -477,7 +504,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
-				if (inputIndex == 6 || inputIndex == DASH_COMMAND.index)
+				if (state != STATE_ATTACKING && (inputIndex == 6 || inputIndex == DASH_COMMAND.index))
 				{
 					bDashing = true;
 					velocityX = (!lookingLeft - lookingLeft) * 8.f;
@@ -488,6 +515,7 @@ void Player::childUpdate(int deltaTime)
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
 				{
 					sprite->changeAnimation(it->second);
+					lookingLeftAtk = lookingLeft;
 				}
 				else if (!grounded && state != STATE_FALLING)
 				{
@@ -500,6 +528,7 @@ void Player::childUpdate(int deltaTime)
 					sprite->setKeyframe(keyframe);
 				}
 				gainMomentum = anim == RUN;
+				crouching = (inputIndex == inputMap[DOWN]) || (inputIndex == (inputMap[DOWN] | inputMap[X]) || (inputIndex == (inputMap[DOWN] | inputMap[A])));
 			}
 		}
 		else
@@ -507,6 +536,7 @@ void Player::childUpdate(int deltaTime)
 			if (state == STATE_DASHING)
 			{
 				calcIncrement(velocityX, 0.f, 0.075f);
+				Hitbox cb = getTerrainCollisionBox();
 				bDashing = velocityX != 0;
 				if (bDashing && anim == DASH1 && Game::instance().getKey(GLFW_KEY_Z))
 				{
@@ -572,10 +602,30 @@ void Player::childUpdate(int deltaTime)
 		afterimages.updateAfterimage(deltaTime, glm::vec2(tileMapDispl) + position, anim, sprite->getCurrentKeyframe());
 		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
+		Hitbox cb = getTerrainCollisionBox();
+		if (velocityX > 0 && !bJumping)
+		{
+			tileMap->collisionMoveRight(cb, &position.x);
+		}
+		else if (velocityX < 0 && !bJumping)
+		{
+			tileMap->collisionMoveLeft(cb, &position.x);
+		}
 		ultTimeElapsed = 0;
 		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
 		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
 		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
+		int newAnim = sprite->animation();
+		whipping = ((newAnim == ATTACK) || (newAnim == ATTACK_CROUCH)) && (anim == ATTACK || anim == ATTACK_CROUCH);
+		if (whipping)
+		{
+			whip->setPosition(glm::vec2(position.x + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + 13 * crouching + tileMapDispl.y));
+			whip->update(deltaTime);
+		}
+		else if (whip->animation() != 0)
+		{
+			whip->changeAnimation(0);
+		}
 	}
 	else
 	{
@@ -591,12 +641,10 @@ void Player::childUpdate(int deltaTime)
 		else
 		{
 			ultTimeElapsed += deltaTime;
-			position.y = startY + ((ultTimeElapsed / (deltaTime * 2)) % 2 == 0);
 			bUlting = ultTimeElapsed < 1500;
 			startY += (ultTimeElapsed > 1250);
 		}
 	}
-	//cout << jumpAngle << endl;
 	setPosition(position);
 	sprite->update(deltaTime);
 }
