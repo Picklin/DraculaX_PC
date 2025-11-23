@@ -64,6 +64,14 @@ const Command UPPERCUT_COMMAND = {
 	128
 };
 
+const vector<glm::vec2> crouchWhipOffset = {
+	glm::vec2(0,16), glm::vec2(1,14), glm::vec2(1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),
+};
+
+const vector<glm::vec2> leftCrouchWhipOffset = {
+	glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),
+};
+
 std::map<int, int> animMap = {
 	{ 0, PlayerAnims::IDLE },
 	{ inputMap[RIGHT], PlayerAnims::WALK},
@@ -73,6 +81,7 @@ std::map<int, int> animMap = {
 	{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
 	{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
 	{ inputMap[X] | inputMap[DOWN], PlayerAnims::ATTACK_CROUCH},
+	{ inputMap[X] | inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::ATTACK_CROUCH},
 	{ inputMap[UP], PlayerAnims::PREP_ATK},
 	{ inputMap[UP] | inputMap[RIGHT], PlayerAnims::WALK},
 	{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
@@ -119,7 +128,7 @@ void Player::render()
 {
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
-	if (gainMomentum || (loseMomentum && sprite->animation() == SKID) || bDashing || sprite->animation() == UPPERCUT) afterimages.render();
+	if (gainMomentum || (loseMomentum && sprite->animation() == SKID) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
 	if (whipping)
 	{
@@ -135,10 +144,16 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	whipTex.setMagFilter(GL_NEAREST);
 	whip = Sprite::createSprite(glm::ivec2(128, 64), glm::vec2(0.1f, 1.f), &whipTex, &shaderProgram);
 	whip->setNumberAnimations(2);
-	whip->setAnimationSpeed(0, 30);
+	whip->setAnimationSpeed(0, 32);
 	whip->animatorX(0, 6, 0.f, 0.1f, 0.f);
-	whip->setAnimationSpeed(1, 60);
-	whip->animatorX(1, 3, 0.6f, 0.1f, 0.f);
+	whip->addKeyframe(0, glm::vec2(0.6f, 0.f));
+	whip->addKeyframe(0, glm::vec2(0.7f, 0.f));
+	whip->addKeyframe(0, glm::vec2(0.8f, 0.f));
+	whip->addKeyframe(0, glm::vec2(0.6f, 0.f));
+	whip->addKeyframe(0, glm::vec2(0.7f, 0.f));
+	whip->addKeyframe(0, glm::vec2(0.8f, 0.f));
+	whip->setAnimationSpeed(1, 0);
+	whip->addKeyframe(1, glm::vec2(0.9f, 0.f));
 	whip->setTransition(0, 1);
 	whip->changeAnimation(0);
 }
@@ -166,7 +181,7 @@ const glm::ivec2 Player::getQuadSize() const
 void Player::setAnimations()
 {
 	int crouchSpeed = 20;
-	int attackSpeed = 30;
+	int attackSpeed = 32;
 
 	sprite->setNumberAnimations(29);
 
@@ -391,6 +406,7 @@ void Player::childUpdate(int deltaTime)
 				else
 				{
 					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
+					whip->changeAnimation(0);
 					lookingLeftAtk = lookingLeft;
 				}
 			}
@@ -515,6 +531,7 @@ void Player::childUpdate(int deltaTime)
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
 				{
 					sprite->changeAnimation(it->second);
+					if (sprite->animation() == (ATTACK + crouching * 2)) whip->changeAnimation(0);
 					lookingLeftAtk = lookingLeft;
 				}
 				else if (!grounded && state != STATE_FALLING)
@@ -528,7 +545,8 @@ void Player::childUpdate(int deltaTime)
 					sprite->setKeyframe(keyframe);
 				}
 				gainMomentum = anim == RUN;
-				crouching = (inputIndex == inputMap[DOWN]) || (inputIndex == (inputMap[DOWN] | inputMap[X]) || (inputIndex == (inputMap[DOWN] | inputMap[A])));
+				int crouchanim = sprite->animation();
+				crouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
 			}
 		}
 		else
@@ -536,7 +554,6 @@ void Player::childUpdate(int deltaTime)
 			if (state == STATE_DASHING)
 			{
 				calcIncrement(velocityX, 0.f, 0.075f);
-				Hitbox cb = getTerrainCollisionBox();
 				bDashing = velocityX != 0;
 				if (bDashing && anim == DASH1 && Game::instance().getKey(GLFW_KEY_Z))
 				{
@@ -616,16 +633,15 @@ void Player::childUpdate(int deltaTime)
 		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
 		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
 		int newAnim = sprite->animation();
-		whipping = ((newAnim == ATTACK) || (newAnim == ATTACK_CROUCH)) && (anim == ATTACK || anim == ATTACK_CROUCH);
+		whipping = ((newAnim == ATTACK) || (newAnim == ATTACK_CROUCH));	
 		if (whipping)
 		{
-			whip->setPosition(glm::vec2(position.x + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + 13 * crouching + tileMapDispl.y));
 			whip->update(deltaTime);
+			int whipKF = whip->getCurrentKeyframe();
+			whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x*!lookingLeft+leftCrouchWhipOffset[whipKF].x*lookingLeft * crouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * crouching + tileMapDispl.y));
 		}
-		else if (whip->animation() != 0)
-		{
-			whip->changeAnimation(0);
-		}
+		//cout << "Position :" << crouchWhipOffset[whip->getCurrentKeyframe()].x << ' ' << crouchWhipOffset[whip->getCurrentKeyframe()].y << endl;
+		//cout << "Keyframe: " << whip->getCurrentKeyframe() << endl;
 	}
 	else
 	{
