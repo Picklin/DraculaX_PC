@@ -128,7 +128,8 @@ void Player::render()
 {
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
-	if (gainMomentum || (loseMomentum && sprite->animation() == SKID) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
+	int anim = sprite->animation();
+	if (gainMomentum || (loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
 	if (whipping)
 	{
@@ -442,6 +443,10 @@ void Player::childUpdate(int deltaTime)
 					JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
 					JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
 					if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
+					else if (!bJumping && backflipping)
+					{
+						loseMomentum = true;
+					}
 				}
 			}
 		}

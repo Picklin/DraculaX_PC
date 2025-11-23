@@ -27,8 +27,8 @@ struct Afterimages
 		int size = lastImages.size();
 		for (int i = 0; i < size; i++)
 		{
-			float alpha = 0.0f + ((float)i / MAX_IMAGES);
-			sprite->setColor(glm::vec4(color.r, color.g, color.b, alpha));
+			float alpha = 1.f/size + ((float)i / size);
+			sprite->setAlpha(alpha);
 			sprite->render(lastImages[i].position, lastImages[i].anim, lastImages[i].keyframe);
 		}
 	}

@@ -15,7 +15,7 @@ void Level1Sc1::render()
 
 TileMap* Level1Sc1::setTileMap() 
 {
-	return TileMap::createTileMap("levels/level02.txt", MAP_OFFSET, *spriteShader);
+	return TileMap::createTileMap("levels/level1sc1/terrain.txt", MAP_OFFSET, *spriteShader);
 }
 TileMap* Level1Sc1::setPlatformMap() 
 {
