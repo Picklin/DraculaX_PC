@@ -1,0 +1,11 @@
+TILEMAP
+64 6 							-- Size of tile map in tiles
+16 16 							-- Tile size & block size
+images/background/SceneTesting2/tiles1.png 	-- Tilesheet
+8 8 								-- Number of tiles in tilesheet
+                                                 H              
+                                                 P              
+                                                 P              
+                                               G P              
+                                               O P              
+56456677            554747856           @@@@@@@W@X@@@@@@@@@@@@@@

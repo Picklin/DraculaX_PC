@@ -1,0 +1,11 @@
+TILEMAP
+68 6 							-- Size of tile map in tiles
+8 8 							-- Tile size & block size
+images/background/SceneTesting2/casas_tiles.png 	-- Tilesheet
+5 5 								-- Number of tiles in tilesheet
+                          =>>?                          =           
+2    3456      2          1111@AB   B456             2  1 2    B456 
+1    17718     1          111C1C1   17718            1  1 1    17718
+1    11119:;<  1        ;<1111111   11119:;<         1  1 1  <911119
+1    11111111  1        111111111   11111111         1  1 1771111111
+1    11111111  1        111EF1111   11111111         1  1 1111111111

@@ -35,7 +35,7 @@ protected:
 	virtual TileMap* setPlatformMap() { return nullptr; }
 	virtual void initItems() = 0;
 	virtual void initActors(Player* player) = 0;
-	virtual void updateActors(int deltaTime);
+	void updateActors(int deltaTime);
 	virtual void updateCamera();
 	virtual const pair<int, int> setNewLevelAndScene() const = 0;
 	virtual void doAction(int eventId) {};

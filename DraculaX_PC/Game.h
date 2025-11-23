@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 #include "SceneTesting.h"
+#include "Level1Sc1.h"
 
 
 #define SCREEN_WIDTH 256
@@ -57,7 +58,7 @@ private:
 	void gameOver();
 
 private:
-	SceneTesting st;
+	Level1Sc1 st;
 	Player player;
 	ShaderProgram spriteShader, basicShader;
 	using SceneCreator = std::function<Scene* ()>;
