@@ -18,6 +18,8 @@ public:
 
 protected:
 	TileMap* setTileMap();
+	TileMap* setPlatformMap() { return nullptr; }
+	TileMap* setStairsMap() { return nullptr; }
 	void initItems();
 	void initActors(Player *player);
 	const pair<int, int> setNewLevelAndScene() const { return pair<int, int>(-1, -1); }

@@ -396,10 +396,11 @@ void Player::childUpdate(int deltaTime)
 			velocityX = (rightPressed - leftPressed) * (1.f + 1.f * gainMomentum);
 			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 			{
-				if (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed))
+				Hitbox cb = getTerrainCollisionBox();
+				if (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && ((rightPressed && !tileMap->tileRight(cb)) || leftPressed && !tileMap->tileLeft(cb)))
 				{
 					sprite->changeAnimation(DASH_COMBO);
-					velocityX = ((!lookingLeft - lookingLeft) * 12.f);
+					velocityX = ((!lookingLeft - lookingLeft) * 8.f);
 					bDashing = true;
 					bJumping = false;
 					commandBuffer.clear();
@@ -525,13 +526,14 @@ void Player::childUpdate(int deltaTime)
 				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
-				if (state != STATE_ATTACKING && (inputIndex == 6 || inputIndex == DASH_COMMAND.index))
+				Hitbox cb = getTerrainCollisionBox();
+				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
 				{
 					bDashing = true;
 					velocityX = (!lookingLeft - lookingLeft) * 8.f;
 					Game::instance().keyReleased(GLFW_KEY_Z);
 				}
-				//cout << "Input Index: " << inputIndex << endl;
+				cout << "Input Index: " << inputIndex << endl;
 				auto it = animMap.find(inputIndex);
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
 				{
@@ -556,6 +558,7 @@ void Player::childUpdate(int deltaTime)
 		}
 		else
 		{
+			cout << anim << endl;
 			if (state == STATE_DASHING)
 			{
 				calcIncrement(velocityX, 0.f, 0.075f);
@@ -625,11 +628,11 @@ void Player::childUpdate(int deltaTime)
 		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
 		Hitbox cb = getTerrainCollisionBox();
-		if (velocityX > 0 && !bJumping)
+		if (velocityX > 0)
 		{
 			tileMap->collisionMoveRight(cb, &position.x);
 		}
-		else if (velocityX < 0 && !bJumping)
+		else if (velocityX < 0)
 		{
 			tileMap->collisionMoveLeft(cb, &position.x);
 		}
@@ -714,7 +717,7 @@ const Hitbox Player::getTerrainCollisionBox() const
 {
 	Hitbox box;
 	box.min = position + glm::vec2(22, 21);
-	box.max = position + glm::vec2(43, 64);
+	box.max = position + glm::vec2(42, 63);
 	return box;
 }
 

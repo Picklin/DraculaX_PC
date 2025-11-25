@@ -32,7 +32,8 @@ public:
 
 protected:
 	virtual TileMap* setTileMap() = 0;
-	virtual TileMap* setPlatformMap() { return nullptr; }
+	virtual TileMap* setPlatformMap() = 0;
+	virtual TileMap* setStairsMap() = 0;
 	virtual void initItems() = 0;
 	virtual void initActors(Player* player) = 0;
 	void updateActors(int deltaTime);
@@ -56,6 +57,7 @@ protected:
 protected:
 	TileMap* map;
 	TileMap* platforms;
+	TileMap* stairs;
 	Player* player;
 	ShaderProgram* spriteShader;
 	ShaderProgram* basicShader;

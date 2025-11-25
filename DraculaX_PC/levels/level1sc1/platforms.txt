@@ -1,0 +1,19 @@
+TILEMAP
+64 14 							-- Size of tile map in tiles
+16 16 							-- Tile size & block size
+images/levels/lvl1/16x16tiles.png 	-- Tilesheet
+8 8 								-- Number of tiles in tilesheet
+                                                                
+                                                                
+                                                                
+                                                                
+                                                                
+                                                                
+                                                                
+                   12211111122                                  
+                                                                
+                                                                
+                                                                
+                                                                
+                                                                
+                                                                

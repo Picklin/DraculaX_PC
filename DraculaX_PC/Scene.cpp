@@ -55,6 +55,7 @@ void Scene::init(Player& player, ShaderProgram& spriteShader, ShaderProgram& bas
 	this->basicShader = &basicShader;
 	map = setTileMap();
 	platforms = setPlatformMap();
+	stairs = setStairsMap();
 	initManagers();
 	initActors(&player);
 	initItems();
@@ -170,7 +171,7 @@ void Scene::updateEffects(int deltaTime)
 
 void Scene::initManagers()
 {
-	ItemManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
+	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms);
 	EffectsManager::instance().init(MAP_OFFSET, *spriteShader);
 	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
 }

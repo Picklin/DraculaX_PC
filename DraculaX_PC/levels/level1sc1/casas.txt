@@ -1,0 +1,30 @@
+TILEMAP
+128 25 							-- Size of tile map in tiles
+8 8 							-- Tile size & block size
+images/levels/lvl1/8x8tiles1.png 	-- Tilesheet
+8 8 								-- Number of tiles in tilesheet
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                    m                                                           
+                                                                    h                                                           
+                                                                    h                                                           
+                                                                R   m       V                                                   
+                        Q                                       Q   m       m              I                                    
+                        QR    R                                 QR  R       m  m           J                                    
+                     SS h   SSSS                                SSSSSSSS    m  mSSS        J                                    
+                     QVhmh  RRQRRRhUUU                          QRQQRRXRRRRUUUUUUU         J                                    
+                     W  m  WWRRWWWW h                           RWWWWRRWWWV h  h           J                                    
+                     X  W RXXXRXYZ[ m                           XXXXVVRXYZ[ m  m           J                                    
+                     Xk VlkRllVXabcXm                           XllXlkXXabcXV  m         F J                                    
+                     XilXliXilXV\]^Xm   i                       VllVliXX\]^Xh  mli       G J                                    
+                     XljXjjXllXXdefV    lj                      VjlRllXXdefXXj Vjl       G J                                    
+                     XWWRWWXWWRX_`g  hWXXR m             n       VWRWWXV_`gVXXohXRo      G J                                    
+                           XRRXXTh  hRXXRX m             KLLLMMh  hRXXXRSSSRXRRXVXR      G J                                    
+BBBBCChBBhBhhhhhhhhhh      hVVVTh  hCCVVVBVBChhhCChhBChBBNOOOPhhh  hhVVTTTTThVVVVVVDEDEBBGBHBDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED
