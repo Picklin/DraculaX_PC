@@ -5,6 +5,7 @@
 #include "TileMap.h"
 #include "Entity.h"
 #include "Afterimages.h"
+#include "Stair.h"
 
 
 // Player is basically a Sprite that represents the player. As such it has
@@ -16,6 +17,9 @@ class Player : public Entity
 public:
 	void render();
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
+	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
+	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
+	void setStairsInfo(vector<Stair>* stairsInfo) { this->stairsInfo = stairsInfo; }
 
 protected:
 	string getName() const;
@@ -27,10 +31,12 @@ protected:
 	void childUpdate(int deltaTime);
 
 private:
+	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
+	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 	const Hitbox getTerrainCollisionBox() const;
-	void calcIncrement(float& valToInc, float targetVal, float factor);
+	const Hitbox getStairsCollisionBox() const;
 
 private:
 	Afterimages afterimages;
@@ -44,6 +50,9 @@ private:
 	vector<InputEvent> commandBuffer;
 	vector<Hitbox> terrainCollisionBoxes;
 
+	TileMap* platforms;
+	TileMap* stairs;
+	vector<Stair>* stairsInfo;
 
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;

@@ -56,6 +56,7 @@ void Scene::init(Player& player, ShaderProgram& spriteShader, ShaderProgram& bas
 	map = setTileMap();
 	platforms = setPlatformMap();
 	stairs = setStairsMap();
+	setStairsInfo();
 	initManagers();
 	initActors(&player);
 	initItems();

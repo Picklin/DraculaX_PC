@@ -34,6 +34,7 @@ protected:
 	virtual TileMap* setTileMap() = 0;
 	virtual TileMap* setPlatformMap() = 0;
 	virtual TileMap* setStairsMap() = 0;
+	virtual void setStairsInfo() = 0;
 	virtual void initItems() = 0;
 	virtual void initActors(Player* player) = 0;
 	void updateActors(int deltaTime);
@@ -71,6 +72,8 @@ protected:
 	vector<InfSpawnPoint> infSpawnPoints;
 	vector<SpawnPoint*> spawnPoints;
 	vector<TriggerArea*> triggerAreas;
+	vector<Stair> stairsInfo;
+
 	vector<Texture> backgroundTexs;
 	vector<Sprite*> backgroundSprites;
 

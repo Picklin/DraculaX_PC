@@ -15,6 +15,7 @@ protected:
 	TileMap* setTileMap();
 	TileMap* setPlatformMap();
 	TileMap* setStairsMap();
+	void setStairsInfo();
 	void initItems();
 	void initActors(Player* player);
 	void updateCamera();

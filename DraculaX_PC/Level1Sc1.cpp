@@ -85,6 +85,20 @@ TileMap* Level1Sc1::setStairsMap()
 	return TileMap::createTileMap("levels/level1sc1/stairs.txt", MAP_OFFSET, *basicShader);
 }
 
+void Level1Sc1::setStairsInfo()
+{
+	stairsInfo.reserve(1);
+	Stair st;
+	Hitbox hb;
+	int tileSize = map->getTileSize();
+	hb.min = glm::vec2(32 * tileSize, 24 * tileSize);
+	hb.max = glm::vec2(34 * tileSize, 26 * tileSize);
+	st.areaDetect = hb;
+	st.posX = (int)hb.min.x - 32;
+	st.up = true;
+	stairsInfo.emplace_back(st);
+}
+
 void Level1Sc1::initItems() 
 {
 
@@ -93,6 +107,9 @@ void Level1Sc1::initActors(Player* player)
 {
 	this->player = player;
 	player->setTileMap(map);
+	player->setPlatforms(platforms);
+	player->setStairsMap(stairs);
+	player->setStairsInfo(&stairsInfo);
 	player->setPosition(glm::vec2(8 * map->getTileSize(), 16 * map->getTileSize()));
 }
 void Level1Sc1::updateCamera() 

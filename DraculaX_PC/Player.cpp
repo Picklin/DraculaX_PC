@@ -524,6 +524,17 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
+				else if (inputIndex == inputMap[UP] /*Hacer colision con tile de escalera*/)
+				{
+					//Colocarse para subir escalera
+					for (auto& stair : *stairsInfo)
+					{
+						if (collision(stair.areaDetect, getStairsCollisionBox()))
+						{
+							cout << "escalera detectada" << endl;
+						}
+					}
+				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
 				Hitbox cb = getTerrainCollisionBox();
@@ -673,6 +684,12 @@ void Player::childUpdate(int deltaTime)
 	sprite->update(deltaTime);
 }
 
+void Player::calcIncrement(float& valToInc, float targetVal, float factor)
+{
+	if (abs(valToInc - targetVal) > 0.2f) valToInc = valToInc + (targetVal - valToInc) * factor;
+	else valToInc = targetVal;
+}
+
 void Player::registerInput(int key)
 {
 	auto now = std::chrono::steady_clock::now();
@@ -713,6 +730,11 @@ bool Player::checkCommand(const vector<int>& command, const std::chrono::millise
 	return false;
 }
 
+bool Player::collision(const Hitbox& hitbox1, const Hitbox& hitbox2)
+{
+	return ((hitbox1.min.x < hitbox2.max.x) && (hitbox2.min.x < hitbox1.max.x) && (hitbox1.min.y < hitbox2.max.y) && (hitbox2.min.y < hitbox1.max.y));
+}
+
 const Hitbox Player::getTerrainCollisionBox() const
 {
 	Hitbox box;
@@ -721,8 +743,11 @@ const Hitbox Player::getTerrainCollisionBox() const
 	return box;
 }
 
-void Player::calcIncrement(float& valToInc, float targetVal, float factor)
+const Hitbox Player::getStairsCollisionBox() const
 {
-	if (abs(valToInc - targetVal) > 0.2f) valToInc = valToInc + (targetVal - valToInc) * factor;
-	else valToInc = targetVal;
+	Hitbox box;
+	box.min = position + glm::vec2(22, 56);
+	box.max = position + glm::vec2(42, 63);
+	return box;
 }
+
