@@ -533,7 +533,7 @@ void Player::childUpdate(int deltaTime)
 					velocityX = (!lookingLeft - lookingLeft) * 8.f;
 					Game::instance().keyReleased(GLFW_KEY_Z);
 				}
-				cout << "Input Index: " << inputIndex << endl;
+				//cout << "Input Index: " << inputIndex << endl;
 				auto it = animMap.find(inputIndex);
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
 				{
@@ -558,7 +558,7 @@ void Player::childUpdate(int deltaTime)
 		}
 		else
 		{
-			cout << anim << endl;
+			//cout << anim << endl;
 			if (state == STATE_DASHING)
 			{
 				calcIncrement(velocityX, 0.f, 0.075f);

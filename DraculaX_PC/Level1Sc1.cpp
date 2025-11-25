@@ -25,20 +25,22 @@ void Level1Sc1::init(Player& player, ShaderProgram& spriteShader, ShaderProgram&
 	backgroundSprites[0]->addKeyframe(0, glm::vec2(0.f, 0.75f));
 	backgroundSprites[0]->changeAnimation(0);
 	backgroundSprites[1]->setNumberAnimations(1);
-	backgroundSprites[1]->setAnimationSpeed(0, 16);
+	backgroundSprites[1]->setAnimationSpeed(0, 20);
 	backgroundSprites[1]->animatorY(0, 8, 0.f, 0.125f, 0.f);
 	backgroundSprites[1]->animatorY(0, 7, 0.75f, -0.125f, 0.f);
 	backgroundSprites[1]->changeAnimation(0);
 	backgroundSprites[2]->setNumberAnimations(1);
-	backgroundSprites[2]->setAnimationSpeed(0, 16);
+	backgroundSprites[2]->setAnimationSpeed(0, 20);
 	backgroundSprites[2]->animatorY(0, 8, 0.f, 0.125f, 0.f);
 	backgroundSprites[2]->animatorY(0, 7, 0.75f, -0.125f, 0.f);
 	backgroundSprites[2]->changeAnimation(0);
 
-	layers.reserve(4);
+	layers.reserve(3);
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/casitas.txt", MAP_OFFSET, basicShader));
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/wall.txt", MAP_OFFSET, basicShader));
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/casas.txt", MAP_OFFSET, basicShader));
+
+	projections.resize(3);
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -48,20 +50,24 @@ void Level1Sc1::update(int deltaTime)
 void Level1Sc1::render() 
 {
 	basicShader->use();
-	basicShader->setUniformMatrix4f("projection", projection);
-	backgroundSprites[0]->render();
-	backgroundSprites[1]->render();
-	backgroundSprites[2]->render();
+	basicShader->setUniformMatrix4f("projection", projections[0]);
+	backgroundSprites[0]->render();	//fuego del fondo
 	glm::mat4 modelview = glm::mat4(1.0f);
 	basicShader->setUniformMatrix4f("modelview", modelview);
-	layers[0]->render();
-	layers[1]->render();
-	layers[2]->render();
+	layers[0]->render();			//casas del fondo
+	basicShader->setUniformMatrix4f("projection", projections[1]);
+	layers[1]->render();			//muro de "barro"
+	backgroundSprites[1]->render();
+	basicShader->setUniformMatrix4f("projection", projections[2]);
+	backgroundSprites[2]->render();	
+	modelview = glm::mat4(1.0f);
+	basicShader->setUniformMatrix4f("modelview", modelview);
+	layers[2]->render();			//casas
 	map->render();
 	platforms->render();
 	stairs->render();
 	spriteShader->use();
-	spriteShader->setUniformMatrix4f("projection", projection);
+	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
 }
 
@@ -93,14 +99,19 @@ void Level1Sc1::updateCamera()
 {
 	glm::vec2 playerPos = player->getPosition();
 	glm::vec2 playerCenter = player->myCenter();
-	cameraPos.x = (playerPos + playerCenter).x - SCREEN_WIDTH / 2.f;
-	if (cameraPos.x < 0) cameraPos.x = 0;
-	else if (cameraPos.x > 1024 - SCREEN_WIDTH) cameraPos.x = 1024 - SCREEN_WIDTH;
-	float minX = cameraPos.x + SCREEN_X;
-	float minY = SCREEN_Y;
-	float maxX = cameraPos.x + SCREEN_WIDTH + SCREEN_X;
-	float maxY = SCREEN_HEIGHT+SCREEN_Y;
-	projection = glm::ortho(minX, maxX, maxY, minY);
+	const float multipliers[3] = { 0.37f, 0.5f, 1.f };
+	for (int i = 0; i < 3; i++)
+	{
+		cameraPos.x = (playerPos + playerCenter).x - SCREEN_WIDTH / 2.f;
+		if (cameraPos.x < 0) cameraPos.x = 0;
+		else if (cameraPos.x > 1024 - SCREEN_WIDTH) cameraPos.x = 1024 - SCREEN_WIDTH;
+		cameraPos.x *= multipliers[i];
+		float minX = cameraPos.x + SCREEN_X;
+		float minY = SCREEN_Y;
+		float maxX = cameraPos.x + SCREEN_WIDTH + SCREEN_X;
+		float maxY = SCREEN_HEIGHT + SCREEN_Y;
+		projections[i] = glm::ortho(minX, maxX, maxY, minY);
+	}
 }
 const pair<int, int> Level1Sc1::setNewLevelAndScene() const 
 {
