@@ -365,7 +365,7 @@ void Player::childUpdate(int deltaTime)
 		startY = position.y;
 		Game::instance().keyReleased(GLFW_KEY_TAB);
 	}
-	else if (!bUlting)
+	else if (!bUlting && !bClimbing)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
@@ -524,16 +524,13 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
-				else if (inputIndex == inputMap[UP] /*Hacer colision con tile de escalera*/)
+				else if (inputIndex == inputMap[UP])
 				{
-					//Colocarse para subir escalera
-					for (auto& stair : *stairsInfo)
-					{
-						if (collision(stair.areaDetect, getStairsCollisionBox()))
-						{
-							cout << "escalera detectada" << endl;
-						}
-					}
+					findUpStair();
+				}
+				else if (inputIndex == inputMap[DOWN])
+				{
+					findDownStair();
 				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
@@ -662,6 +659,32 @@ void Player::childUpdate(int deltaTime)
 		//cout << "Position :" << crouchWhipOffset[whip->getCurrentKeyframe()].x << ' ' << crouchWhipOffset[whip->getCurrentKeyframe()].y << endl;
 		//cout << "Keyframe: " << whip->getCurrentKeyframe() << endl;
 	}
+	else if (bClimbing)
+	{
+		if (!linedUpStair && position.x != currentStair->posX)
+		{
+			if (anim != WALK) sprite->changeAnimation(WALK);
+			lookingLeft = position.x > currentStair->posX;
+			position.x += (!lookingLeft - lookingLeft);
+		}
+		else if (linedUpStair)
+		{
+			bool up = Game::instance().getKey(GLFW_KEY_UP);
+			bool down = Game::instance().getKey(GLFW_KEY_DOWN);
+			if (currentStair->right)
+			{
+				position.x += (!lookingLeft - lookingLeft) * (up || down);
+				position.y += (lookingLeft - !lookingLeft) * (up || down);
+				lookingLeft = down;
+			}
+		}
+		else
+		{
+			sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
+			lookingLeft = !currentStair->right;
+			linedUpStair = true;
+		}
+	}
 	else
 	{
 		if (startY - position.y < 64 && ultTimeElapsed == 0)
@@ -682,6 +705,30 @@ void Player::childUpdate(int deltaTime)
 	}
 	setPosition(position);
 	sprite->update(deltaTime);
+}
+
+void Player::findUpStair()
+{
+	int i = 0;
+	int numStairs = stairsInfo->size();
+	while (i < numStairs && !bClimbing)
+	{
+		bClimbing = (*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
+		if (bClimbing) currentStair = &(*stairsInfo)[i];
+		i++;
+	}
+}
+
+void Player::findDownStair()
+{
+	int i = 0;
+	int numStairs = stairsInfo->size();
+	while (i < numStairs && !bClimbing)
+	{
+		bClimbing = !(*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
+		if (bClimbing) currentStair = &(*stairsInfo)[i];
+		i++;
+	}
 }
 
 void Player::calcIncrement(float& valToInc, float targetVal, float factor)

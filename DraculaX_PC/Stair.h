@@ -8,8 +8,10 @@
 struct Stair
 {
 	Hitbox areaDetect;
-	int posX;
+	int posX;			//donde el jugador se alinea al empezar a subir o bajar
+	int ydistance;
 	bool up;
+	bool right;
 };
 
 #endif // !_STAIR_INCLUDE

@@ -31,6 +31,8 @@ protected:
 	void childUpdate(int deltaTime);
 
 private:
+	void findUpStair();
+	void findDownStair();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
@@ -53,6 +55,7 @@ private:
 	TileMap* platforms;
 	TileMap* stairs;
 	vector<Stair>* stairsInfo;
+	Stair* currentStair;
 
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;
@@ -67,6 +70,7 @@ private:
 	bool bJumping = false;
 	bool bDashing = false;
 	bool bUlting = false;
+	bool bClimbing = false;
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
@@ -80,6 +84,7 @@ private:
 	bool backflipping = false;
 	bool crouching = false;
 	bool whipping = false;
+	bool linedUpStair = false;
 };
 
 
