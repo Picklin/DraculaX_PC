@@ -440,7 +440,8 @@ void Player::childUpdate(int deltaTime)
 				else
 				{
 					position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
-					bJumping = jumpAngle < 90 || !tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+					bJumping = jumpAngle < 90 || (!tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
+						&& !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
 					JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
 					JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
 					if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
@@ -464,7 +465,8 @@ void Player::childUpdate(int deltaTime)
 		else if (!bDashing && !backflipping)
 		{
 			position.y += FALL_SPEED;
-			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
+				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
 			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && state != STATE_ATTACKING)
 			{
 				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
@@ -546,7 +548,7 @@ void Player::childUpdate(int deltaTime)
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
 				{
 					sprite->changeAnimation(it->second);
-					if (sprite->animation() == (ATTACK + crouching * 2)) whip->changeAnimation(0);
+					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);
 					lookingLeftAtk = lookingLeft;
 				}
 				else if (!grounded && state != STATE_FALLING)
@@ -561,7 +563,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				gainMomentum = anim == RUN;
 				int crouchanim = sprite->animation();
-				crouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
+				bCrouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
 			}
 		}
 		else
@@ -602,7 +604,9 @@ void Player::childUpdate(int deltaTime)
 				else if (anim != DASH_KICK_FINAL)
 				{
 					position.y = startY - DASH_KICK_HEIGHT * sin(glm::radians((float)jumpAngle));
-					tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+					Hitbox cb = getTerrainCollisionBox();
+					tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+					platforms->collisionMoveDown(cb, &position.y, quadSize.y);
 					//cout << jumpAngle << endl;
 				}
 				bDashing = velocityX != 0 || (anim != DASH_KICK_FINAL);
@@ -624,7 +628,8 @@ void Player::childUpdate(int deltaTime)
 			}
 			Game::instance().keyReleased(GLFW_KEY_Z);
 			position.y += FALL_SPEED * (state != STATE_COMBO_DASHING);
-			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
+				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
 			if (!grounded && !bDashing)
 			{
 				sprite->changeAnimation(FALL);
@@ -654,14 +659,14 @@ void Player::childUpdate(int deltaTime)
 		{
 			whip->update(deltaTime);
 			int whipKF = whip->getCurrentKeyframe();
-			whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x*!lookingLeft+leftCrouchWhipOffset[whipKF].x*lookingLeft * crouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * crouching + tileMapDispl.y));
+			whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x*!lookingLeft+leftCrouchWhipOffset[whipKF].x*lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y));
 		}
 		//cout << "Position :" << crouchWhipOffset[whip->getCurrentKeyframe()].x << ' ' << crouchWhipOffset[whip->getCurrentKeyframe()].y << endl;
 		//cout << "Keyframe: " << whip->getCurrentKeyframe() << endl;
 	}
 	else if (bClimbing)
 	{
-		if (!linedUpStair && position.x != currentStair->posX)
+		if (!linedUpStair && (int)position.x != currentStair->posX)
 		{
 			if (anim != WALK) sprite->changeAnimation(WALK);
 			lookingLeft = position.x > currentStair->posX;
@@ -671,18 +676,35 @@ void Player::childUpdate(int deltaTime)
 		{
 			bool up = Game::instance().getKey(GLFW_KEY_UP);
 			bool down = Game::instance().getKey(GLFW_KEY_DOWN);
+			bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
+			bool left = Game::instance().getKey(GLFW_KEY_LEFT);
+			int newPosX = 0;
+			int newPosY = 0;
 			if (currentStair->right)
 			{
-				position.x += (!lookingLeft - lookingLeft) * (up || down);
-				position.y += (lookingLeft - !lookingLeft) * (up || down);
-				lookingLeft = down;
+				bool keypressed = (up || down || right || left);
+				newPosX += (!lookingLeft - lookingLeft) * keypressed;
+				newPosY += (lookingLeft - !lookingLeft) * keypressed;
+				lookingLeft = lookingLeft && !(up || right) || (down || left);
 			}
+			else
+			{
+				bool keypressed = (up || down || right || left);
+				newPosX += (!lookingLeft - lookingLeft) * keypressed;
+				newPosY -= (lookingLeft - !lookingLeft) * keypressed;
+				lookingLeft = lookingLeft && !(down || right) || (up || left);
+			}
+			bool inStairs = (currentStair->up && (position.y + newPosY) <= stairStartY) || (!currentStair->up && (position.y + newPosY) >= stairStartY);
+			linedUpStair = bClimbing = inStairs && (abs(position.y - stairStartY) < currentStair->ydistance);
+			position.x += newPosX;
+			position.y += newPosY;
 		}
 		else
 		{
 			sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
-			lookingLeft = !currentStair->right;
+			lookingLeft = (!currentStair->right && currentStair->up) || (currentStair->right && !currentStair->up);
 			linedUpStair = true;
+			stairStartY = position.y;
 		}
 	}
 	else

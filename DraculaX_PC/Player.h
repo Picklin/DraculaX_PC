@@ -65,26 +65,32 @@ private:
 	float startY = 0.f;
 	float timeRunning = 0.f;
 	float dashDistance = 0.f;
+	float stairStartY = 0.f;
 	int ultTimeElapsed = 0;
 
+	//state variables
 	bool bJumping = false;
+	bool bCrouching = false;
 	bool bDashing = false;
 	bool bUlting = false;
-	bool bClimbing = false;
+	bool backflipping = false;
+	bool whipping = false;
 	bool prevGrounded = true;
 	bool grounded = true;
 	bool lookingLeft = false;
 	bool lookingLeftAtk = false;
+
 	bool prevRightPressed = false;
 	bool prevLeftPressed = false;
 	bool prevDownPressed = false;
 	bool gainMomentum = false;
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
-	bool backflipping = false;
-	bool crouching = false;
-	bool whipping = false;
+
+	//stairs booleans
+	bool bClimbing = false;
 	bool linedUpStair = false;
+
 };
 
 

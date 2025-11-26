@@ -96,6 +96,35 @@ void Level1Sc1::setStairsInfo()
 	st.areaDetect = hb;
 	st.posX = (int)hb.min.x - 32;
 	st.up = true;
+	st.right = true;
+	st.ydistance = 11 * tileSize;
+	stairsInfo.emplace_back(st);
+
+	hb.min = glm::vec2(66 * tileSize, 24 * tileSize);
+	hb.max = glm::vec2(68 * tileSize, 26 * tileSize);
+	st.areaDetect = hb;
+	st.posX = (int)hb.max.x - 32;
+	st.up = true;
+	st.right = false;
+	st.ydistance = 11 * tileSize;
+	stairsInfo.emplace_back(st);
+
+	hb.min = glm::vec2(42 * tileSize, 13 * tileSize);
+	hb.max = glm::vec2(44 * tileSize, 15 * tileSize);
+	st.areaDetect = hb;
+	st.posX = (int)hb.max.x - 32;
+	st.up = false;
+	st.right = true;
+	st.ydistance = 11 * tileSize;
+	stairsInfo.emplace_back(st);
+
+	hb.min = glm::vec2(56 * tileSize, 13 * tileSize);
+	hb.max = glm::vec2(58 * tileSize, 15 * tileSize);
+	st.areaDetect = hb;
+	st.posX = (int)hb.min.x - 32;
+	st.up = false;
+	st.right = false;
+	st.ydistance = 11 * tileSize;
 	stairsInfo.emplace_back(st);
 }
 
