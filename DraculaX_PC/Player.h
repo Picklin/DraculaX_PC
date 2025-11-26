@@ -91,6 +91,7 @@ private:
 	//stairs booleans
 	bool bClimbing = false;
 	bool linedUpStair = false;
+	bool rightUpStair = false;
 
 };
 

@@ -157,7 +157,7 @@ bool TileMap::collisionMoveLeft(const Hitbox& hitbox, float* posX) const
 	int x, y0, y1;
 	x = (int)hitbox.min.x / tileSize;
 	y0 = (int)hitbox.min.y / tileSize;
-	y1 = (int)(hitbox.max.y - 1) / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
@@ -174,14 +174,14 @@ bool TileMap::collisionMoveRight(const Hitbox& hitbox, float* posX) const
 {
 
 	int x, y0, y1;
-	x = (int)(hitbox.max.x) / tileSize;
+	x = (int)hitbox.max.x / tileSize;
 	y0 = (int)hitbox.min.y / tileSize;
-	y1 = (int)(hitbox.max.y - 1) / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
 		{
-			*posX -= hitbox.max.x - (x * tileSize);
+			*posX -= hitbox.max.x - (x * tileSize)+1;
 			return true;
 		}
 	}
@@ -191,11 +191,10 @@ bool TileMap::collisionMoveRight(const Hitbox& hitbox, float* posX) const
 
 bool TileMap::collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) const
 {
-
 	int x0, x1, y;
 	x0 = (int)hitbox.min.x / tileSize;
-	x1 = (int)(hitbox.max.x - 1) / tileSize;
-	y = (int)(hitbox.max.y) / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y = (int)hitbox.max.y / tileSize;
 	float height = hitbox.max.y - *posY;
 	for (int x = x0; x <= x1; x++)
 	{
@@ -208,8 +207,43 @@ bool TileMap::collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) co
 			}
 		}
 	}
-
 	return false;
+}
+
+bool TileMap::collisionMoveDown(const Hitbox& hitbox) const
+{
+	int x0, x1, y;
+	x0 = (int)hitbox.min.x / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y = (int)hitbox.max.y / tileSize;
+	for (int x = x0; x <= x1; x++)
+	{
+		if (map[y * mapSize.x + x] != 0) return true;
+	}
+	return false;
+}
+
+int TileMap::collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const
+{
+	int x0, x1, y;
+	x0 = (int)hitbox.min.x / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y = (int)hitbox.max.y / tileSize;
+	float height = hitbox.max.y - *posY;
+	for (int x = x0; x <= x1; x++)
+	{
+		int tile = map[y * mapSize.x + x];
+		if (tile != 0)
+		{
+			if (*posY - tileSize * y + height <= 5)
+			{
+				*posY = float(tileSize * y - sizey);
+				return tile;
+			}
+		}
+	}
+
+	return -1;
 }
 
 bool TileMap::collisionMoveUp(const Hitbox& hitbox, float* posY) const
@@ -217,7 +251,7 @@ bool TileMap::collisionMoveUp(const Hitbox& hitbox, float* posY) const
 
 	int x0, x1, y;
 	x0 = (int)hitbox.min.x / tileSize;
-	x1 = (int)(hitbox.max.x - 1) / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
 	y = (int)hitbox.min.y / tileSize;
 	for (int x = x0; x <= x1; x++)
 	{
