@@ -437,6 +437,15 @@ void Player::childUpdate(int deltaTime)
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
 				}
+				else if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90 && stairs->collisionMoveDown(getStairsCollisionBox(), &position.y, quadSize.y))
+				{
+					JUMP_HEIGHT = 64;
+					JUMP_ANGLE_STEP = 4;
+					bJumping = false;
+					bClimbing = true;
+					backflipping = false;
+					sprite->changeAnimation(IDLE);		//Habrá que cambiar la anim
+				}
 				else
 				{
 					position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
@@ -526,11 +535,11 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
-				else if (inputIndex == inputMap[UP])
+				else if (inputIndex == inputMap[UP] && grounded)
 				{
 					findUpStair();
 				}
-				else if (inputIndex == inputMap[DOWN])
+				else if (inputIndex == inputMap[DOWN] && grounded)
 				{
 					findDownStair();
 				}
@@ -666,45 +675,32 @@ void Player::childUpdate(int deltaTime)
 	}
 	else if (bClimbing)
 	{
-		if (!linedUpStair && (int)position.x != currentStair->posX)
+		if (currentStair != NULL)
 		{
-			if (anim != WALK) sprite->changeAnimation(WALK);
-			lookingLeft = position.x > currentStair->posX;
-			position.x += (!lookingLeft - lookingLeft);
-		}
-		else if (linedUpStair)
-		{
-			bool up = Game::instance().getKey(GLFW_KEY_UP);
-			bool down = Game::instance().getKey(GLFW_KEY_DOWN);
-			bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
-			bool left = Game::instance().getKey(GLFW_KEY_LEFT);
-			int newPosX = 0;
-			int newPosY = 0;
-			if (currentStair->right)
+			if (!linedUpStair && (int)position.x != currentStair->posX)
 			{
-				bool keypressed = (up || down || right || left);
-				newPosX += (!lookingLeft - lookingLeft) * keypressed;
-				newPosY += (lookingLeft - !lookingLeft) * keypressed;
-				lookingLeft = lookingLeft && !(up || right) || (down || left);
+				if (anim != WALK) sprite->changeAnimation(WALK);
+				lookingLeft = position.x > currentStair->posX;
+				position.x += (!lookingLeft - lookingLeft);
+			}
+			else if (linedUpStair)
+			{
+				stairMovement();
+				bool inStairs = (currentStair->up && position.y <= stairStartY) || (!currentStair->up && position.y >= stairStartY);
+				linedUpStair = bClimbing = inStairs && (abs(position.y - stairStartY) < currentStair->ydistance);
 			}
 			else
 			{
-				bool keypressed = (up || down || right || left);
-				newPosX += (!lookingLeft - lookingLeft) * keypressed;
-				newPosY -= (lookingLeft - !lookingLeft) * keypressed;
-				lookingLeft = lookingLeft && !(down || right) || (up || left);
+				sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
+				lookingLeft = (!currentStair->right && currentStair->up) || (currentStair->right && !currentStair->up);
+				linedUpStair = true;
+				prevDownPressed = false;
+				stairStartY = position.y;
 			}
-			bool inStairs = (currentStair->up && (position.y + newPosY) <= stairStartY) || (!currentStair->up && (position.y + newPosY) >= stairStartY);
-			linedUpStair = bClimbing = inStairs && (abs(position.y - stairStartY) < currentStair->ydistance);
-			position.x += newPosX;
-			position.y += newPosY;
 		}
 		else
 		{
-			sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
-			lookingLeft = (!currentStair->right && currentStair->up) || (currentStair->right && !currentStair->up);
-			linedUpStair = true;
-			stairStartY = position.y;
+
 		}
 	}
 	else
@@ -736,7 +732,10 @@ void Player::findUpStair()
 	while (i < numStairs && !bClimbing)
 	{
 		bClimbing = (*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
-		if (bClimbing) currentStair = &(*stairsInfo)[i];
+		if (bClimbing)
+		{
+			currentStair = &(*stairsInfo)[i];
+		}
 		i++;
 	}
 }
@@ -748,9 +747,38 @@ void Player::findDownStair()
 	while (i < numStairs && !bClimbing)
 	{
 		bClimbing = !(*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
-		if (bClimbing) currentStair = &(*stairsInfo)[i];
+		if (bClimbing)
+		{
+			currentStair = &(*stairsInfo)[i];
+		}
 		i++;
 	}
+}
+
+void Player::stairMovement()
+{
+	bool up = Game::instance().getKey(GLFW_KEY_UP);
+	bool down = Game::instance().getKey(GLFW_KEY_DOWN);
+	bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
+	bool left = Game::instance().getKey(GLFW_KEY_LEFT);
+	int xDispl = 0;
+	int yDispl = 0;
+	if (currentStair->right)
+	{
+		bool keypressed = (up || down || right || left);
+		xDispl += (!lookingLeft - lookingLeft) * keypressed;
+		yDispl += (lookingLeft - !lookingLeft) * keypressed;
+		lookingLeft = lookingLeft && !(up || right) || (down || left);
+	}
+	else
+	{
+		bool keypressed = (up || down || right || left);
+		xDispl += (!lookingLeft - lookingLeft) * keypressed;
+		yDispl -= (lookingLeft - !lookingLeft) * keypressed;
+		lookingLeft = lookingLeft && !(down || right) || (up || left);
+	}
+	position.x += xDispl;
+	position.y += yDispl;
 }
 
 void Player::calcIncrement(float& valToInc, float targetVal, float factor)

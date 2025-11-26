@@ -33,6 +33,7 @@ protected:
 private:
 	void findUpStair();
 	void findDownStair();
+	void stairMovement();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
@@ -55,7 +56,7 @@ private:
 	TileMap* platforms;
 	TileMap* stairs;
 	vector<Stair>* stairsInfo;
-	Stair* currentStair;
+	Stair* currentStair = nullptr;
 
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;
