@@ -537,6 +537,8 @@ void Player::childUpdate(int deltaTime)
 					+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
 					+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
 				if (inputToRegister != 0) registerInput(inputToRegister);
+				int tile = 0;
+				int distance = 0;
 				if (rightPressed || leftPressed)
 				{
 					int commandInputIndex = RIGHT_RUN_COMMAND.index * checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow)
@@ -553,11 +555,16 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
-				/*else if (inputIndex == inputMap[UP] && grounded)
+				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->collisionMoveRightWithTileNum(getStairsCollisionBox(), distance)) != -1) && (tile % 8 != 1))
 				{
-					findUpStair();
+					bClimbing = true; 
+					sprite->changeAnimation(IDLE);
+					rightUpStair = true;
+					lookingLeft = false;
+					position.x -= distance;
 				}
-				else if (inputIndex == inputMap[DOWN] && grounded)
+				//else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->collisionMoveRightWithTileNum(getStairsCollisionBox(), distance)) != -1) && (tile % 8 != 2))
+				/*else if (inputIndex == inputMap[DOWN] && grounded)
 				{
 					findDownStair();
 				}*/
@@ -693,8 +700,12 @@ void Player::childUpdate(int deltaTime)
 	}
 	else if (bClimbing)
 	{
+		prevYpos = position.y;
 		stairMovement();
-		bClimbing = stairs->collisionMoveDown(getStairsCollisionBox());
+		bool goingUp = (prevYpos - position.y) > 0;
+		Hitbox cb = getStairsCollisionBox();
+		if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
+		else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
 	}
 	else
 	{

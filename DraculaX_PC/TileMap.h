@@ -35,6 +35,7 @@ public:
 
 	bool collisionMoveLeft(const Hitbox& hitbox, float* posX) const;
 	bool collisionMoveRight(const Hitbox& hitbox, float* posX) const;
+	int collisionMoveRightWithTileNum(const Hitbox& hitbox, int& dist) const;
 	bool collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) const;
 	bool collisionMoveDown(const Hitbox& hitbox) const;
 	int collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const;

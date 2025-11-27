@@ -61,13 +61,14 @@ private:
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;
 	int JUMP_ANGLE_STEP = 4;
+	int ultTimeElapsed = 0;
 
 	float velocityX = 0.f;
 	float startY = 0.f;
 	float timeRunning = 0.f;
 	float dashDistance = 0.f;
 	float stairStartY = 0.f;
-	int ultTimeElapsed = 0;
+	float prevYpos = 0.f;
 
 	//state variables
 	bool bJumping = false;

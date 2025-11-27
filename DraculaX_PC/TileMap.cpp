@@ -189,6 +189,24 @@ bool TileMap::collisionMoveRight(const Hitbox& hitbox, float* posX) const
 	return false;
 }
 
+int TileMap::collisionMoveRightWithTileNum(const Hitbox& hitbox, int& dist) const
+{
+	int x, y0, y1;
+	x = (int)hitbox.max.x / tileSize;
+	y0 = (int)hitbox.min.y / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
+	for (int y = y0; y <= y1; y++)
+	{
+		int tile = map[y * mapSize.x + x];
+		if (tile != 0)
+		{
+			dist = (int)hitbox.max.x - (x * tileSize) + 1;
+			return tile;
+		}
+	}
+	return -1;
+}
+
 bool TileMap::collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) const
 {
 	int x0, x1, y;
