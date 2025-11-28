@@ -555,15 +555,14 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
-				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->collisionMoveRightWithTileNum(getStairsCollisionBox(), distance)) != -1) && (tile % 8 != 1))
+				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true; 
+					rightUpStair = tile == 1;
+					lookingLeft = !rightUpStair;
 					sprite->changeAnimation(IDLE);
-					rightUpStair = true;
-					lookingLeft = false;
-					position.x -= distance;
+					position.x -= distance;				//En vez de ponernos en la posicion de golpe, hay que hacer que el personaje se mueva hacia ahí
 				}
-				//else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->collisionMoveRightWithTileNum(getStairsCollisionBox(), distance)) != -1) && (tile % 8 != 2))
 				/*else if (inputIndex == inputMap[DOWN] && grounded)
 				{
 					findDownStair();

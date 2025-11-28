@@ -33,15 +33,18 @@ public:
 	int getTileSize() const { return tileSize; }
 	const glm::ivec2& getMapSize() const { return mapSize; }
 
+
 	bool collisionMoveLeft(const Hitbox& hitbox, float* posX) const;
 	bool collisionMoveRight(const Hitbox& hitbox, float* posX) const;
-	int collisionMoveRightWithTileNum(const Hitbox& hitbox, int& dist) const;
 	bool collisionMoveDown(const Hitbox& hitbox, float* posY, int sizey) const;
 	bool collisionMoveDown(const Hitbox& hitbox) const;
-	int collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const;
 	bool collisionMoveUp(const Hitbox& hitbox, float* posY) const;
 	bool tileLeft(const Hitbox& hitbox) const;
 	bool tileRight(const Hitbox& hitbox) const;
+	int distanceFromStairTile(const Hitbox& hitbox, int& dist) const;
+	int collisionMoveLeftWithTileNum(const Hitbox& hitbox, int& dist) const;
+	int collisionMoveRightWithTileNum(const Hitbox& hitbox, int& dist) const;
+	int collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const;
 
 
 	void addCollision(const Hitbox& hitbox);

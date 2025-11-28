@@ -170,6 +170,24 @@ bool TileMap::collisionMoveLeft(const Hitbox& hitbox, float* posX) const
 	return false;
 }
 
+int TileMap::collisionMoveLeftWithTileNum(const Hitbox& hitbox, int& dist) const
+{
+	int x, y0, y1;
+	x = (int)hitbox.min.x / tileSize;
+	y0 = (int)hitbox.min.y / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
+	for (int y = y0; y <= y1; y++)
+	{
+		int tile = map[y * mapSize.x + x];
+		if (tile != 0)
+		{
+			dist = (int)hitbox.min.x - (x * tileSize + tileSize);
+			return tile;
+		}
+	}
+	return -1;
+}
+
 bool TileMap::collisionMoveRight(const Hitbox& hitbox, float* posX) const
 {
 
@@ -307,6 +325,33 @@ bool TileMap::tileRight(const Hitbox& hitbox) const
 		if (map[y * mapSize.x + x] != 0) return true;
 	}
 	return false;
+}
+
+int TileMap::distanceFromStairTile(const Hitbox& hitbox, int& dist) const
+{
+	int x0, x1, y0, y1;
+	x0 = (int)hitbox.min.x / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y0 = (int)hitbox.min.y / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
+	for (int x = x0; x <= x1; x++)
+	{
+		for (int y = y0; y <= y1; y++)
+		{
+			int tile = map[y * mapSize.x + x];
+			if (tile % 8 == 1)
+			{
+				dist = (int)hitbox.max.x - (x * tileSize + tileSize) + 1;
+				return 1;
+			}
+			else if (tile % 8 == 2)
+			{
+				dist = (int)hitbox.min.x - x * tileSize - 1;
+				return 2;
+			}
+		}
+	}
+	return -1;
 }
 
 void TileMap::addCollision(const Hitbox& hitbox)
