@@ -42,6 +42,7 @@ public:
 	bool tileLeft(const Hitbox& hitbox) const;
 	bool tileRight(const Hitbox& hitbox) const;
 	int distanceFromStairTile(const Hitbox& hitbox, int& dist) const;
+	int distanceFromBelowStairTile(const Hitbox& hitbox, int& dist) const;
 	int collisionMoveLeftWithTileNum(const Hitbox& hitbox, int& dist) const;
 	int collisionMoveRightWithTileNum(const Hitbox& hitbox, int& dist) const;
 	int collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const;

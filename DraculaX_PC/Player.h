@@ -5,7 +5,6 @@
 #include "TileMap.h"
 #include "Entity.h"
 #include "Afterimages.h"
-#include "Stair.h"
 
 
 // Player is basically a Sprite that represents the player. As such it has
@@ -19,7 +18,6 @@ public:
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
-	void setStairsInfo(vector<Stair>* stairsInfo) { this->stairsInfo = stairsInfo; }
 
 protected:
 	string getName() const;
@@ -31,8 +29,6 @@ protected:
 	void childUpdate(int deltaTime);
 
 private:
-	void findUpStair();
-	void findDownStair();
 	void stairMovement();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
@@ -40,6 +36,7 @@ private:
 	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 	const Hitbox getTerrainCollisionBox() const;
 	const Hitbox getStairsCollisionBox() const;
+	const Hitbox getBelowStairsCollisionBox() const;
 
 private:
 	Afterimages afterimages;
@@ -55,19 +52,18 @@ private:
 
 	TileMap* platforms;
 	TileMap* stairs;
-	vector<Stair>* stairsInfo;
-	Stair* currentStair = nullptr;
 
 	int jumpAngle = 0;
 	int JUMP_HEIGHT = 64;
 	int JUMP_ANGLE_STEP = 4;
 	int ultTimeElapsed = 0;
+	int stairPosX = 0;
+	int stairPosY = 0;
 
 	float velocityX = 0.f;
 	float startY = 0.f;
 	float timeRunning = 0.f;
 	float dashDistance = 0.f;
-	float stairStartY = 0.f;
 	float prevYpos = 0.f;
 
 	//state variables
@@ -93,7 +89,7 @@ private:
 	bool bClimbing = false;
 	bool linedUpStair = false;
 	bool rightUpStair = false;
-
+	bool goDown = false;
 };
 
 

@@ -354,6 +354,33 @@ int TileMap::distanceFromStairTile(const Hitbox& hitbox, int& dist) const
 	return -1;
 }
 
+int TileMap::distanceFromBelowStairTile(const Hitbox& hitbox, int& dist) const
+{
+	int x0, x1, y0, y1;
+	x0 = (int)hitbox.min.x / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y0 = (int)hitbox.min.y / tileSize;
+	y1 = (int)hitbox.max.y / tileSize;
+	for (int x = x0; x <= x1; x++)
+	{
+		for (int y = y0; y <= y1 && y < mapSize.y; y++)
+		{
+			int tile = map[y * mapSize.x + x];
+			if (tile % 8 == 1)
+			{
+				dist = (int)hitbox.min.x - x * tileSize - 1;
+				return 1;
+			}
+			else if (tile % 8 == 2)
+			{
+				dist = (int)hitbox.max.x - (x * tileSize + tileSize) + 1;
+				return 2;
+			}
+		}
+	}
+	return -1;
+}
+
 void TileMap::addCollision(const Hitbox& hitbox)
 {
 	int x0, x1, y0, y1;

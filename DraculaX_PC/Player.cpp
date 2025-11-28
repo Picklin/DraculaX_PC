@@ -445,8 +445,10 @@ void Player::childUpdate(int deltaTime)
 					JUMP_HEIGHT = 64;
 					JUMP_ANGLE_STEP = 4;
 					bJumping = false;
-					bClimbing = true;
 					backflipping = false;
+					bClimbing = true;
+					goDown = false;
+					linedUpStair = true;
 					position.y += 8;
 					sprite->changeAnimation(IDLE);
 					if (tile == 1)
@@ -463,6 +465,8 @@ void Player::childUpdate(int deltaTime)
 						lookingLeft = true;
 						position.x -= 8;
 					}
+					//stairPosX = (int)position.x;
+					//stairPosY = (int)position.y;
 				}
 				else
 				{
@@ -558,15 +562,21 @@ void Player::childUpdate(int deltaTime)
 				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true; 
+					linedUpStair = false;
+					goDown = false;
 					rightUpStair = tile == 1;
-					lookingLeft = !rightUpStair;
-					sprite->changeAnimation(IDLE);
-					position.x -= distance;				//En vez de ponernos en la posicion de golpe, hay que hacer que el personaje se mueva hacia ahí
+					stairPosX = (int)position.x - distance;
+					stairPosY = (int)position.y;
 				}
-				/*else if (inputIndex == inputMap[DOWN] && grounded)
+				else if (inputIndex == inputMap[DOWN] && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsCollisionBox(), distance)) != -1))
 				{
-					findDownStair();
-				}*/
+					bClimbing = true;
+					linedUpStair = false;
+					goDown = true;
+					rightUpStair = tile == 1;
+					stairPosX = (int)position.x - distance;
+					stairPosY = (int)position.y + 8;
+				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
 				Hitbox cb = getTerrainCollisionBox();
@@ -699,12 +709,34 @@ void Player::childUpdate(int deltaTime)
 	}
 	else if (bClimbing)
 	{
-		prevYpos = position.y;
-		stairMovement();
-		bool goingUp = (prevYpos - position.y) > 0;
-		Hitbox cb = getStairsCollisionBox();
-		if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
-		else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+		if (linedUpStair)
+		{
+			prevYpos = position.y;
+			stairMovement();
+			bool goingUp = (prevYpos - position.y) > 0;
+			Hitbox cb = getStairsCollisionBox();
+			if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
+			else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+			linedUpStair = bClimbing;
+		}
+		else if ((int)position.x != stairPosX)
+		{
+			if (anim != WALK) sprite->changeAnimation(WALK);
+			lookingLeft = position.x > stairPosX;
+			position.x += (!lookingLeft - lookingLeft);
+		}
+		else if ((int)position.y != stairPosY)
+		{
+			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
+			position.y++;
+		}
+		else
+		{
+			sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
+			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
+			linedUpStair = true;
+			prevDownPressed = false;
+		}
 	}
 	else
 	{
@@ -726,36 +758,6 @@ void Player::childUpdate(int deltaTime)
 	}
 	setPosition(position);
 	sprite->update(deltaTime);
-}
-
-void Player::findUpStair()
-{
-	int i = 0;
-	int numStairs = stairsInfo->size();
-	while (i < numStairs && !bClimbing)
-	{
-		bClimbing = (*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
-		if (bClimbing)
-		{
-			currentStair = &(*stairsInfo)[i];
-		}
-		i++;
-	}
-}
-
-void Player::findDownStair()
-{
-	int i = 0;
-	int numStairs = stairsInfo->size();
-	while (i < numStairs && !bClimbing)
-	{
-		bClimbing = !(*stairsInfo)[i].up && collision((*stairsInfo)[i].areaDetect, getStairsCollisionBox());
-		if (bClimbing)
-		{
-			currentStair = &(*stairsInfo)[i];
-		}
-		i++;
-	}
 }
 
 void Player::stairMovement()
@@ -848,6 +850,14 @@ const Hitbox Player::getStairsCollisionBox() const
 	Hitbox box;
 	box.min = position + glm::vec2(22, 56);
 	box.max = position + glm::vec2(42, 63);
+	return box;
+}
+
+const Hitbox Player::getBelowStairsCollisionBox() const
+{
+	Hitbox box;
+	box.min = position + glm::vec2(22, 64);
+	box.max = position + glm::vec2(42, 79);
 	return box;
 }
 

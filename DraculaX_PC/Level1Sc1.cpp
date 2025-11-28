@@ -85,49 +85,6 @@ TileMap* Level1Sc1::setStairsMap()
 	return TileMap::createTileMap("levels/level1sc1/stairs.txt", MAP_OFFSET, *basicShader);
 }
 
-void Level1Sc1::setStairsInfo()
-{
-	stairsInfo.reserve(1);
-	Stair st;
-	Hitbox hb;
-	int tileSize = map->getTileSize();
-	hb.min = glm::vec2(32 * tileSize, 24 * tileSize);
-	hb.max = glm::vec2(34 * tileSize, 26 * tileSize);
-	st.areaDetect = hb;
-	st.posX = (int)hb.min.x - 32;
-	st.up = true;
-	st.right = true;
-	st.ydistance = 11 * tileSize;
-	stairsInfo.emplace_back(st);
-
-	hb.min = glm::vec2(66 * tileSize, 24 * tileSize);
-	hb.max = glm::vec2(68 * tileSize, 26 * tileSize);
-	st.areaDetect = hb;
-	st.posX = (int)hb.max.x - 32;
-	st.up = true;
-	st.right = false;
-	st.ydistance = 11 * tileSize;
-	stairsInfo.emplace_back(st);
-
-	hb.min = glm::vec2(42 * tileSize, 13 * tileSize);
-	hb.max = glm::vec2(44 * tileSize, 15 * tileSize);
-	st.areaDetect = hb;
-	st.posX = (int)hb.max.x - 32;
-	st.up = false;
-	st.right = true;
-	st.ydistance = 11 * tileSize;
-	stairsInfo.emplace_back(st);
-
-	hb.min = glm::vec2(56 * tileSize, 13 * tileSize);
-	hb.max = glm::vec2(58 * tileSize, 15 * tileSize);
-	st.areaDetect = hb;
-	st.posX = (int)hb.min.x - 32;
-	st.up = false;
-	st.right = false;
-	st.ydistance = 11 * tileSize;
-	stairsInfo.emplace_back(st);
-}
-
 void Level1Sc1::initItems() 
 {
 
@@ -138,7 +95,6 @@ void Level1Sc1::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setStairsInfo(&stairsInfo);
 	player->setPosition(glm::vec2(8 * map->getTileSize(), 16 * map->getTileSize()));
 }
 void Level1Sc1::updateCamera() 
