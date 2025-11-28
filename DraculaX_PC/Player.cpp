@@ -447,7 +447,6 @@ void Player::childUpdate(int deltaTime)
 					bJumping = false;
 					backflipping = false;
 					bClimbing = true;
-					goDown = false;
 					linedUpStair = true;
 					position.y += 8;
 					sprite->changeAnimation(IDLE);
@@ -465,6 +464,7 @@ void Player::childUpdate(int deltaTime)
 						lookingLeft = true;
 						position.x -= 8;
 					}
+					goDown = (lookingLeft && rightUpStair) || (!lookingLeft && !rightUpStair);
 					//stairPosX = (int)position.x;
 					//stairPosY = (int)position.y;
 				}
@@ -717,7 +717,9 @@ void Player::childUpdate(int deltaTime)
 			Hitbox cb = getStairsCollisionBox();
 			if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
 			else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+			bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
 			linedUpStair = bClimbing;
+			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 		else if ((int)position.x != stairPosX)
 		{
