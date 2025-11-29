@@ -10,13 +10,13 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_ULTING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_ULTING, STATE_CLIMBING
 };
 
 enum PlayerAnims
 {
 	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, BACKFLIP_SKID, 
-	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL,
+	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN
 };
 
 enum Inputs
@@ -122,6 +122,8 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::BACKFLIP_SKID, PlayerStates::STATE_IDLE },
 	{ PlayerAnims::ULT, PlayerStates::STATE_ULTING },
 	{ PlayerAnims::ULT_FINAL, PlayerStates::STATE_ULTING },
+	{ PlayerAnims::CLIMB_IDLE_UP, PlayerStates::STATE_CLIMBING },
+	{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING }
 };
 
 void Player::render()
@@ -184,7 +186,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 32;
 
-	sprite->setNumberAnimations(29);
+	sprite->setNumberAnimations(31);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -324,6 +326,12 @@ void Player::setAnimations()
 	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.3f, 0.8f));
 	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.4f, 0.8f));
 
+	sprite->setAnimationSpeed(CLIMB_IDLE_UP, 0);
+	sprite->addKeyframe(CLIMB_IDLE_UP, glm::vec2(0.f, 0.9f));
+
+	sprite->setAnimationSpeed(CLIMB_IDLE_DOWN, 0);
+	sprite->addKeyframe(CLIMB_IDLE_DOWN, glm::vec2(0.1f, 0.9f));
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
@@ -449,20 +457,20 @@ void Player::childUpdate(int deltaTime)
 					bClimbing = true;
 					linedUpStair = true;
 					position.y += 8;
-					sprite->changeAnimation(IDLE);
+					sprite->changeAnimation(CLIMB_IDLE_UP);
 					if (tile == 1)
 					{
 						stairs->collisionMoveRight(getStairsCollisionBox(), &position.x);
 						rightUpStair = true;
 						lookingLeft = false;
-						position.x += 8;
+						position.x += 5;
 					}
 					else
 					{
 						stairs->collisionMoveLeft(getStairsCollisionBox(), &position.x);
 						rightUpStair = false;
 						lookingLeft = true;
-						position.x -= 8;
+						position.x -= 5;
 					}
 					goDown = (lookingLeft && rightUpStair) || (!lookingLeft && !rightUpStair);
 					//stairPosX = (int)position.x;
@@ -559,7 +567,7 @@ void Player::childUpdate(int deltaTime)
 						inputIndex = commandInputIndex;
 					}
 				}
-				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsCollisionBox(), distance)) != -1))
+				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true; 
 					linedUpStair = false;
@@ -568,7 +576,7 @@ void Player::childUpdate(int deltaTime)
 					stairPosX = (int)position.x - distance;
 					stairPosY = (int)position.y;
 				}
-				else if (inputIndex == inputMap[DOWN] && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsCollisionBox(), distance)) != -1))
+				else if (inputIndex == inputMap[DOWN] && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true;
 					linedUpStair = false;
@@ -724,17 +732,17 @@ void Player::childUpdate(int deltaTime)
 		else if ((int)position.x != stairPosX)
 		{
 			if (anim != WALK) sprite->changeAnimation(WALK);
-			lookingLeft = position.x > stairPosX;
-			position.x += (!lookingLeft - lookingLeft);
+			bool goLeft = position.x > stairPosX;
+			position.x += (!goLeft - goLeft);
 		}
 		else if ((int)position.y != stairPosY)
 		{
-			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
+			//lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
 			position.y++;
 		}
 		else
 		{
-			sprite->changeAnimation(IDLE);		//esto será idle pero subiendo escaleras
+			sprite->changeAnimation(CLIMB_IDLE_UP+goDown);
 			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
 			linedUpStair = true;
 			prevDownPressed = false;
@@ -776,6 +784,7 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl += (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(up || right) || (down || left);
+		if (sprite->animation() != CLIMB_IDLE_UP + lookingLeft) sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
 	}
 	else
 	{
@@ -783,6 +792,7 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl -= (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(down || right) || (up || left);
+		if (sprite->animation() != CLIMB_IDLE_UP + !lookingLeft) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
 	}
 	position.x += xDispl;
 	position.y += yDispl;
@@ -855,11 +865,19 @@ const Hitbox Player::getStairsCollisionBox() const
 	return box;
 }
 
-const Hitbox Player::getBelowStairsCollisionBox() const
+const Hitbox Player::getStairsDetectionCollisionBox() const
 {
 	Hitbox box;
-	box.min = position + glm::vec2(22, 64);
-	box.max = position + glm::vec2(42, 79);
+	box.min = position + glm::vec2(31, 56);
+	box.max = position + glm::vec2(38, 63);
+	return box;
+}
+
+const Hitbox Player::getBelowStairsDetectionCollisionBox() const
+{
+	Hitbox box;
+	box.min = position + glm::vec2(31, 64);
+	box.max = position + glm::vec2(38, 79);
 	return box;
 }
 

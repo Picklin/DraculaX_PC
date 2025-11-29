@@ -18,7 +18,7 @@ images/levels/stairs.png 	-- Tilesheet
                                                                                                                                 
                                                                                                                                 
                                            7            7                                                                       
-                                          15            42                                                                      
+                                          13            42                                                                      
                                          15              62                                                                     
                                         15                62                                                                    
                                        15                  62                                                                   

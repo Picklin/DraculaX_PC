@@ -36,7 +36,8 @@ private:
 	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 	const Hitbox getTerrainCollisionBox() const;
 	const Hitbox getStairsCollisionBox() const;
-	const Hitbox getBelowStairsCollisionBox() const;
+	const Hitbox getStairsDetectionCollisionBox() const;
+	const Hitbox getBelowStairsDetectionCollisionBox() const;
 
 private:
 	Afterimages afterimages;
