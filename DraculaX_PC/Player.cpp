@@ -69,7 +69,16 @@ const vector<glm::vec2> crouchWhipOffset = {
 };
 
 const vector<glm::vec2> leftCrouchWhipOffset = {
-	glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),glm::vec2(1,16),
+	glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16),
+};
+
+const vector<glm::vec2> upstairsOffset = {
+	//glm::vec2(0,0), glm::vec2(2,-1), glm::vec2(4,-3), glm::vec2(6,-5), glm::vec2(8,-7), glm::vec2(10, -9), glm::vec2(12,-11), glm::vec2(14,-13), glm::vec2(16,-15)
+	glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2)
+};
+
+const vector<glm::vec2> downstairsOffset = {
+	glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2)
 };
 
 std::map<int, int> animMap = {
