@@ -799,16 +799,15 @@ void Player::stairMovement()
 		yDispl += (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(up || right) || (down || left);
 		int kf = sprite->getCurrentKeyframe();
-		stepping = stepping && (anim == UPSTAIRS + (down || left)) && (kf < 5 || (stepping2));
-		stepping2 = stepping2 && !sprite->animationEnded();
-		//cout << stepping2 << endl;
+		stepping = stepping && (anim == UPSTAIRS + (down || left)) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
+		stepping2 = stepping2 && kf != 1 && (!sprite->animationEnded() || kf == 0);
 		//cout << "keyframe: " << sprite->getCurrentKeyframe() <<endl<< "keypressed: " << keypressed << endl;
 		if (!stepping)
 		{
 			if (!keypressed && anim != (CLIMB_IDLE_UP + lookingLeft))
 			{
 				sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
-				position.y -= prevAnim == UPSTAIRS + (down || left);
+				position.y -= (prevAnim == UPSTAIRS + (down || left)) * (prevKeyframe != 0);
 				stepping2 = false;
 			}
 			else if (keypressed && anim != (UPSTAIRS + (down || left)))
