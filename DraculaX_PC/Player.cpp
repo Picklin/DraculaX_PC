@@ -16,7 +16,7 @@ enum PlayerStates
 enum PlayerAnims
 {
 	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, BACKFLIP_SKID, 
-	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN
+	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
 enum Inputs
@@ -177,7 +177,7 @@ string Player::getName() const
 
 const string Player::getSpritesheet() const
 {
-	return "images/Richter/Richter.png";
+	return "images/Richter/Richter_v2.png";
 }
 
 const glm::vec2 Player::getSizeInSpritesheet() const
@@ -195,7 +195,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 32;
 
-	sprite->setNumberAnimations(31);
+	sprite->setNumberAnimations(33);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -265,15 +265,15 @@ void Player::setAnimations()
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 
 	sprite->setAnimationSpeed(SKID, 32);
-	sprite->addKeyframe(SKID, glm::vec2(0.7f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
-	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.6f));
+	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.4f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
+	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
+	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
+	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
+	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
+	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
 
 	sprite->setAnimationSpeed(DASH1, 24);
 	sprite->addKeyframe(DASH1, glm::vec2(0.9f, 0.f));
@@ -296,50 +296,56 @@ void Player::setAnimations()
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.4f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.4f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.f));
+	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.6f));
 
 	sprite->setAnimationSpeed(DASH_KICK_FINAL, 0);
-	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.4f));
+	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.6f));
 
 	sprite->setAnimationSpeed(DASH_COMBO, 16);
-	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.0f, 0.6f));
-	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.1f, 0.6f));
-	sprite->animatorX(DASH_COMBO, 5, 0.2f, 0.1f, 0.6f);
+	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.8f, 0.3f));
+	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.9f, 0.3f));
+	sprite->animatorX(DASH_COMBO, 5, 0.9f, 0.f, 0.3f);
 
 	sprite->setAnimationSpeed(DASH_COMBO_FINAL, 0);
-	sprite->addKeyframe(DASH_COMBO_FINAL, glm::vec2(0.1f, 0.6f));
+	sprite->addKeyframe(DASH_COMBO_FINAL, glm::vec2(0.9f, 0.3f));
 
 	sprite->setAnimationSpeed(UPPERCUT, 0);
-	sprite->addKeyframe(UPPERCUT, glm::vec2(0.9f, 0.7f));
+	sprite->addKeyframe(UPPERCUT, glm::vec2(0.9f, 0.6f));
 
 	sprite->setAnimationSpeed(BACKFLIP, 16);
-	sprite->animatorX(BACKFLIP, 7, 0.f, 0.1f, 0.7f);
+	sprite->animatorX(BACKFLIP, 7, 0.f, 0.1f, 0.6f);
 
 	sprite->setAnimationSpeed(BACKFLIP_FINAL, 0);
-	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.7f, 0.7f));
+	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.7f, 0.6f));
 
 	sprite->setAnimationSpeed(BACKFLIP_SKID, 2);
-	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.7f));
+	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.6f));
 
 	sprite->setAnimationSpeed(ULT, 16);
 	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
 	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
-	sprite->animatorX(ULT, 3, 0.f, 0.1f, 0.8f);
+	sprite->animatorX(ULT, 3, 0.7f, 0.1f, 0.5f);
 
 	sprite->setAnimationSpeed(ULT_FINAL, 30);
-	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.3f, 0.8f));
-	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.4f, 0.8f));
+	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.8f, 0.9f));
+	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.9f, 0.9f));
 
 	sprite->setAnimationSpeed(CLIMB_IDLE_UP, 0);
-	sprite->addKeyframe(CLIMB_IDLE_UP, glm::vec2(0.f, 0.9f));
+	sprite->addKeyframe(CLIMB_IDLE_UP, glm::vec2(0.f, 0.7f));
 
 	sprite->setAnimationSpeed(CLIMB_IDLE_DOWN, 0);
-	sprite->addKeyframe(CLIMB_IDLE_DOWN, glm::vec2(0.1f, 0.9f));
+	sprite->addKeyframe(CLIMB_IDLE_DOWN, glm::vec2(0.9f, 0.7f));
+
+	sprite->setAnimationSpeed(UPSTAIRS, 14);
+	sprite->animatorX(UPSTAIRS, 8, 0.1f, 0.1f, 0.7f);
+
+	sprite->setAnimationSpeed(DOWNSTAIRS, 14);
+	sprite->animatorX(DOWNSTAIRS, 10, 0.f, 0.1f, 0.8f);
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
@@ -672,7 +678,6 @@ void Player::childUpdate(int deltaTime)
 				bDashing = velocityX != 0 || (anim != DASH_KICK_FINAL);
 				if (!bDashing)
 				{
-					lookingLeft = !lookingLeft;
 					sprite->changeAnimation(CROUCH_FINAL);
 				}
 			}
@@ -781,6 +786,7 @@ void Player::childUpdate(int deltaTime)
 
 void Player::stairMovement()
 {
+	int anim = sprite->animation();
 	bool up = Game::instance().getKey(GLFW_KEY_UP);
 	bool down = Game::instance().getKey(GLFW_KEY_DOWN);
 	bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
@@ -793,7 +799,8 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl += (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(up || right) || (down || left);
-		if (sprite->animation() != CLIMB_IDLE_UP + lookingLeft) sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
+		if (!keypressed && anim != (CLIMB_IDLE_UP + lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
+		else if (keypressed && anim != (UPSTAIRS + (down || left))) sprite->changeAnimation(UPSTAIRS + (down || left));
 	}
 	else
 	{
@@ -801,7 +808,8 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl -= (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(down || right) || (up || left);
-		if (sprite->animation() != CLIMB_IDLE_UP + !lookingLeft) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
+		if (!keypressed && anim != (CLIMB_IDLE_UP + !lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
+		else if (keypressed && anim != (UPSTAIRS + (down || right))) sprite->changeAnimation(UPSTAIRS + (down || right));
 	}
 	position.x += xDispl;
 	position.y += yDispl;
