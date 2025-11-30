@@ -60,6 +60,8 @@ private:
 	int ultTimeElapsed = 0;
 	int stairPosX = 0;
 	int stairPosY = 0;
+	int prevKeyframe = 0;
+	int prevAnim = 0;
 
 	float velocityX = 0.f;
 	float startY = 0.f;
@@ -91,6 +93,8 @@ private:
 	bool linedUpStair = false;
 	bool rightUpStair = false;
 	bool goDown = false;
+	bool stepping = false;
+	bool stepping2 = false;
 };
 
 

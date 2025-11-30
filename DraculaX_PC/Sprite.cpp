@@ -220,7 +220,7 @@ void Sprite::setPosition(const glm::vec2& pos)
 const bool Sprite::animationEnded()
 {
 	bool ret = animationDoneOnce && currentKeyframe == 0;
-	animationDoneOnce = false;
+	//animationDoneOnce = false;
 	return ret;
 }
 

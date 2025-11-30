@@ -72,13 +72,9 @@ const vector<glm::vec2> leftCrouchWhipOffset = {
 	glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16),
 };
 
-const vector<glm::vec2> upstairsOffset = {
-	//glm::vec2(0,0), glm::vec2(2,-1), glm::vec2(4,-3), glm::vec2(6,-5), glm::vec2(8,-7), glm::vec2(10, -9), glm::vec2(12,-11), glm::vec2(14,-13), glm::vec2(16,-15)
-	glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2)
-};
-
-const vector<glm::vec2> downstairsOffset = {
-	glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2)
+const vector<glm::vec2> stairsOffset = {
+	glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), //para arriba
+	glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2) //para abajo
 };
 
 std::map<int, int> animMap = {
@@ -132,7 +128,9 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::ULT, PlayerStates::STATE_ULTING },
 	{ PlayerAnims::ULT_FINAL, PlayerStates::STATE_ULTING },
 	{ PlayerAnims::CLIMB_IDLE_UP, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING }
+	{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING },
+	{ PlayerAnims:: UPSTAIRS, PlayerStates::STATE_CLIMBING },
+	{ PlayerAnims::DOWNSTAIRS, PlayerStates::STATE_CLIMBING }
 };
 
 void Player::render()
@@ -341,10 +339,10 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(CLIMB_IDLE_DOWN, 0);
 	sprite->addKeyframe(CLIMB_IDLE_DOWN, glm::vec2(0.9f, 0.7f));
 
-	sprite->setAnimationSpeed(UPSTAIRS, 14);
+	sprite->setAnimationSpeed(UPSTAIRS, 20);
 	sprite->animatorX(UPSTAIRS, 8, 0.1f, 0.1f, 0.7f);
 
-	sprite->setAnimationSpeed(DOWNSTAIRS, 14);
+	sprite->setAnimationSpeed(DOWNSTAIRS, 20);
 	sprite->animatorX(DOWNSTAIRS, 10, 0.f, 0.1f, 0.8f);
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
@@ -373,6 +371,7 @@ void Player::setHitboxes()
 
 void Player::childUpdate(int deltaTime)
 {
+	sprite->update(deltaTime);
 	//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
 	int anim = sprite->animation();
 	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
@@ -780,8 +779,8 @@ void Player::childUpdate(int deltaTime)
 			startY += (ultTimeElapsed > 1250);
 		}
 	}
+	prevAnim = anim;
 	setPosition(position);
-	sprite->update(deltaTime);
 }
 
 void Player::stairMovement()
@@ -799,8 +798,48 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl += (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(up || right) || (down || left);
-		if (!keypressed && anim != (CLIMB_IDLE_UP + lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
-		else if (keypressed && anim != (UPSTAIRS + (down || left))) sprite->changeAnimation(UPSTAIRS + (down || left));
+		int kf = sprite->getCurrentKeyframe();
+		stepping = stepping && (anim == UPSTAIRS + (down || left)) && (kf < 5 || (stepping2));
+		stepping2 = stepping2 && !sprite->animationEnded();
+		//cout << stepping2 << endl;
+		//cout << "keyframe: " << sprite->getCurrentKeyframe() <<endl<< "keypressed: " << keypressed << endl;
+		if (!stepping)
+		{
+			if (!keypressed && anim != (CLIMB_IDLE_UP + lookingLeft))
+			{
+				sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
+				position.y -= prevAnim == UPSTAIRS + (down || left);
+				stepping2 = false;
+			}
+			else if (keypressed && anim != (UPSTAIRS + (down || left)))
+			{
+				sprite->changeAnimation(UPSTAIRS + (down || left));
+				if (sprite->animation() == DOWNSTAIRS)
+				{
+					position.x += stairsOffset[kf + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == anim);
+					position.y += stairsOffset[kf + 8 * (down || left)].y * (prevAnim == anim);
+				}
+				stepping = true;
+			}
+			else if (anim == (UPSTAIRS + (down || left)) && kf == 5)
+			{
+				stepping = true;
+				stepping2 = true;
+				position.x += stairsOffset[kf + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == anim);
+				position.y += stairsOffset[kf + 8 * (down || left)].y * (prevAnim == anim);
+			}
+		}
+		else
+		{
+			int currentKeyframe = sprite->getCurrentKeyframe();
+			if (currentKeyframe != prevKeyframe)
+			{
+				int currentAnim = sprite->animation();
+				position.x += stairsOffset[currentKeyframe + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == currentAnim);
+				position.y += stairsOffset[currentKeyframe + 8 * (down || left)].y * (prevAnim == currentAnim);
+			}
+		}
+		prevAnim = sprite->animation();
 	}
 	else
 	{
@@ -808,11 +847,23 @@ void Player::stairMovement()
 		xDispl += (!lookingLeft - lookingLeft) * keypressed;
 		yDispl -= (lookingLeft - !lookingLeft) * keypressed;
 		lookingLeft = lookingLeft && !(down || right) || (up || left);
-		if (!keypressed && anim != (CLIMB_IDLE_UP + !lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
-		else if (keypressed && anim != (UPSTAIRS + (down || right))) sprite->changeAnimation(UPSTAIRS + (down || right));
+		stepping = stepping && keypressed && (prevKeyframe == sprite->getCurrentKeyframe());
+		if (!stepping)
+		{
+			if (!keypressed && anim != (CLIMB_IDLE_UP + !lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
+			else if (keypressed)
+			{
+				if (anim != (UPSTAIRS + (down || right))) sprite->changeAnimation(UPSTAIRS + (down || right));
+				int currentKeyframe = sprite->getCurrentKeyframe();
+				int currentAnim = sprite->animation();
+				position.x += stairsOffset[currentKeyframe + 8 * (down || right)].x * (!lookingLeft - lookingLeft) * (prevAnim == currentAnim);
+				position.y += stairsOffset[currentKeyframe + 8 * (down || right)].y * (prevAnim == currentAnim);
+				stepping = true;
+			}
+		}
+		prevAnim = sprite->animation();
 	}
-	position.x += xDispl;
-	position.y += yDispl;
+	prevKeyframe = sprite->getCurrentKeyframe();
 }
 
 void Player::calcIncrement(float& valToInc, float targetVal, float factor)
