@@ -62,10 +62,12 @@ private:
 	int stairPosY = 0;
 	int prevKeyframe = 0;
 	int prevAnim = 0;
+	int fallDistance = 0;
 
 	float velocityX = 0.f;
 	float startY = 0.f;
 	float timeRunning = 0.f;
+	float timeRecoveringFromJump = 0.f;
 	float dashDistance = 0.f;
 	float prevYpos = 0.f;
 
@@ -73,6 +75,7 @@ private:
 	bool bJumping = false;
 	bool bCrouching = false;
 	bool bDashing = false;
+	bool bRunning = false;
 	bool bUlting = false;
 	bool backflipping = false;
 	bool whipping = false;
@@ -80,13 +83,12 @@ private:
 	bool grounded = true;
 	bool lookingLeft = false;
 	bool lookingLeftAtk = false;
-
 	bool prevRightPressed = false;
 	bool prevLeftPressed = false;
 	bool prevDownPressed = false;
-	bool gainMomentum = false;
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
+	bool recoverFromJump = false;
 
 	//stairs booleans
 	bool bClimbing = false;

@@ -19,20 +19,6 @@ enum PlayerAnims
 	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
-enum Inputs
-{
-	RIGHT, LEFT, DOWN, UP, A, X
-};
-
-std::map<int, int> inputMap = {
-	{ RIGHT, 1 },
-	{ LEFT, 1},
-	{ A, 2 },
-	{ DOWN, 4 },
-	{ X, 8 },
-	{ UP, 16 },
-};
-
 struct Command
 {
 	vector<int> sequence;
@@ -77,11 +63,26 @@ const vector<glm::vec2> stairsOffset = {
 	glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2) //para abajo
 };
 
+enum Inputs
+{
+	RIGHT, LEFT, DOWN, UP, A, X
+};
+
+std::map<int, int> inputMap = {
+	{ RIGHT, 1 },
+	{ LEFT, 1},
+	{ A, 2 },
+	{ DOWN, 4 },
+	{ X, 8 },
+	{ UP, 16 },
+};
+
 std::map<int, int> animMap = {
 	{ 0, PlayerAnims::IDLE },
 	{ inputMap[RIGHT], PlayerAnims::WALK},
 	{ inputMap[DOWN], PlayerAnims::CROUCH},
 	{ inputMap[DOWN] | inputMap[A], PlayerAnims::DASH1},
+	{ inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::CROUCH},
 	{ inputMap[X], PlayerAnims::ATTACK},
 	{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
 	{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
@@ -138,7 +139,7 @@ void Player::render()
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
 	int anim = sprite->animation();
-	if (gainMomentum || (loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
+	if (bRunning || (loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
 	if (whipping)
 	{
@@ -391,7 +392,7 @@ void Player::childUpdate(int deltaTime)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
-		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING) + lookingLeftAtk * (state == STATE_ATTACKING);
+		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING && state != STATE_CROUCHING) + lookingLeftAtk * (state == STATE_ATTACKING || state == STATE_CROUCHING);
 
 		if (loseMomentum)
 		{
@@ -411,11 +412,11 @@ void Player::childUpdate(int deltaTime)
 		}
 	
 		bool getup = (prevDownPressed && grounded && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
-			|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN));
+			|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN)) || (timeRecoveringFromJump >= 0.5 && recoverFromJump);
 
 		if (bJumping)
 		{
-			velocityX = (rightPressed - leftPressed) * (1.f + 1.f * gainMomentum);
+			velocityX = (rightPressed - leftPressed) * (1.f + 1.f * bRunning);
 			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 			{
 				Hitbox cb = getTerrainCollisionBox();
@@ -455,7 +456,7 @@ void Player::childUpdate(int deltaTime)
 				if (jumpAngle >= 180)
 				{
 					bJumping = false;
-					loseMomentum = true;
+					//loseMomentum = true;
 					position.y = startY;
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
@@ -513,13 +514,39 @@ void Player::childUpdate(int deltaTime)
 				sprite->changeAnimation(ATTACK);
 				sprite->setKeyframe(keyframe);
 			}
-			else sprite->changeAnimation(GETUP);
+			else
+			{
+				sprite->changeAnimation(GETUP);
+				recoverFromJump = false;
+				timeRecoveringFromJump = 0;
+				lookingLeftAtk = lookingLeft;
+			}
+		}
+		else if (recoverFromJump && grounded)
+		{
+			if (state != STATE_CROUCHING)
+			{
+				sprite->changeAnimation(CROUCH);
+				timeRecoveringFromJump = 0;
+				bRunning = false;
+				velocityX = 0;
+				fallDistance = 0;
+			}
+			else
+			{
+				timeRecoveringFromJump += deltaTime / 1000.f;
+			}
 		}
 		else if (!bDashing && !backflipping)
 		{
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
 				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+			if (!grounded)
+			{
+				fallDistance += FALL_SPEED;
+				recoverFromJump = fallDistance >= 48;
+			}
 			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && state != STATE_ATTACKING)
 			{
 				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
@@ -545,9 +572,9 @@ void Player::childUpdate(int deltaTime)
 				}
 				else if (!loseMomentum)
 				{
-					loseMomentum = (timeRunning >= .5f) && gainMomentum && !(rightPressed || leftPressed);
-					gainMomentum = gainMomentum && (rightPressed || leftPressed);
-					velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * gainMomentum)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+					loseMomentum = (timeRunning >= .5f) && bRunning && !(rightPressed || leftPressed);
+					bRunning = bRunning && (rightPressed || leftPressed);
+					velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * bRunning)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
@@ -569,7 +596,7 @@ void Player::childUpdate(int deltaTime)
 				{
 					int commandInputIndex = RIGHT_RUN_COMMAND.index * checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow)
 						+ LEFT_RUN_COMMAND.index * checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow)
-						+ RIGHT_RUN_COMMAND.index * gainMomentum;
+						+ RIGHT_RUN_COMMAND.index * bRunning;
 
 					if (Game::instance().getKey(GLFW_KEY_X))
 					{
@@ -626,7 +653,7 @@ void Player::childUpdate(int deltaTime)
 					sprite->changeAnimation(ATTACK_CROUCH);
 					sprite->setKeyframe(keyframe);
 				}
-				gainMomentum = anim == RUN;
+				bRunning = (anim == RUN) || (anim==FALL_FINAL && bRunning);
 				int crouchanim = sprite->animation();
 				bCrouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
 			}
@@ -790,42 +817,36 @@ void Player::stairMovement()
 	bool down = Game::instance().getKey(GLFW_KEY_DOWN);
 	bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
 	bool left = Game::instance().getKey(GLFW_KEY_LEFT);
-	int xDispl = 0;
-	int yDispl = 0;
-	if (rightUpStair)
+	
+	bool keypressed = (up || right || down || left);
+	//parriba
+	if (up || (right && rightUpStair) || (left && !rightUpStair) || !keypressed)
 	{
-		bool keypressed = (up || down || right || left);
-		xDispl += (!lookingLeft - lookingLeft) * keypressed;
-		yDispl += (lookingLeft - !lookingLeft) * keypressed;
-		lookingLeft = lookingLeft && !(up || right) || (down || left);
 		int kf = sprite->getCurrentKeyframe();
-		stepping = stepping && (anim == UPSTAIRS + (down || left)) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
+		stepping = stepping && (anim == UPSTAIRS) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
 		stepping2 = stepping2 && kf != 1 && (!sprite->animationEnded() || kf == 0);
 		//cout << "keyframe: " << sprite->getCurrentKeyframe() <<endl<< "keypressed: " << keypressed << endl;
 		if (!stepping)
 		{
-			if (!keypressed && anim != (CLIMB_IDLE_UP + lookingLeft))
+			if (!keypressed && anim != CLIMB_IDLE_UP)
 			{
-				sprite->changeAnimation(CLIMB_IDLE_UP + lookingLeft);
-				position.y -= (prevAnim == UPSTAIRS + (down || left)) * (prevKeyframe != 0);
+				sprite->changeAnimation(CLIMB_IDLE_UP);
+				position.y -= (prevAnim == UPSTAIRS) * (prevKeyframe != 0);
 				stepping2 = false;
 			}
-			else if (keypressed && anim != (UPSTAIRS + (down || left)))
+			else if (keypressed && anim != UPSTAIRS)
 			{
-				sprite->changeAnimation(UPSTAIRS + (down || left));
-				if (sprite->animation() == DOWNSTAIRS)
-				{
-					position.x += stairsOffset[kf + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == anim);
-					position.y += stairsOffset[kf + 8 * (down || left)].y * (prevAnim == anim);
-				}
+				sprite->changeAnimation(UPSTAIRS);
 				stepping = true;
 			}
-			else if (anim == (UPSTAIRS + (down || left)) && kf == 5)
+			else if (anim == UPSTAIRS && kf == 5)
 			{
 				stepping = true;
 				stepping2 = true;
-				position.x += stairsOffset[kf + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == anim);
-				position.y += stairsOffset[kf + 8 * (down || left)].y * (prevAnim == anim);
+
+				float xDispl = stairsOffset[kf].x * (prevAnim == anim);
+				position.x += xDispl * (rightUpStair - !rightUpStair);
+				position.y += stairsOffset[kf].y * (prevAnim == anim);
 			}
 		}
 		else
@@ -834,34 +855,15 @@ void Player::stairMovement()
 			if (currentKeyframe != prevKeyframe)
 			{
 				int currentAnim = sprite->animation();
-				position.x += stairsOffset[currentKeyframe + 8 * (down || left)].x * (!lookingLeft - lookingLeft) * (prevAnim == currentAnim);
-				position.y += stairsOffset[currentKeyframe + 8 * (down || left)].y * (prevAnim == currentAnim);
+				float xDispl = stairsOffset[kf].x * (prevAnim == anim);
+				position.x += xDispl * (rightUpStair - !rightUpStair);
+				position.y += stairsOffset[currentKeyframe].y * (prevAnim == currentAnim);
 			}
 		}
 		prevAnim = sprite->animation();
 	}
-	else
-	{
-		bool keypressed = (up || down || right || left);
-		xDispl += (!lookingLeft - lookingLeft) * keypressed;
-		yDispl -= (lookingLeft - !lookingLeft) * keypressed;
-		lookingLeft = lookingLeft && !(down || right) || (up || left);
-		stepping = stepping && keypressed && (prevKeyframe == sprite->getCurrentKeyframe());
-		if (!stepping)
-		{
-			if (!keypressed && anim != (CLIMB_IDLE_UP + !lookingLeft)) sprite->changeAnimation(CLIMB_IDLE_UP + !lookingLeft);
-			else if (keypressed)
-			{
-				if (anim != (UPSTAIRS + (down || right))) sprite->changeAnimation(UPSTAIRS + (down || right));
-				int currentKeyframe = sprite->getCurrentKeyframe();
-				int currentAnim = sprite->animation();
-				position.x += stairsOffset[currentKeyframe + 8 * (down || right)].x * (!lookingLeft - lookingLeft) * (prevAnim == currentAnim);
-				position.y += stairsOffset[currentKeyframe + 8 * (down || right)].y * (prevAnim == currentAnim);
-				stepping = true;
-			}
-		}
-		prevAnim = sprite->animation();
-	}
+	//pabajo
+		
 	prevKeyframe = sprite->getCurrentKeyframe();
 }
 
