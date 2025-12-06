@@ -11,6 +11,16 @@ TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoo
 	return map;
 }
 
+TileMap* TileMap::createTerrainMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader)
+{
+	TileMap* map = new TileMap(levelFile, minCoords, shader);
+	for (int j = 0; j < map->mapSize.y; j++)
+	{
+		map->map[j * map->mapSize.x] = -1;
+	}
+	return map;
+}
+
 TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& shader)
 {
 	loadLevel(levelFile);
@@ -135,7 +145,6 @@ void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& shader)
 				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[1].y);
 			}
 		}
-		map[j * mapSize.x] = -1;
 	}
 
 	glGenVertexArrays(1, &vao);

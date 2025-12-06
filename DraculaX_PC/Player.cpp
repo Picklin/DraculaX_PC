@@ -398,9 +398,18 @@ void Player::childUpdate(int deltaTime)
 		{
 			if (abs(velocityX) == (1 + backflipping) && anim != (SKID + backflipping))
 			{
-				sprite->changeAnimation(SKID+backflipping);
-				anim = SKID+backflipping;
-				state = STATE_IDLE;
+				if (anim != ATTACK)
+				{
+					sprite->changeAnimation(SKID + backflipping);
+					anim = SKID + backflipping;
+					state = STATE_IDLE;
+				}
+				else
+				{
+					loseMomentum = false;
+					backflipping = false;
+					velocityX = 0.f;
+				}
 				backflipping = false;
 			}
 			velocityX *= 0.9f;
@@ -408,6 +417,7 @@ void Player::childUpdate(int deltaTime)
 			{
 				velocityX = 0.f;
 				loseMomentum = false;
+				backflipping = false;
 			}
 		}
 	
@@ -547,12 +557,19 @@ void Player::childUpdate(int deltaTime)
 				fallDistance += FALL_SPEED;
 				recoverFromJump = fallDistance >= JUMP_HEIGHT;
 			}
-			else
+			else if (anim == BACKFLIP_FINAL)
 			{
 				fallDistance = 0;
-				loseMomentum = loseMomentum || backflipping;
+				loseMomentum = true;
 			}
-			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && state != STATE_ATTACKING)
+			else if (whipping)
+			{
+				fallDistance = 0;
+				backflipping = false;
+				loseMomentum = false;
+			}
+			else fallDistance = 0;
+			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && anim != BACKFLIP_SKID && state != STATE_ATTACKING)
 			{
 				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
 				{
