@@ -390,8 +390,8 @@ void Player::childUpdate(int deltaTime)
 	}
 	else if (!bUlting && !bClimbing)
 	{
-		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) * !bDashing;
-		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed * !bDashing;
+		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) && !bDashing && !backflipping && anim != BACKFLIP_SKID;
+		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) && !rightPressed && !bDashing && !backflipping && anim != BACKFLIP_SKID;
 		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING && state != STATE_CROUCHING) + lookingLeftAtk * (state == STATE_ATTACKING || state == STATE_CROUCHING);
 
 		if (loseMomentum)
@@ -456,22 +456,25 @@ void Player::childUpdate(int deltaTime)
 				if (jumpAngle >= 180)
 				{
 					bJumping = false;
-					//loseMomentum = true;
+					//loseMomentum = backflipping && !whipping;
 					position.y = startY;
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
 				}
 				else if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
-					&& ((tile = stairs->collisionMoveDownWithTileNum(getStairsCollisionBox(), &position.y, quadSize.y)) != -1) 
+					&& ((tile = stairs->collisionMoveDownWithTileNum(getBelowStairsDetectionCollisionBox(), &position.y, quadSize.y)) != -1)
 					&& ((tile % 8 == 1) || (tile % 8 == 2)))
 				{
 					JUMP_HEIGHT = 64;
 					JUMP_ANGLE_STEP = 4;
 					bJumping = false;
-					backflipping = false;
 					bClimbing = true;
+					bRunning = false;
+					backflipping = false;
 					linedUpStair = true;
 					position.y += 8;
+					cout << tile << endl;
+					velocityX = 0;
 					sprite->changeAnimation(CLIMB_IDLE_UP);
 					if (tile == 1)
 					{
@@ -487,9 +490,6 @@ void Player::childUpdate(int deltaTime)
 						lookingLeft = true;
 						position.x -= 5;
 					}
-					goDown = (lookingLeft && rightUpStair) || (!lookingLeft && !rightUpStair);
-					//stairPosX = (int)position.x;
-					//stairPosY = (int)position.y;
 				}
 				else
 				{
@@ -501,7 +501,7 @@ void Player::childUpdate(int deltaTime)
 					if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
 					else if (!bJumping && backflipping)
 					{
-						loseMomentum = true;
+						loseMomentum = !whipping;
 					}
 				}
 			}
@@ -537,7 +537,7 @@ void Player::childUpdate(int deltaTime)
 				timeRecoveringFromJump += deltaTime / 1000.f;
 			}
 		}
-		else if (!bDashing && !backflipping)
+		else if (!bDashing)
 		{
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
@@ -545,7 +545,12 @@ void Player::childUpdate(int deltaTime)
 			if (!grounded)
 			{
 				fallDistance += FALL_SPEED;
-				recoverFromJump = fallDistance >= 48;
+				recoverFromJump = fallDistance >= JUMP_HEIGHT;
+			}
+			else
+			{
+				fallDistance = 0;
+				loseMomentum = loseMomentum || backflipping;
 			}
 			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && state != STATE_ATTACKING)
 			{
@@ -574,22 +579,26 @@ void Player::childUpdate(int deltaTime)
 				{
 					loseMomentum = (timeRunning >= .5f) && bRunning && !(rightPressed || leftPressed);
 					bRunning = bRunning && (rightPressed || leftPressed);
-					velocityX = (((rightPressed - leftPressed) + ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * bRunning)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+					velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
+						+ ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * bRunning)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
-				inputIndex += inputMap[RIGHT] * rightPressed
-					+ inputMap[LEFT] * leftPressed
-					+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
-					+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-					+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
-					+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
-				//Register inputs for command detection
-				int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
-					+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
-					+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
-					+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
-				if (inputToRegister != 0) registerInput(inputToRegister);
+				if (!backflipping && anim != BACKFLIP_SKID)
+				{
+					inputIndex += inputMap[RIGHT] * rightPressed
+						+ inputMap[LEFT] * leftPressed
+						+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
+						+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
+						+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
+						+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
+					//Register inputs for command detection
+					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
+						+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
+						+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
+						+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
+					if (inputToRegister != 0) registerInput(inputToRegister);
+				}
 				int tile = 0;
 				int distance = 0;
 				if (rightPressed || leftPressed)
@@ -643,7 +652,7 @@ void Player::childUpdate(int deltaTime)
 					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);
 					lookingLeftAtk = lookingLeft;
 				}
-				else if (!grounded && state != STATE_FALLING)
+				else if (!grounded && state != STATE_FALLING && !whipping)
 				{
 					sprite->changeAnimation(FALL + backflipping);
 				}
