@@ -45,7 +45,7 @@ public:
 	int distanceFromStairTile(const Hitbox& hitbox, int& dist) const;
 	int distanceFromBelowStairTile(const Hitbox& hitbox, int& dist) const;
 	int collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int sizey) const;
-
+	int collisionMoveDownWithTileNum(const Hitbox& hitbox) const;
 
 	void addCollision(const Hitbox& hitbox);
 	void removeCollision(const Hitbox& hitbox);

@@ -255,6 +255,24 @@ int TileMap::collisionMoveDownWithTileNum(const Hitbox& hitbox, float* posY, int
 	return -1;
 }
 
+int TileMap::collisionMoveDownWithTileNum(const Hitbox& hitbox) const
+{
+	int x0, x1, y;
+	x0 = (int)hitbox.min.x / tileSize;
+	x1 = (int)hitbox.max.x / tileSize;
+	y = (int)hitbox.max.y / tileSize;
+	for (int x = x0; x <= x1; x++)
+	{
+		int tile = map[y * mapSize.x + x];
+		if (tile != 0)
+		{
+			return tile;
+		}
+	}
+
+	return -1;
+}
+
 bool TileMap::collisionMoveUp(const Hitbox& hitbox, float* posY) const
 {
 

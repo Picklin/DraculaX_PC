@@ -471,10 +471,14 @@ void Player::childUpdate(int deltaTime)
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
 				}
-				else if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
-					&& ((tile = stairs->collisionMoveDownWithTileNum(getBelowStairsDetectionCollisionBox(), &position.y, quadSize.y)) != -1)
+				else if (/*Game::instance().getKey(GLFW_KEY_UP) && */jumpAngle >= 90
+					&& ((tile = stairs->collisionMoveDownWithTileNum(getStairsCollisionBox())) != -1)
 					&& ((tile % 8 == 1) || (tile % 8 == 2)))
 				{
+					//cout << "altura: " << startY - position.y << endl;
+					//cout << "angulo: " << jumpAngle << endl;
+					//cout << "posicion X antes del ajuste: " << position.x << endl;
+					//cout << "posicion Y antes del ajuste: " << position.y << endl;
 					JUMP_HEIGHT = 64;
 					JUMP_ANGLE_STEP = 4;
 					bJumping = false;
@@ -482,19 +486,37 @@ void Player::childUpdate(int deltaTime)
 					bRunning = false;
 					backflipping = false;
 					linedUpStair = true;
-					position.y += 8;
-					cout << tile << endl;
 					velocityX = 0;
 					sprite->changeAnimation(CLIMB_IDLE_UP);
 					if (tile == 1)
 					{
-						stairs->collisionMoveRight(getStairsCollisionBox(), &position.x);
 						rightUpStair = true;
 						lookingLeft = false;
-						position.x += 5;
+						int height = int(std::round(startY - position.y));
+						if (height < JUMP_HEIGHT) position.y += 8;
+						else
+						{
+							Hitbox pixBox;
+							glm::vec2 pixel(42, 63);
+							pixBox.min = position + pixel;
+							pixBox.max = pixBox.min;
+							while (stairs->collisionMoveDownWithTileNum(pixBox) != 1)
+							{
+								position.x -= 8;
+								pixBox.min = position + pixel;
+								pixBox.max = pixBox.min;
+							}
+						}
+						position.x = (float)alignPosXToGrid(position.x);
+						position.y = (float)alignPosYToGrid(position.y);
+						//stairs->collisionMoveDown(getStairsCollisionBox(), &position.y, quadSize.y);
+						//cout << "posicion X despues del ajuste: " << position.x << endl;
+						//cout << "posicion Y despues del ajuste: " << position.y << endl;
+						//stairs->collisionMoveRight(getStairsCollisionBox(), &position.x);
 					}
 					else
 					{
+						//position.x -= 7;
 						stairs->collisionMoveLeft(getStairsCollisionBox(), &position.x);
 						rightUpStair = false;
 						lookingLeft = true;
@@ -601,7 +623,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
-				if (!backflipping && anim != BACKFLIP_SKID)
+				if (anim != BACKFLIP_SKID)
 				{
 					inputIndex += inputMap[RIGHT] * rightPressed
 						+ inputMap[LEFT] * leftPressed
@@ -834,6 +856,7 @@ void Player::childUpdate(int deltaTime)
 	}
 	prevAnim = anim;
 	setPosition(position);
+	//cout << position.x << ' ' << position.y << endl;
 }
 
 void Player::stairMovement()
@@ -944,6 +967,27 @@ bool Player::collision(const Hitbox& hitbox1, const Hitbox& hitbox2)
 	return ((hitbox1.min.x < hitbox2.max.x) && (hitbox2.min.x < hitbox1.max.x) && (hitbox1.min.y < hitbox2.max.y) && (hitbox2.min.y < hitbox1.max.y));
 }
 
+int Player::alignPosYToGrid(float axisPos) const
+{
+	float div = axisPos / 8;
+	if (int(div * 10) % 5 == 0) div = float(int(div));
+	else div = std::round(div);
+	return int(div * 8);
+	//return axisPos + (8 - int(axisPos) % 8);
+}
+
+int Player::alignPosXToGrid(float axisPos) const
+{
+	int newPos;
+	int def = (int)axisPos - int(axisPos) % 8 + 2;
+	int exc = (int)axisPos + (8 - int(axisPos) % 8) + 2;
+	int defdiff = (int)axisPos - def;
+	int excdiff = exc - (int)axisPos;
+	if (defdiff < excdiff) newPos = def;
+	else newPos = exc;
+	return newPos;
+}
+
 const Hitbox Player::getTerrainCollisionBox() const
 {
 	Hitbox box;
@@ -955,7 +999,7 @@ const Hitbox Player::getTerrainCollisionBox() const
 const Hitbox Player::getStairsCollisionBox() const
 {
 	Hitbox box;
-	box.min = position + glm::vec2(22, 56);
+	box.min = position + glm::vec2(27, 63);
 	box.max = position + glm::vec2(42, 63);
 	return box;
 }
@@ -972,7 +1016,7 @@ const Hitbox Player::getBelowStairsDetectionCollisionBox() const
 {
 	Hitbox box;
 	box.min = position + glm::vec2(31, 64);
-	box.max = position + glm::vec2(38, 79);
+	box.max = position + glm::vec2(38, 64);
 	return box;
 }
 

@@ -34,6 +34,8 @@ private:
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
 	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
+	int alignPosYToGrid(float axisPos) const;
+	int alignPosXToGrid(float axisPos) const;
 	const Hitbox getTerrainCollisionBox() const;
 	const Hitbox getStairsCollisionBox() const;
 	const Hitbox getStairsDetectionCollisionBox() const;
