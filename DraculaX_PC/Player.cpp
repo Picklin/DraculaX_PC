@@ -477,46 +477,11 @@ void Player::childUpdate(int deltaTime)
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
 				}
-				else if (/*Game::instance().getKey(GLFW_KEY_UP) && */jumpAngle >= 90
+				else if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
 					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
 						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
 				{
-					//cout << "altura: " << startY - position.y << endl;
-					//cout << "angulo: " << jumpAngle << endl;
-					//cout << "posicion X antes del ajuste: " << position.x << endl;
-					//cout << "posicion Y antes del ajuste: " << position.y << endl;
-					JUMP_HEIGHT = 64;
-					JUMP_ANGLE_STEP = 4;
-					bJumping = false;
-					bClimbing = true;
-					bRunning = false;
-					backflipping = false;
-					linedUpStair = true;
-					velocityX = 0;
-					sprite->changeAnimation(CLIMB_IDLE_UP);
-					rightUpStair = tile == 1;
-					lookingLeft = tile == 2;
-					int height = int(std::round(startY - position.y));
-					if (height < JUMP_HEIGHT) position.y += 8;
-					position.x = (float)alignPosXToGrid(position.x);
-					position.y = (float)alignPosYToGrid(position.y);
-					//extra adjustment to stair position
-					if (rightUpStair)
-					{
-						pixBoxR.min = position + pixelR;
-						pixBoxR.max = pixBoxR.min;
-						position.x -= 8 * (stairs->collisionMoveDownWithTileNum(pixBoxR) != 1);
-						//cout << "posicion X despues del ajuste: " << position.x << endl;
-						//cout << "posicion Y despues del ajuste: " << position.y << endl;
-					}
-					else
-					{
-						pixBoxL.min = position + pixelL;
-						pixBoxL.max = pixBoxL.min;
-						position.x += 8 * (stairs->collisionMoveDownWithTileNum(pixBoxL) != 2);
-						//cout << "posicion X despues del ajuste: " << position.x << endl;
-						//cout << "posicion Y despues del ajuste: " << position.y << endl;
-					}
+					climbToStair(tile);
 				}
 				else
 				{
@@ -909,6 +874,50 @@ void Player::stairMovement()
 	//pabajo
 		
 	prevKeyframe = sprite->getCurrentKeyframe();
+}
+
+void Player::climbToStair(int tile)
+{
+	//cout << "altura: " << startY - position.y << endl;
+	//cout << "angulo: " << jumpAngle << endl;
+	//cout << "posicion X antes del ajuste: " << position.x << endl;
+	//cout << "posicion Y antes del ajuste: " << position.y << endl;
+	JUMP_HEIGHT = 64;
+	JUMP_ANGLE_STEP = 4;
+	bJumping = false;
+	bClimbing = true;
+	bRunning = false;
+	backflipping = false;
+	linedUpStair = true;
+	velocityX = 0;
+	sprite->changeAnimation(CLIMB_IDLE_UP);
+	rightUpStair = tile == 1;
+	lookingLeft = tile == 2;
+	int height = int(std::round(startY - position.y));
+	if (height < JUMP_HEIGHT) position.y += 8;
+	position.x = (float)alignPosXToGrid(position.x);
+	position.y = (float)alignPosYToGrid(position.y);
+	//extra adjustment to stair position
+	if (rightUpStair)
+	{
+		Hitbox pixBox;
+		glm::vec2 pixel(42, 63);
+		pixBox.min = position + pixel;
+		pixBox.max = pixBox.min;
+		position.x -= 8 * (stairs->collisionMoveDownWithTileNum(pixBox) != 1);
+		//cout << "posicion X despues del ajuste: " << position.x << endl;
+		//cout << "posicion Y despues del ajuste: " << position.y << endl;
+	}
+	else
+	{
+		Hitbox pixBox;
+		glm::vec2 pixel(24, 63);
+		pixBox.min = position + pixel;
+		pixBox.max = pixBox.min;
+		position.x += 8 * (stairs->collisionMoveDownWithTileNum(pixBox) != 2);
+		//cout << "posicion X despues del ajuste: " << position.x << endl;
+		//cout << "posicion Y despues del ajuste: " << position.y << endl;
+	}
 }
 
 void Player::calcIncrement(float& valToInc, float targetVal, float factor)
