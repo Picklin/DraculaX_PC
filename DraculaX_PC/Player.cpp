@@ -789,14 +789,21 @@ void Player::childUpdate(int deltaTime)
 	{
 		if (linedUpStair)
 		{
-			prevYpos = position.y;
-			stairMovement();
-			bool goingUp = (prevYpos - position.y) > 0;
-			Hitbox cb = getStairsCollisionBox();
-			if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
-			else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
-			bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
-			linedUpStair = bClimbing;
+			if (Game::instance().getKey(GLFW_KEY_Z))
+			{
+				jump();
+			}
+			else
+			{
+				prevYpos = position.y;
+				stairMovement();
+				bool goingUp = (prevYpos - position.y) >= 0;
+				Hitbox cb = getStairsCollisionBox();
+				if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
+				else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+				bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
+				linedUpStair = bClimbing;
+			}
 			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
 		else if ((int)position.x != stairPosX)
@@ -939,6 +946,17 @@ void Player::climbToStair(int tile)
 		//cout << "posicion X despues del ajuste: " << position.x << endl;
 		//cout << "posicion Y despues del ajuste: " << position.y << endl;
 	}
+}
+
+void Player::jump()
+{
+	sprite->changeAnimation(JUMP + (Game::instance().getKey(GLFW_KEY_RIGHT) || Game::instance().getKey(GLFW_KEY_LEFT)));
+	bJumping = true;
+	grounded = false;
+	backflipping = false;
+	bClimbing = false;
+	jumpAngle = 0;
+	startY = position.y;
 }
 
 void Player::calcIncrement(float& valToInc, float targetVal, float factor)

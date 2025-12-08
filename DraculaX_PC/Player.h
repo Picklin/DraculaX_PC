@@ -31,6 +31,7 @@ protected:
 private:
 	void stairMovement();
 	void climbToStair(int tile);
+	void jump();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
