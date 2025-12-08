@@ -516,9 +516,16 @@ void Player::childUpdate(int deltaTime)
 		}
 		else if (recoverFromJump && grounded)
 		{
-			if (state != STATE_CROUCHING)
+			if (state != STATE_CROUCHING && anim != ATTACK_CROUCH)
 			{
-				sprite->changeAnimation(CROUCH);
+				if (whipping)
+				{
+					int keyframe = sprite->getCurrentKeyframe();
+					sprite->changeAnimation(ATTACK_CROUCH);
+					sprite->setKeyframe(keyframe);
+					bCrouching = true;
+				}
+				else sprite->changeAnimation(CROUCH);
 				timeRecoveringFromJump = 0;
 				bRunning = false;
 				velocityX = 0;
@@ -538,6 +545,23 @@ void Player::childUpdate(int deltaTime)
 			{
 				fallDistance += FALL_SPEED;
 				recoverFromJump = fallDistance >= JUMP_HEIGHT;
+				int tile = 0;
+				Hitbox pixBoxR, pixBoxL;
+				glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
+				pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
+				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
+				if (Game::instance().getKey(GLFW_KEY_X) && !whipping)
+				{
+					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
+					whip->changeAnimation(0);
+					whipping = true;
+				}
+				else if (Game::instance().getKey(GLFW_KEY_UP)
+					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
+						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
+				{
+					climbToStair(tile);
+				}
 			}
 			else if (anim == BACKFLIP_FINAL)
 			{
@@ -645,7 +669,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				//cout << "Input Index: " << inputIndex << endl;
 				auto it = animMap.find(inputIndex);
-				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded)
+				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded && !whipping)
 				{
 					sprite->changeAnimation(it->second);
 					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);
@@ -757,11 +781,9 @@ void Player::childUpdate(int deltaTime)
 		if (whipping)
 		{
 			whip->update(deltaTime);
-			int whipKF = whip->getCurrentKeyframe();
+			int whipKF = whip->getCurrentKeyframe();	
 			whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x*!lookingLeft+leftCrouchWhipOffset[whipKF].x*lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y));
 		}
-		//cout << "Position :" << crouchWhipOffset[whip->getCurrentKeyframe()].x << ' ' << crouchWhipOffset[whip->getCurrentKeyframe()].y << endl;
-		//cout << "Keyframe: " << whip->getCurrentKeyframe() << endl;
 	}
 	else if (bClimbing)
 	{
@@ -852,7 +874,6 @@ void Player::stairMovement()
 			{
 				stepping = true;
 				stepping2 = true;
-
 				float xDispl = stairsOffset[kf].x * (prevAnim == anim);
 				position.x += xDispl * (rightUpStair - !rightUpStair);
 				position.y += stairsOffset[kf].y * (prevAnim == anim);
@@ -1034,4 +1055,3 @@ const Hitbox Player::getBelowStairsDetectionCollisionBox() const
 	box.max = position + glm::vec2(38, 64);
 	return box;
 }
-
