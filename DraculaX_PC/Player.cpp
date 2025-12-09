@@ -176,7 +176,7 @@ string Player::getName() const
 
 const string Player::getSpritesheet() const
 {
-	return "images/Richter/Richter_v2.png";
+	return "images/Richter/Richter_v3.png";
 }
 
 const glm::vec2 Player::getSizeInSpritesheet() const
@@ -264,7 +264,6 @@ void Player::setAnimations()
 	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
 
 	sprite->setAnimationSpeed(SKID, 32);
-	sprite->addKeyframe(SKID, glm::vec2(0.8f, 0.4f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
 	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
@@ -295,15 +294,14 @@ void Player::setAnimations()
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
 	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.5f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.f));
-	sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.6f));
+	//sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
+	//sprite->addKeyframe(DASH_KICK, glm::vec2(0.6f, 0.6f));
+	//sprite->addKeyframe(DASH_KICK, glm::vec2(0.7f, 0.5f));
+	//sprite->addKeyframe(DASH_KICK, glm::vec2(0.8f, 0.5f));
+	//sprite->addKeyframe(DASH_KICK, glm::vec2(0.9f, 0.f));
 
 	sprite->setAnimationSpeed(DASH_KICK_FINAL, 0);
-	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(DASH_KICK_FINAL, glm::vec2(0.4f, 0.6f));
 
 	sprite->setAnimationSpeed(DASH_COMBO, 16);
 	sprite->addKeyframe(DASH_COMBO, glm::vec2(0.8f, 0.3f));
@@ -316,22 +314,21 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(UPPERCUT, 0);
 	sprite->addKeyframe(UPPERCUT, glm::vec2(0.9f, 0.6f));
 
-	sprite->setAnimationSpeed(BACKFLIP, 16);
-	sprite->animatorX(BACKFLIP, 7, 0.f, 0.1f, 0.6f);
+	sprite->setAnimationSpeed(BACKFLIP, 10);
+	sprite->animatorX(BACKFLIP, 3, 0.f, 0.1f, 0.6f);
 
 	sprite->setAnimationSpeed(BACKFLIP_FINAL, 0);
-	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.7f, 0.6f));
+	sprite->addKeyframe(BACKFLIP_FINAL, glm::vec2(0.3f, 0.6f));
 
 	sprite->setAnimationSpeed(BACKFLIP_SKID, 2);
-	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.8f, 0.6f));
+	sprite->addKeyframe(BACKFLIP_SKID, glm::vec2(0.4f, 0.6f));
 
 	sprite->setAnimationSpeed(ULT, 16);
 	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
 	sprite->addKeyframe(ULT, glm::vec2(0.6f, 0.f));
-	sprite->animatorX(ULT, 3, 0.7f, 0.1f, 0.5f);
+	sprite->addKeyframe(ULT, glm::vec2(0.9f, 0.5f));
 
-	sprite->setAnimationSpeed(ULT_FINAL, 30);
-	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.8f, 0.9f));
+	sprite->setAnimationSpeed(ULT_FINAL, 0);
 	sprite->addKeyframe(ULT_FINAL, glm::vec2(0.9f, 0.9f));
 
 	sprite->setAnimationSpeed(CLIMB_IDLE_UP, 0);
