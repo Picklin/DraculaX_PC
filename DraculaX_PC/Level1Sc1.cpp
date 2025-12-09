@@ -95,7 +95,7 @@ void Level1Sc1::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setPosition(glm::vec2(33 * map->getTileSize()-37, 16 * map->getTileSize()));
+	player->setPosition(glm::vec2(38 * map->getTileSize(), 6 * map->getTileSize()));
 }
 void Level1Sc1::updateCamera() 
 {

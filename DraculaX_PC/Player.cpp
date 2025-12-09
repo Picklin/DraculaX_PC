@@ -60,7 +60,7 @@ const vector<glm::vec2> leftCrouchWhipOffset = {
 
 const vector<glm::vec2> stairsOffset = {
 	glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), //para arriba
-	glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(0,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2) //para abajo
+	glm::vec2(0,-2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,4), glm::vec2(2,2), glm::vec2(1,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(1,2) //para abajo
 };
 
 enum Inputs
@@ -343,7 +343,7 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(UPSTAIRS, 20);
 	sprite->animatorX(UPSTAIRS, 8, 0.1f, 0.1f, 0.7f);
 
-	sprite->setAnimationSpeed(DOWNSTAIRS, 20);
+	sprite->setAnimationSpeed(DOWNSTAIRS, 24);
 	sprite->animatorX(DOWNSTAIRS, 10, 0.f, 0.1f, 0.8f);
 
 	sprite->setTransition(JUMP, JUMP_FINAL);
@@ -468,20 +468,19 @@ void Player::childUpdate(int deltaTime)
 				glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
 				pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
 				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
-				
-				if (jumpAngle >= 180)
+				if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
+					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
+						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
+				{
+					climbToStair(tile);
+				}
+				else if (jumpAngle >= 180)
 				{
 					bJumping = false;
 					//loseMomentum = backflipping && !whipping;
 					position.y = startY;
 					JUMP_HEIGHT = 64;
 					jumpAngle = 0;
-				}
-				else if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
-					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
-						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
-				{
-					climbToStair(tile);
 				}
 				else
 				{
@@ -607,7 +606,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
-				if (anim != BACKFLIP_SKID)
+				if (anim != BACKFLIP_SKID && anim != BACKFLIP_FINAL)
 				{
 					inputIndex += inputMap[RIGHT] * rightPressed
 						+ inputMap[LEFT] * leftPressed
@@ -789,7 +788,7 @@ void Player::childUpdate(int deltaTime)
 	{
 		if (linedUpStair)
 		{
-			if (Game::instance().getKey(GLFW_KEY_Z))
+			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN))
 			{
 				jump();
 			}
@@ -855,11 +854,20 @@ void Player::stairMovement()
 	bool down = Game::instance().getKey(GLFW_KEY_DOWN);
 	bool right = Game::instance().getKey(GLFW_KEY_RIGHT);
 	bool left = Game::instance().getKey(GLFW_KEY_LEFT);
-	
-	bool keypressed = (up || right || down || left);
-	//parriba
-	if (up || (right && rightUpStair) || (left && !rightUpStair) || !keypressed)
+	if (!stepping && (up || (right && rightUpStair) || (left && !rightUpStair)))
 	{
+		goDown = false;
+		lookingLeft = !rightUpStair;
+	}
+	else if (!stepping && (down || (left && rightUpStair) || (right && !rightUpStair)))
+	{
+		goDown = true;
+		lookingLeft = rightUpStair;
+	}
+	//parriba
+	if (!goDown)
+	{
+		bool keypressed = up || (right && rightUpStair) || (left && !rightUpStair);
 		int kf = sprite->getCurrentKeyframe();
 		stepping = stepping && (anim == UPSTAIRS) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
 		stepping2 = stepping2 && kf != 1 && (!sprite->animationEnded() || kf == 0);
@@ -869,7 +877,7 @@ void Player::stairMovement()
 			if (!keypressed && anim != CLIMB_IDLE_UP)
 			{
 				sprite->changeAnimation(CLIMB_IDLE_UP);
-				position.y -= (prevAnim == UPSTAIRS) * (prevKeyframe != 0);
+				position.y -= prevKeyframe != 0;
 				stepping2 = false;
 			}
 			else if (keypressed && anim != UPSTAIRS)
@@ -900,7 +908,48 @@ void Player::stairMovement()
 		prevAnim = sprite->animation();
 	}
 	//pabajo
-		
+	else
+	{
+		bool keypressed = down || (left && rightUpStair) || (right && !rightUpStair);
+		int kf = sprite->getCurrentKeyframe();
+		stepping = stepping && (anim == DOWNSTAIRS) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
+		stepping2 = stepping2 && kf != 1 && (!sprite->animationEnded() || kf == 0);
+		if (!stepping)
+		{
+			if (!keypressed && anim != CLIMB_IDLE_DOWN)
+			{
+				sprite->changeAnimation(CLIMB_IDLE_DOWN);
+				position.y -= 2 * (prevKeyframe != 0);
+				stepping2 = false;
+			}
+			else if (keypressed && anim != DOWNSTAIRS)
+			{
+				sprite->changeAnimation(DOWNSTAIRS);
+				stepping = true;
+			}
+			else if (anim == DOWNSTAIRS && kf == 5)
+			{
+				stepping = true;
+				stepping2 = true;
+				float xDispl = stairsOffset[kf+8].x * (prevAnim == anim);
+				position.x += xDispl * (!rightUpStair - rightUpStair);
+				position.y += stairsOffset[kf+8].y * (prevAnim == anim);
+			}
+		}
+		else
+		{
+			int currentKeyframe = sprite->getCurrentKeyframe();
+			if (currentKeyframe != prevKeyframe)
+			{
+				int currentAnim = sprite->animation();
+				float xDispl = stairsOffset[kf+8].x * (prevAnim == anim);
+				//bool reset = prevKeyframe == 9 && currentKeyframe == 0;
+				position.x += (xDispl/* - 2 * reset*/) * (!rightUpStair - rightUpStair);
+				position.y += stairsOffset[currentKeyframe + 8].y * (prevAnim == currentAnim)/* - 4 * reset*/;
+			}
+		}
+		prevAnim = sprite->animation();
+	}
 	prevKeyframe = sprite->getCurrentKeyframe();
 }
 
@@ -917,6 +966,7 @@ void Player::climbToStair(int tile)
 	bRunning = false;
 	backflipping = false;
 	linedUpStair = true;
+	goDown = false;
 	velocityX = 0;
 	sprite->changeAnimation(CLIMB_IDLE_UP);
 	rightUpStair = tile == 1;
@@ -1069,7 +1119,7 @@ const Hitbox Player::getStairsDetectionCollisionBox() const
 const Hitbox Player::getBelowStairsDetectionCollisionBox() const
 {
 	Hitbox box;
-	box.min = position + glm::vec2(31, 64);
-	box.max = position + glm::vec2(38, 64);
+	box.min = position + glm::vec2(31, 72);
+	box.max = position + glm::vec2(38, 78);
 	return box;
 }
