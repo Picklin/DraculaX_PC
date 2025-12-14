@@ -34,6 +34,7 @@ private:
 	void jump();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);
+	void whipUpdate(int deltaTime);
 	bool checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const;
 	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 	int alignPosYToGrid(float axisPos) const;
@@ -93,6 +94,7 @@ private:
 	bool loseMomentum = false;
 	bool dashOffLedge = false;
 	bool recoverFromJump = false;
+	bool canJump = true;
 
 	//stairs booleans
 	bool bClimbing = false;
@@ -101,6 +103,8 @@ private:
 	bool goDown = false;
 	bool stepping = false;
 	bool stepping2 = false;
+	bool attackInStairs = false;
+	bool useSubweaponInStairs = false;
 };
 
 

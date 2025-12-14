@@ -15,8 +15,8 @@ enum PlayerStates
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, SKID, BACKFLIP_SKID, 
-	DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
+	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, ATTACK_UPSTAIRS, ATTACK_UPSTAIRS_SUBWEAPON, ATTACK_DOWNSTAIRS, ATTACK_DOWNSTAIRS_SUBWEAPON,
+	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
 struct Command
@@ -131,7 +131,11 @@ std::map<int, int> animToStateMap = {
 	{ PlayerAnims::CLIMB_IDLE_UP, PlayerStates::STATE_CLIMBING },
 	{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING },
 	{ PlayerAnims:: UPSTAIRS, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims::DOWNSTAIRS, PlayerStates::STATE_CLIMBING }
+	{ PlayerAnims::DOWNSTAIRS, PlayerStates::STATE_CLIMBING },
+	{ PlayerAnims::ATTACK_UPSTAIRS, PlayerStates::STATE_ATTACKING },
+	{ PlayerAnims::ATTACK_UPSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+	{ PlayerAnims::ATTACK_DOWNSTAIRS, PlayerStates::STATE_ATTACKING },
+	{ PlayerAnims::ATTACK_DOWNSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
 };
 
 void Player::render()
@@ -155,7 +159,7 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	whipTex.setMagFilter(GL_NEAREST);
 	whip = Sprite::createSprite(glm::ivec2(128, 64), glm::vec2(0.1f, 1.f), &whipTex, &shaderProgram);
 	whip->setNumberAnimations(2);
-	whip->setAnimationSpeed(0, 32);
+	whip->setAnimationSpeed(0, 30);
 	whip->animatorX(0, 6, 0.f, 0.1f, 0.f);
 	whip->addKeyframe(0, glm::vec2(0.6f, 0.f));
 	whip->addKeyframe(0, glm::vec2(0.7f, 0.f));
@@ -194,7 +198,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 32;
 
-	sprite->setNumberAnimations(33);
+	sprite->setNumberAnimations(37);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -239,29 +243,40 @@ void Player::setAnimations()
 
 	sprite->setAnimationSpeed(ATTACK, attackSpeed);
 	sprite->animatorX(ATTACK, 6, 0.f, 0.1f, 0.1f);
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
-	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.1));
+	sprite->animatorX(ATTACK, 6, 0.6f, 0.f, 0.1f);
 
 	sprite->setAnimationSpeed(ATTACK_CROUCH, attackSpeed);
 	sprite->animatorX(ATTACK_CROUCH, 5, 0.f, 0.1f, 0.2f);
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
-	sprite->addKeyframe(ATTACK_CROUCH, glm::vec2(0.5f, 0.2f));
+	sprite->animatorX(ATTACK_CROUCH, 7, 0.5f, 0.f, 0.2f);
+
+	sprite->setAnimationSpeed(ATTACK_UPSTAIRS, attackSpeed);
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.8f, 0.4f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.7f, 0.5f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.8f, 0.5f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.5f, 0.6f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.6f, 0.6f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS, glm::vec2(0.7f, 0.6f));
+	sprite->animatorX(ATTACK_UPSTAIRS, 6, 0.8f, 0.f, 0.6f);
+
+	sprite->setAnimationSpeed(ATTACK_DOWNSTAIRS, attackSpeed);
+	sprite->animatorX(ATTACK_DOWNSTAIRS, 6, 0.f, 0.1f, 0.9f);
+	sprite->animatorX(ATTACK_DOWNSTAIRS, 6, 0.6f, 0.f, 0.9f);
 
 	sprite->setAnimationSpeed(ATTACK_SUBWEAPON, 20);
 	sprite->animatorX(ATTACK_SUBWEAPON, 5, 0.f, 0.1f, 0.1f);
-	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
-	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
-	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
-	sprite->addKeyframe(ATTACK_SUBWEAPON, glm::vec2(0.7f, 0.1f));
+	sprite->animatorX(ATTACK_SUBWEAPON, 4, 0.7f, 0.f, 0.1f);
+
+	sprite->setAnimationSpeed(ATTACK_UPSTAIRS_SUBWEAPON, 20);
+	sprite->addKeyframe(ATTACK_UPSTAIRS_SUBWEAPON, glm::vec2(0.8f, 0.4f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS_SUBWEAPON, glm::vec2(0.7f, 0.5f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS_SUBWEAPON, glm::vec2(0.8f, 0.5f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS_SUBWEAPON, glm::vec2(0.5f, 0.6f));
+	sprite->addKeyframe(ATTACK_UPSTAIRS_SUBWEAPON, glm::vec2(0.6f, 0.6f));
+	sprite->animatorX(ATTACK_UPSTAIRS_SUBWEAPON, 4, 0.8f, 0.f, 0.9f);
+
+	sprite->setAnimationSpeed(ATTACK_DOWNSTAIRS_SUBWEAPON, 20);
+	sprite->animatorX(ATTACK_DOWNSTAIRS_SUBWEAPON, 5, 0.f, 0.1f, 0.9f);
+	sprite->animatorX(ATTACK_DOWNSTAIRS_SUBWEAPON, 4, 0.7f, 0.f, 0.9f);
 
 	sprite->setAnimationSpeed(SKID, 32);
 	sprite->addKeyframe(SKID, glm::vec2(0.9f, 0.4f));
@@ -350,7 +365,11 @@ void Player::setAnimations()
 	sprite->setTransition(GETUP, IDLE);
 	sprite->setTransition(ATTACK, IDLE);
 	sprite->setTransition(ATTACK_CROUCH, CROUCH_FINAL);
+	sprite->setTransition(ATTACK_UPSTAIRS, CLIMB_IDLE_UP);
+	sprite->setTransition(ATTACK_DOWNSTAIRS, CLIMB_IDLE_DOWN);
 	sprite->setTransition(ATTACK_SUBWEAPON, IDLE);
+	sprite->setTransition(ATTACK_UPSTAIRS_SUBWEAPON, CLIMB_IDLE_UP);
+	sprite->setTransition(ATTACK_DOWNSTAIRS_SUBWEAPON, CLIMB_IDLE_DOWN);
 	sprite->setTransition(SKID, IDLE);
 	sprite->setTransition(DASH1, DASH1_FINAL);
 	sprite->setTransition(DASH1_GETUP, CROUCH_FINAL);
@@ -524,6 +543,7 @@ void Player::childUpdate(int deltaTime)
 				else sprite->changeAnimation(CROUCH);
 				timeRecoveringFromJump = 0;
 				bRunning = false;
+				bDashing = false;
 				velocityX = 0;
 				fallDistance = 0;
 			}
@@ -537,6 +557,7 @@ void Player::childUpdate(int deltaTime)
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
 				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+			canJump = canJump || grounded && !Game::instance().getKey(GLFW_KEY_Z);
 			if (!grounded)
 			{
 				fallDistance += FALL_SPEED;
@@ -571,7 +592,7 @@ void Player::childUpdate(int deltaTime)
 				loseMomentum = false;
 			}
 			else fallDistance = 0;
-			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && grounded && anim != BACKFLIP_SKID && state != STATE_ATTACKING)
+			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && canJump && grounded && anim != BACKFLIP_SKID && state != STATE_ATTACKING)
 			{
 				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
 				{
@@ -582,6 +603,7 @@ void Player::childUpdate(int deltaTime)
 				bJumping = true;
 				grounded = false;
 				backflipping = false;
+				canJump = false;
 				jumpAngle = 0;
 				startY = position.y;
 				Game::instance().keyReleased(GLFW_KEY_Z);
@@ -609,7 +631,6 @@ void Player::childUpdate(int deltaTime)
 						+ inputMap[LEFT] * leftPressed
 						+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
 						+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-						+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
 						+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
 					//Register inputs for command detection
 					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
@@ -657,13 +678,12 @@ void Player::childUpdate(int deltaTime)
 				loseMomentum = loseMomentum && (inputIndex == 0);
 				// Low dash or dash combo
 				Hitbox cb = getTerrainCollisionBox();
-				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
+				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING && state != STATE_FALLING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
 				{
 					bDashing = true;
 					velocityX = (!lookingLeft - lookingLeft) * 8.f;
 					Game::instance().keyReleased(GLFW_KEY_Z);
 				}
-				//cout << "Input Index: " << inputIndex << endl;
 				auto it = animMap.find(inputIndex);
 				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded && !whipping)
 				{
@@ -757,7 +777,6 @@ void Player::childUpdate(int deltaTime)
 			}
 		}
 		afterimages.updateAfterimage(deltaTime, glm::vec2(tileMapDispl) + position, anim, sprite->getCurrentKeyframe());
-		Game::instance().keyReleased(GLFW_KEY_X);
 		position.x += velocityX;
 		Hitbox cb = getTerrainCollisionBox();
 		if (velocityX > 0)
@@ -772,14 +791,7 @@ void Player::childUpdate(int deltaTime)
 		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
 		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
 		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
-		int newAnim = sprite->animation();
-		whipping = ((newAnim == ATTACK) || (newAnim == ATTACK_CROUCH));	
-		if (whipping)
-		{
-			whip->update(deltaTime);
-			int whipKF = whip->getCurrentKeyframe();	
-			whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x*!lookingLeft+leftCrouchWhipOffset[whipKF].x*lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y));
-		}
+		whipUpdate(deltaTime);
 	}
 	else if (bClimbing)
 	{
@@ -792,13 +804,30 @@ void Player::childUpdate(int deltaTime)
 			else
 			{
 				prevYpos = position.y;
-				stairMovement();
-				bool goingUp = (prevYpos - position.y) >= 0;
+				if (state != STATE_ATTACKING) stairMovement();
+				if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
+				{
+					attackInStairs = true;
+					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP);
+				}
+				bool goingUp = (prevYpos - position.y) > 0;
+				bool goingDown = (prevYpos - position.y) < 0;
 				Hitbox cb = getStairsCollisionBox();
+				int kf = sprite->getCurrentKeyframe();
 				if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
-				else bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+				else if (goingDown) bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
+				{
+					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs);
+					whip->changeAnimation(0);
+					whipping = true;
+					attackInStairs = useSubweaponInStairs = false;
+					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
+					position.y -= float(correction);
+				}
 				bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
 				linedUpStair = bClimbing;
+				whipUpdate(deltaTime);
 			}
 			Game::instance().keyReleased(GLFW_KEY_Z);
 		}
@@ -819,6 +848,7 @@ void Player::childUpdate(int deltaTime)
 			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
 			linedUpStair = true;
 			prevDownPressed = false;
+			bCrouching = false;
 		}
 	}
 	else
@@ -864,6 +894,7 @@ void Player::stairMovement()
 	//parriba
 	if (!goDown)
 	{
+		//puede parecer que es redundante pero es necesario por la lazy evaluation del primer if de la funcion
 		bool keypressed = up || (right && rightUpStair) || (left && !rightUpStair);
 		int kf = sprite->getCurrentKeyframe();
 		stepping = stepping && (anim == UPSTAIRS) && ((kf < 5 && !stepping2) || (stepping2 && (kf >= 5 || kf == 0 || keypressed)));
@@ -960,6 +991,7 @@ void Player::climbToStair(int tile)
 	JUMP_ANGLE_STEP = 4;
 	bJumping = false;
 	bClimbing = true;
+	bCrouching = false;
 	bRunning = false;
 	backflipping = false;
 	linedUpStair = true;
@@ -1030,6 +1062,19 @@ void Player::registerInput(int key)
 	
 	//if (commandBuffer.size()>2) cout << commandBuffer[commandBuffer.size() - 3].key << ' ' << commandBuffer[commandBuffer.size()-2].key << ' ' << commandBuffer[commandBuffer.size() - 1].key << endl;
 	
+}
+
+void Player::whipUpdate(int deltaTime)
+{
+	int anim = sprite->animation();
+	whipping = ((anim == ATTACK) || (anim == ATTACK_CROUCH) || (anim == ATTACK_UPSTAIRS) || (anim == ATTACK_DOWNSTAIRS));
+	if (whipping)
+	{
+		whip->update(deltaTime);
+		int whipKF = whip->getCurrentKeyframe();
+		whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x * !lookingLeft + leftCrouchWhipOffset[whipKF].x * lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y));
+	}
+	Game::instance().keyReleased(GLFW_KEY_X);
 }
 
 bool Player::checkCommand(const vector<int>& command, const std::chrono::milliseconds& timeWindow) const
