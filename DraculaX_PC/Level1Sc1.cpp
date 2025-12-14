@@ -41,6 +41,8 @@ void Level1Sc1::init(Player& player, ShaderProgram& spriteShader, ShaderProgram&
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/casas.txt", MAP_OFFSET, basicShader));
 
 	projections.resize(3);
+
+	text.init(&basicShader);
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -69,6 +71,13 @@ void Level1Sc1::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
+	basicShader->use();
+	modelview = glm::mat4(1.0f);
+	basicShader->setUniformMatrix4f("modelview", modelview);
+	basicShader->setUniformMatrix4f("projection", projections[2]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	text.render("ola\nque ase", player->getPosition());
 }
 
 TileMap* Level1Sc1::setTileMap() 

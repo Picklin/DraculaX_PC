@@ -88,6 +88,9 @@
     <ClCompile Include="Level1Sc1.cpp">
       <Filter>Archivos de código fuente\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -162,5 +165,6 @@
     <ClInclude Include="Level1Sc1.h">
       <Filter>Archivos de encabezado\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Text.h" />
   </ItemGroup>
 </Project>
