@@ -28,6 +28,12 @@ const map<char, int> specialCharMap = {
     {'ñ', 63}
 };
 
+Text& Text::instance()
+{
+    static Text instance;
+    return instance;
+}
+
 void Text::init(ShaderProgram* shader)
 {
 	this->shader = shader;
@@ -38,8 +44,8 @@ void Text::init(ShaderProgram* shader)
     glGenBuffers(1, &vbo);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	posLocation = shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
-    texCoordLocation = shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
+	shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
+    shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
     glBindVertexArray(0);
 }
 

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "SceneTesting.h"
 #include "Level1Sc1.h"
+#include "Text.h"
 
 
 #define SCREEN_WIDTH 256
