@@ -14,7 +14,6 @@ void Game::init()
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
-	Text::instance().init(&basicShader);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	//titScreen.init(basicShader);
 	st.init(player, spriteShader, basicShader);

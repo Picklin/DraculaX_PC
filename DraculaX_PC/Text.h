@@ -8,11 +8,7 @@
 
 class Text
 {
-private:
-    Text() : shader(nullptr), vao(0), vbo(0) {}
-
 public:
-    static Text& instance();
     void init(ShaderProgram* shader);
     void render(const std::string& text, glm::vec2 position);
     void setAlpha(float alpha) {

@@ -3,6 +3,7 @@
 #define _LEVEL1SC1_INCLUDE
 
 #include "Scene.h"
+#include "Text.h"
 
 class Level1Sc1 : public Scene
 {
@@ -15,11 +16,11 @@ protected:
 	TileMap* setTileMap();
 	TileMap* setPlatformMap();
 	TileMap* setStairsMap();
-	void setStairsInfo();
 	void initItems();
 	void initActors(Player* player);
 	void updateCamera();
 	const pair<int, int> setNewLevelAndScene() const;
+	//Text text;
 };
 
 #endif // !_LEVEL1SC1_INCLUDE

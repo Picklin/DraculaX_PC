@@ -28,12 +28,6 @@ const map<char, int> specialCharMap = {
     {'ñ', 63}
 };
 
-Text& Text::instance()
-{
-    static Text instance;
-    return instance;
-}
-
 void Text::init(ShaderProgram* shader)
 {
 	this->shader = shader;
