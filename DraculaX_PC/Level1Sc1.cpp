@@ -71,13 +71,7 @@ void Level1Sc1::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
-	basicShader->use();
-	modelview = glm::mat4(1.0f);
-	basicShader->setUniformMatrix4f("modelview", modelview);
-	basicShader->setUniformMatrix4f("projection", projections[2]);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	text.render("ola\nque ase", player->getPosition());
+	text.render("¡Cómo mola!", player->getPosition());
 }
 
 TileMap* Level1Sc1::setTileMap() 

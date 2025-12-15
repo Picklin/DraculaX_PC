@@ -1,5 +1,8 @@
 #include <vector>
+#include <iostream>
+#include <map>
 #include "Text.h"
+#include "Game.h"
 
 #define CHAR_WIDTH 6
 #define CHAR_HEIGHT 12
@@ -8,6 +11,21 @@
 struct TextVertex {
     glm::vec2 pos;
     glm::vec2 texCoords;
+};
+
+const map<char, int> specialCharMap = {
+    {'¿', 26},
+    {'?', 27},
+    {'¡', 28},
+    {'!', 29},
+    {',', 30},
+    {'.', 31},
+    {'á', 58},
+    {'é', 59},
+    {'í', 60},
+    {'ó', 61},
+    {'ú', 62},
+    {'ñ', 63}
 };
 
 void Text::init(ShaderProgram* shader)
@@ -30,6 +48,7 @@ void Text::render(const std::string& text, glm::vec2 position)
     if (text.empty()) return;
 
     fontTexture.use();
+	shader->use();
 	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
 
     std::vector<TextVertex> vertices;
@@ -48,7 +67,7 @@ void Text::render(const std::string& text, glm::vec2 position)
 
     for (char c : text)
     {
-        int charIndex = (int(c) - 64 - 1);
+		int charIndex = -1;
         if (c == ' ') {
             currentX += CHAR_WIDTH;
             continue;
@@ -58,23 +77,13 @@ void Text::render(const std::string& text, glm::vec2 position)
             currentY += CHAR_HEIGHT;
             continue;
         }
-        
-		//en vez de hacer todo este if else, se puede usar un carácter 
-        //que haciendo la operación de charIndex, de el charIndex equivalente
-		//por ejemplo, para el '¿' se escribe en el texto el simbolo '[' que al restarle 65 da 26
-        //else if (c == '¿') charIndex = 26;
-        //else if (c == '?') charIndex = 27;
-        //else if (c == '¡') charIndex = 28;
-        //else if (c == '!') charIndex = 29;
-        //else if (c == ',') charIndex = 30;
-        //else if (c == '.') charIndex = 31;
-        //else if (c == 'á') charIndex = 58;
-        //else if (c == 'é') charIndex = 59;
-        //else if (c == 'í') charIndex = 60;
-        //else if (c == 'ó') charIndex = 61;
-		//aqui ya toca hacer asi porque ya nos salimos del ASCII
-        else if (c == 'ú') charIndex = 62;
-		else if (c == 'ñ') charIndex = 63;
+        else if (c < 65 || c > 126) {
+            auto it = specialCharMap.find(c);
+            if (it != specialCharMap.end()) {
+                charIndex = it->second;
+            }
+		}
+        else charIndex = (int(c) - 64 - 1);
         
         if (charIndex < 0 || charIndex >= MAX_CHARS) {
 			charIndex = 27; //equivale a poner '?' cuando el caracter no esta en el mapa
