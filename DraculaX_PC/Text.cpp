@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include "Text.h"
 #include "Game.h"
 
@@ -28,18 +29,18 @@ const map<char, int> specialCharMap = {
     {'ñ', 63}
 };
 
-void Text::init(ShaderProgram* shader)
+void Text::init(ShaderProgram& shader, const string& file)
 {
-	this->shader = shader;
-    fontTexture.loadFromFile("images/font_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	this->shader = &shader;
+    fontTexture.loadFromFile(file, TEXTURE_PIXEL_FORMAT_RGBA);
 	fontTexture.setMagFilter(GL_NEAREST);
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
-    shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
+	this->shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
+    this->shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
     glBindVertexArray(0);
 }
 
@@ -54,8 +55,8 @@ void Text::render(const std::string& text, glm::vec2 position)
     std::vector<TextVertex> vertices;
     vertices.reserve(text.size() * 6);
 
-    float currentX = position.x;
-    float currentY = position.y;
+    //float currentX = position.x;
+    //float currentY = position.y;
 
     int texWidth = fontTexture.width();
     int texHeight = fontTexture.height();
@@ -65,68 +66,78 @@ void Text::render(const std::string& text, glm::vec2 position)
 
     int columnsInTexture = fontTexture.width() / CHAR_WIDTH;
 
-    for (char c : text)
+	std::stringstream ss(text);
+    std::string line;
+	float currentY = position.y;
+    while (getline(ss, line, '\n'))
     {
-		int charIndex = -1;
-        if (c == ' ') {
-            currentX += CHAR_WIDTH;
-            continue;
-        }
-        else if (c == '\n') {
-            currentX = position.x;
-            currentY += CHAR_HEIGHT;
-            continue;
-        }
-        else if (c < 65 || c > 126) {
-            auto it = specialCharMap.find(c);
-            if (it != specialCharMap.end()) {
-                charIndex = it->second;
+		float lineWidth = line.length() * (float)CHAR_WIDTH;
+		float startX = position.x - lineWidth / 2;
+		float currentX = startX;
+        for (char c : line)
+        {
+		    int charIndex = -1;
+            if (c == ' ') {
+                currentX += CHAR_WIDTH;
+                continue;
             }
-		}
-        else charIndex = (int(c) - 64 - 1);
+            else if (c == '\n') {
+                currentX = position.x;
+                currentY += CHAR_HEIGHT;
+                continue;
+            }
+            else if (c < 65 || c > 126) {
+                auto it = specialCharMap.find(c);
+                if (it != specialCharMap.end()) {
+                    charIndex = it->second;
+                }
+		    }
+            else charIndex = (int(c) - 64 - 1);
         
-        if (charIndex < 0 || charIndex >= MAX_CHARS) {
-			charIndex = 27; //equivale a poner '?' cuando el caracter no esta en el mapa
+            if (charIndex < 0 || charIndex >= MAX_CHARS) {
+			    charIndex = 27; //equivale a poner '?' cuando el caracter no esta en el mapa
+            }
+
+            // --- CÁLCULO DE UVs ---
+            int col = charIndex % columnsInTexture;
+            int row = charIndex / columnsInTexture;
+
+            float uMin = col * stepU;
+            float vMin = row * stepV;
+            float uMax = uMin + stepU;
+            float vMax = vMin + stepV;
+
+            // --- DEFINICIÓN DEL QUAD (2 Triángulos) ---
+            // Vértice Superior Izquierda
+            glm::vec2 posTL(currentX, currentY);
+            glm::vec2 uvTL(uMin, vMin);
+
+            // Vértice Inferior Izquierda
+            glm::vec2 posBL(currentX, currentY + CHAR_HEIGHT);
+            glm::vec2 uvBL(uMin, vMax);
+
+            // Vértice Superior Derecha
+            glm::vec2 posTR(currentX + CHAR_WIDTH, currentY);
+            glm::vec2 uvTR(uMax, vMin);
+
+            // Vértice Inferior Derecha
+            glm::vec2 posBR(currentX + CHAR_WIDTH, currentY + CHAR_HEIGHT);
+            glm::vec2 uvBR(uMax, vMax);
+
+            // Triángulo 1
+            vertices.push_back({ posTL, uvTL });
+            vertices.push_back({ posBL, uvBL });
+            vertices.push_back({ posTR, uvTR });
+
+            // Triángulo 2
+            vertices.push_back({ posBL, uvBL });
+            vertices.push_back({ posBR, uvBR });
+            vertices.push_back({ posTR, uvTR });
+
+            // Avanzar el cursor
+            currentX += CHAR_WIDTH;
         }
-
-        // --- CÁLCULO DE UVs ---
-        int col = charIndex % columnsInTexture;
-        int row = charIndex / columnsInTexture;
-
-        float uMin = col * stepU;
-        float vMin = row * stepV;
-        float uMax = uMin + stepU;
-        float vMax = vMin + stepV;
-
-        // --- DEFINICIÓN DEL QUAD (2 Triángulos) ---
-        // Vértice Superior Izquierda
-        glm::vec2 posTL(currentX, currentY);
-        glm::vec2 uvTL(uMin, vMin);
-
-        // Vértice Inferior Izquierda
-        glm::vec2 posBL(currentX, currentY + CHAR_HEIGHT);
-        glm::vec2 uvBL(uMin, vMax);
-
-        // Vértice Superior Derecha
-        glm::vec2 posTR(currentX + CHAR_WIDTH, currentY);
-        glm::vec2 uvTR(uMax, vMin);
-
-        // Vértice Inferior Derecha
-        glm::vec2 posBR(currentX + CHAR_WIDTH, currentY + CHAR_HEIGHT);
-        glm::vec2 uvBR(uMax, vMax);
-
-        // Triángulo 1
-        vertices.push_back({ posTL, uvTL });
-        vertices.push_back({ posBL, uvBL });
-        vertices.push_back({ posTR, uvTR });
-
-        // Triángulo 2
-        vertices.push_back({ posBL, uvBL });
-        vertices.push_back({ posBR, uvBR });
-        vertices.push_back({ posTR, uvTR });
-
-        // Avanzar el cursor
-        currentX += CHAR_WIDTH;
+		currentY += CHAR_HEIGHT;
     }
 
     glBindVertexArray(vao);

@@ -20,7 +20,7 @@ protected:
 	void initActors(Player* player);
 	void updateCamera();
 	const pair<int, int> setNewLevelAndScene() const;
-	//Text text;
+	Text text;
 };
 
 #endif // !_LEVEL1SC1_INCLUDE

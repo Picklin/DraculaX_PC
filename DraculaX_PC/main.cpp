@@ -7,6 +7,12 @@
 
 #define TARGET_FRAMERATE 60.0f
 
+bool isFullscreen = false;
+double lastClickTime = 0.0; // Para medir el doble clic
+
+// Variables para recordar cómo era la ventana antes de hacerla gigante
+int windowedPosX, windowedPosY;
+int windowedWidth, windowedHeight;
 
 void joystick_callback(int joystickId, int action)
 {
@@ -32,33 +38,83 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	Game::instance().mouseMove(int(xpos), int(ypos));
 }
+void toggleFullscreen(GLFWwindow* window)
+{
+	if (!isFullscreen)
+	{
+		// --- DE VENTANA A PANTALLA COMPLETA ---
 
+		// 1. Guardamos la posición y tamaño actual para luego poder volver
+		glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
+		glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+
+		// 2. Obtenemos el monitor principal y su resolución nativa
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+		// 3. Cambiamos al monitor completo
+		// Parámetros: window, monitor, x, y, ancho, alto, hz
+		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+	}
+	else
+	{
+		// --- DE PANTALLA COMPLETA A VENTANA ---
+
+		// 1. Ponemos el monitor a NULL (esto significa "Modo Ventana")
+		// Y restauramos las dimensiones guardadas
+		glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY, windowedWidth, windowedHeight, 0);
+	}
+
+	// Cambiamos el estado
+	isFullscreen = !isFullscreen;
+}
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS)
 		Game::instance().mousePress(button);
 	else if (action == GLFW_RELEASE)
 		Game::instance().mouseRelease(button);
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		double currentTime = glfwGetTime();
+
+		// Si ha pasado menos de 0.3 segundos desde el último clic... ¡Es DOBLE CLIC!
+		if (currentTime - lastClickTime < 0.3)
+		{
+			// Llamamos a la función que creamos arriba
+			// (Asumiendo que tienes acceso a la instancia de Game)
+			toggleFullscreen(window);
+		}
+
+		lastClickTime = currentTime;
+	}
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// Actualizar la proyección para mantener la relación de aspecto
-	float scaleX = (float)width / SCREEN_WIDTH;
-	float scaleY = (float)height / SCREEN_HEIGHT;
+	float targetAspectRatio = float(SCREEN_WIDTH) / float(SCREEN_HEIGHT);
 
-	// Obtener el mayor factor de escala ENTERO que quepa en la ventana
-	int scaleFactor = (int)floor(std::min(scaleX, scaleY));
-	if (scaleFactor < 1) scaleFactor = 1; // Asegurarse de que al menos sea 1x
+	float windowAspectRatio = float(width) / float(height);
+	int viewportX, viewportY, viewportWidth, viewportHeight;
 
-	int finalViewportWidth = SCREEN_WIDTH * scaleFactor;
-	int finalViewportHeight = SCREEN_HEIGHT * scaleFactor;
-
-	int viewportX = (width - finalViewportWidth) / 2;
-	int viewportY = (height - finalViewportHeight) / 2;
-	Game::instance().setScreenWidth(finalViewportWidth);
+	if (windowAspectRatio > targetAspectRatio)
+	{
+		viewportHeight = height;
+		viewportWidth = (int)(height * targetAspectRatio);
+		viewportX = (width - viewportWidth) / 2;
+		viewportY = 0;
+	}
+	else
+	{
+		viewportWidth = width;
+		viewportHeight = (int)(width / targetAspectRatio);
+		viewportX = 0;
+		viewportY = (height - viewportHeight) / 2;
+	}
+	Game::instance().setScreenWidth(viewportWidth);
 	Game::instance().setViewportOffset(viewportX);
-	glViewport(viewportX, viewportY, finalViewportWidth, finalViewportHeight);
+	glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 }

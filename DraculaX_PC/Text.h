@@ -9,8 +9,8 @@
 class Text
 {
 public:
-    void init(ShaderProgram* shader);
-    void render(const std::string& text, glm::vec2 position);
+    void init(ShaderProgram& shader, const string& file);
+    void render(const string& text, glm::vec2 position);
     void setAlpha(float alpha) {
         shader->setUniform4f("color", 1, 1, 1, alpha);
     }

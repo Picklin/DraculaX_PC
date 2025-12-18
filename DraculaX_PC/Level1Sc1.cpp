@@ -42,7 +42,7 @@ void Level1Sc1::init(Player& player, ShaderProgram& spriteShader, ShaderProgram&
 
 	projections.resize(3);
 
-	//text.init(&basicShader);
+	text.init(basicShader, "images/font_intro.png");
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -71,7 +71,7 @@ void Level1Sc1::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
-	//text.render("¡Cómo mola!", player->getPosition());
+	text.render("In der guten alten Zeit\nlebten die Menschen\nnoch ruhig und in Frieden", player->getPosition()+glm::vec2(64,0));
 }
 
 TileMap* Level1Sc1::setTileMap() 
