@@ -42,7 +42,7 @@ void Level1Sc1::init(Player& player, ShaderProgram& spriteShader, ShaderProgram&
 
 	projections.resize(3);
 
-	text.init(basicShader, "images/font_intro.png");
+	text.init(basicShader, "images/fonts/font_intro.png");
 }
 void Level1Sc1::update(int deltaTime) 
 {

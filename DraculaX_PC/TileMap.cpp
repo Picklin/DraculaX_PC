@@ -26,7 +26,7 @@ TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProg
 	loadLevel(levelFile);
 	prepareArrays(minCoords, shader);
 	this->shaderProgram = &shader;
-	color = glm::vec4(1.f);
+	//color = glm::vec4(1.f);
 }
 
 TileMap::~TileMap()
@@ -38,7 +38,7 @@ TileMap::~TileMap()
 void TileMap::render() const
 {
 	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
-	shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
+	//shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
 	glEnable(GL_TEXTURE_2D);
 	tilesheet.use();
 	glBindVertexArray(vao);

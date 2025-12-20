@@ -49,24 +49,24 @@ public:
 
 	void addCollision(const Hitbox& hitbox);
 	void removeCollision(const Hitbox& hitbox);
-	void setColor(const glm::vec4& color) { this->color = color; }
+	//void setColor(const glm::vec4& color) { this->color = color; }
 
 private:
 	bool loadLevel(const string& levelFile);
 	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& shader);
 
 private:
+	Texture tilesheet;
+	//glm::vec4 color;
+	glm::vec2 tileTexSize;
+	glm::ivec2 position, mapSize, tilesheetSize;
 	GLuint vao;
 	GLuint vbo;
 	GLint posLocation, texCoordLocation;
 	int nTiles;
-	glm::ivec2 position, mapSize, tilesheetSize;
 	int tileSize, blockSize;
-	Texture tilesheet;
-	glm::vec2 tileTexSize;
 	int* map;
 	ShaderProgram* shaderProgram;
-	glm::vec4 color;
 };
 
 

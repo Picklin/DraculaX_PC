@@ -8,9 +8,8 @@
 #define TARGET_FRAMERATE 60.0f
 
 bool isFullscreen = false;
-double lastClickTime = 0.0; // Para medir el doble clic
+double lastClickTime = 0.0;
 
-// Variables para recordar cómo era la ventana antes de hacerla gigante
 int windowedPosX, windowedPosY;
 int windowedWidth, windowedHeight;
 
@@ -42,26 +41,16 @@ void toggleFullscreen(GLFWwindow* window)
 {
 	if (!isFullscreen)
 	{
-		// --- DE VENTANA A PANTALLA COMPLETA ---
-
-		// 1. Guardamos la posición y tamaño actual para luego poder volver
 		glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
 		glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
 
-		// 2. Obtenemos el monitor principal y su resolución nativa
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-		// 3. Cambiamos al monitor completo
-		// Parámetros: window, monitor, x, y, ancho, alto, hz
 		glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 	}
 	else
 	{
-		// --- DE PANTALLA COMPLETA A VENTANA ---
-
-		// 1. Ponemos el monitor a NULL (esto significa "Modo Ventana")
-		// Y restauramos las dimensiones guardadas
 		glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY, windowedWidth, windowedHeight, 0);
 	}
 
@@ -78,11 +67,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
 		double currentTime = glfwGetTime();
 
-		// Si ha pasado menos de 0.3 segundos desde el último clic... ¡Es DOBLE CLIC!
 		if (currentTime - lastClickTime < 0.3)
 		{
-			// Llamamos a la función que creamos arriba
-			// (Asumiendo que tienes acceso a la instancia de Game)
 			toggleFullscreen(window);
 		}
 
