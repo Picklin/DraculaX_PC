@@ -14,9 +14,10 @@ void Game::init()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
+	gui.init(basicShader, &player, false);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	//titScreen.init(basicShader);
-	st.init(player, spriteShader, basicShader);
+	st.init(player, gui, spriteShader, basicShader);
 }
 
 bool Game::update(int deltaTime)
@@ -29,7 +30,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[nextLevel][nextScene]();
-			scene->init(player, spriteShader, basicShader);
+			scene->init(player, gui, spriteShader, basicShader);
 			currentLevel = nextLevel;
 			currentScene = nextScene;
 			next = false;
@@ -38,7 +39,7 @@ bool Game::update(int deltaTime)
 		{
 			delete scene;
 			scene = scenesFactory[currentLevel][currentScene]();
-			scene->init(player, spriteShader, basicShader);
+			scene->init(player, gui, spriteShader, basicShader);
 			restart = false;
 		}
 
@@ -55,6 +56,7 @@ bool Game::update(int deltaTime)
 			{
 				SoundEngine::instance().unpauseAllSounds();
 			}
+			gui.toggleBoardFrame();
 		}
 		startPressedLastFrame = startPressed;
 		if (!paused)
@@ -63,6 +65,7 @@ bool Game::update(int deltaTime)
 			SoundEngine::instance().update();
 			st.update(deltaTime);
 		}
+		gui.update(deltaTime);
 	}
 	else
 	{
@@ -114,7 +117,7 @@ void Game::start()
 {
 	gameStarted = true;
 	scene = scenesFactory[currentLevel][currentScene]();
-	scene->init(player, spriteShader, basicShader);
+	scene->init(player, gui, spriteShader, basicShader);
 }
 
 void Game::keyPressed(int key)

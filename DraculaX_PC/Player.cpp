@@ -149,6 +149,8 @@ void Player::render()
 	{
 		whip->render();
 	}
+	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
+	shader->setUniform1i("flip", false);
 }
 
 void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
@@ -631,6 +633,7 @@ void Player::childUpdate(int deltaTime)
 						+ inputMap[LEFT] * leftPressed
 						+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
 						+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
+						+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
 						+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
 					//Register inputs for command detection
 					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
@@ -676,6 +679,7 @@ void Player::childUpdate(int deltaTime)
 					stairPosY = (int)position.y + 8;
 				}
 				loseMomentum = loseMomentum && (inputIndex == 0);
+				//cout << "Input Index: " << inputIndex << endl;
 				// Low dash or dash combo
 				Hitbox cb = getTerrainCollisionBox();
 				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING && state != STATE_FALLING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))

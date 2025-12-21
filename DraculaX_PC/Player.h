@@ -18,9 +18,9 @@ public:
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
+	string getName() const;
 
 protected:
-	string getName() const;
 	const string getSpritesheet() const;
 	const glm::vec2 getSizeInSpritesheet() const;
 	const glm::ivec2 getQuadSize() const;

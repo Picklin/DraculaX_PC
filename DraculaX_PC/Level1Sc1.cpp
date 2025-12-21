@@ -1,9 +1,9 @@
 #include "Level1Sc1.h"
 #include "Game.h"
 
-void Level1Sc1::init(Player& player, ShaderProgram& spriteShader, ShaderProgram& basicShader) 
+void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader) 
 {
-	Scene::init(player, spriteShader, basicShader);
+	Scene::init(player, gui, spriteShader, basicShader);
 	const int tileSize = 8;
 	backgroundTexs.resize(3);
 	backgroundSprites.reserve(3);
@@ -71,7 +71,11 @@ void Level1Sc1::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
-	text.render("In der guten alten Zeit\nlebten die Menschen\nnoch ruhig und in Frieden", player->getPosition()+glm::vec2(64,0));
+	//text.render("In der guten alten Zeit,\nlebten die Menschen\nnoch ruhig und in Frieden...", player->getPosition()+glm::vec2(60,0));
+	basicShader->use();
+	glm::mat4 guiProjection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
+	basicShader->setUniformMatrix4f("projection", guiProjection);
+	gui->render();
 }
 
 TileMap* Level1Sc1::setTileMap() 

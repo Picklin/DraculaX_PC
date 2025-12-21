@@ -100,11 +100,11 @@ void Sprite::render()
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
 	shaderProgram->setUniform1i("invert", invert);
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 	texture->use();
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 	invert = false;
 	shaderProgram->setUniform1i("invert", invert);
 }

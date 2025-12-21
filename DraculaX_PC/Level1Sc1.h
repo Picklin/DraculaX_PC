@@ -8,7 +8,7 @@
 class Level1Sc1 : public Scene
 {
 public:
-	void init(Player& player, ShaderProgram& spriteShader, ShaderProgram& basicShader);
+	void init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader);
 	void update(int deltaTime);
 	void render();
 

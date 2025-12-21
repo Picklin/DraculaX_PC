@@ -2,6 +2,7 @@
 #define _GAME_INCLUDE
 
 #include <GLFW/glfw3.h>
+#include "GUI.h"
 #include "SceneTesting.h"
 #include "Level1Sc1.h"
 
@@ -60,6 +61,7 @@ private:
 private:
 	Level1Sc1 st;
 	Player player;
+	GUI gui;
 	ShaderProgram spriteShader, basicShader;
 	using SceneCreator = std::function<Scene* ()>;
 	vector<vector<SceneCreator>> scenesFactory;

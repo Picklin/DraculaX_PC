@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "GUI.h"
 #include "SpawnPoint.h"
 #include "EffectsManager.h"
 #include "EnemyManager.h"
@@ -24,7 +25,7 @@ class Scene
 
 public:
 	virtual ~Scene();
-	virtual void init(Player& player, ShaderProgram& spriteShader, ShaderProgram& basicShader);
+	virtual void init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader);
 	virtual void update(int deltaTime);
 	virtual void render();
 	void setScreenWidth(int width);
@@ -59,6 +60,7 @@ protected:
 	TileMap* platforms;
 	TileMap* stairs;
 	Player* player;
+	GUI* gui;
 	ShaderProgram* spriteShader;
 	ShaderProgram* basicShader;
 	float currentTime;

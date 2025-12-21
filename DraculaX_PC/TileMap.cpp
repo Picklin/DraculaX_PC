@@ -38,14 +38,9 @@ TileMap::~TileMap()
 void TileMap::render() const
 {
 	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
-	//shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
-	glEnable(GL_TEXTURE_2D);
 	tilesheet.use();
 	glBindVertexArray(vao);
-	glEnableVertexAttribArray(posLocation);
-	glEnableVertexAttribArray(texCoordLocation);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * nTiles);
-	glDisable(GL_TEXTURE_2D);
 }
 
 void TileMap::free()

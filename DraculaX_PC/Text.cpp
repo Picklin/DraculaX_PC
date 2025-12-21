@@ -68,12 +68,12 @@ void Text::render(const std::string& text, glm::vec2 position)
 
 	std::stringstream ss(text);
     std::string line;
-	float currentY = position.y;
+	int currentY = (int)position.y;
     while (getline(ss, line, '\n'))
     {
-		float lineWidth = line.length() * (float)CHAR_WIDTH;
-		float startX = position.x - lineWidth / 2;
-		float currentX = startX;
+		int lineWidth = line.length() * CHAR_WIDTH;
+		int startX = (int)position.x - lineWidth / 2;
+		int currentX = startX;
         for (char c : line)
         {
 		    int charIndex = -1;
@@ -82,7 +82,7 @@ void Text::render(const std::string& text, glm::vec2 position)
                 continue;
             }
             else if (c == '\n') {
-                currentX = position.x;
+                currentX = (int)position.x;
                 currentY += CHAR_HEIGHT;
                 continue;
             }

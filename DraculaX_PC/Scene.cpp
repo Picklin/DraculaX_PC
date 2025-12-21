@@ -49,10 +49,11 @@ Scene::~Scene()
 }
 
 
-void Scene::init(Player& player, ShaderProgram& spriteShader, ShaderProgram& basicShader)
+void Scene::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader)
 {
 	this->spriteShader = &spriteShader;
 	this->basicShader = &basicShader;
+	this->gui = &gui;
 	map = setTileMap();
 	platforms = setPlatformMap();
 	stairs = setStairsMap();
@@ -82,6 +83,10 @@ void Scene::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projection);
 	player->render();
+	basicShader->use();
+	glm::mat4 guiProjection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f); // Proyección fija para la interfaz
+	basicShader->setUniformMatrix4f("projection", guiProjection);
+	gui->render();
 }
 
 void Scene::setScreenWidth(int width)
