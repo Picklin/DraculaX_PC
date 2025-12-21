@@ -1,14 +1,9 @@
 #include "GUI.h"
 #include "TextureManager.h"
 
-enum RichterItems
+enum itemIDs
 {
-	DAGGER, AXE, HOLY_WATER, STOPWATCH, BIBLE, CROSS
-};
-
-enum MariaItems
-{
-	BIRD, CAT, TURTLE, EGG, BOOK, DRAGON
+	NONE, DAGGER, AXE, HOLY_WATER, STOPWATCH, BIBLE, CROSS, BIRD, CAT, TURTLE, EGG, BOOK, DRAGON,
 };
 
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
@@ -22,6 +17,7 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	tex.setMagFilter(GL_NEAREST);
 	TextureManager::instance().addTexture("gui&items", &tex);
 	healthFrame = TexturedQuad::createTexturedQuad(glm::ivec2(32, 96), glm::vec2(0.125f * isMaria, 0.375f*secondPlayer), glm::vec2(0.125f + 0.125f * isMaria, 0.375f+0.375f*secondPlayer), tex, shaderProgram);
+	hpBar = TexturedQuad::createTexturedQuad(glm::ivec2(8, 96), glm::vec2(0.53125f+0.03125f * isMaria, 0.375f), glm::vec2(0.5625f + 0.03125f * isMaria, 0.75f), tex, shaderProgram);
 	score = TexturedQuad::createTexturedQuad(glm::ivec2(24, 8), glm::vec2(0.75f, 0.f), glm::vec2(0.84375f, 0.03125f), tex, shaderProgram);
 	credit_rest = TexturedQuad::createTexturedQuad(glm::ivec2(64, 8), glm::vec2(0.75f, 0.03125f), glm::vec2(1.f, 0.0625f), tex, shaderProgram);
 	boards[0] = TexturedQuad::createTexturedQuad(glm::ivec2(64, 16), glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
@@ -63,6 +59,7 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	item = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.f,0.f), glm::vec2(0.0625f, 0.0625f), &tex, &shaderProgram);
 	setItem(item);
 	healthFrame->setPosition(glm::vec2(0, 128 * secondPlayer));
+	hpBar->setPosition(glm::vec2(0, 128 * secondPlayer));
 	score->setPosition(glm::vec2(35, 3 + secondPlayerOffset));
 	credit_rest->setPosition(glm::vec2(35, 3 + secondPlayerOffset));
 	boards[0]->setPosition(glm::vec2(32, secondPlayerOffset));
@@ -70,8 +67,8 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	boardFrame->setPosition(glm::vec2(32, secondPlayerOffset));
 	boards[0]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
 	boards[1]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
-	item->setPosition(glm::vec2(13, 12 + secondPlayerOffset));
-	dragon->setPosition(glm::vec2(5, 2 + 176 * secondPlayer));
+	item->setPosition(glm::vec2(13, 12 + 177 * secondPlayer));
+	dragon->setPosition(glm::vec2(5, 2 + 177 * secondPlayer));
 
 	hp = 100;
 	currentScore = 0;
@@ -90,6 +87,7 @@ void GUI::update(int deltaTime)
 void GUI::render()
 {
 	healthFrame->render();
+	hpBar->render();
 	if (paused)
 	{
 		boards[1]->render();
@@ -105,14 +103,24 @@ void GUI::render()
 	}
 	for (Sprite* num : heartsNumbers) num->render();
 	boardFrame->render();
-	//dragon->render();
-	item->render();
+	if (renderDragon) dragon->render();
+	else item->render();
 }
 
 void GUI::toggleBoardFrame()
 {
 	boardFrame->changeAnimation(1);
 	paused = !paused;
+}
+
+void GUI::changeItem(int itemId)
+{
+	if (itemId == DRAGON) renderDragon = true;
+	else
+	{
+		renderDragon = false;
+		item->changeAnimation(itemId);
+	}
 }
 
 void GUI::takeDmg(int dmg)
@@ -158,6 +166,7 @@ void GUI::respawn()
 	currentLifes--;
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
+	changeItem(NONE);
 }
 
 void GUI::reset()
@@ -169,6 +178,7 @@ void GUI::reset()
 	currentLifes = 3;
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
+	changeItem(NONE);
 }
 
 void GUI::setNumberAnims(Sprite* num)
@@ -183,28 +193,22 @@ void GUI::setNumberAnims(Sprite* num)
 
 void GUI::setItem(Sprite* item)
 {
-	if (isMaria)
-	{
-		item->setNumberAnimations(6);
-		item->addKeyframe(5, glm::vec2(0.125f, 0.8125f));
-		item->addKeyframe(BIRD, glm::vec2(0.375f, 0.75f));
-		item->addKeyframe(CAT, glm::vec2(0.4375f, 0.75f));
-		item->addKeyframe(TURTLE, glm::vec2(0.5f, 0.75f));
-		item->addKeyframe(EGG, glm::vec2(0.5625f, 0.75f));
-		item->addKeyframe(BOOK, glm::vec2(0.725f, 0.75f));
-	}
-	else
-	{
-		item->setNumberAnimations(7);
-		item->addKeyframe(6, glm::vec2(0.125f, 0.8125f));
-		item->addKeyframe(DAGGER, glm::vec2(0.f, 0.75f));
-		item->addKeyframe(AXE, glm::vec2(0.0625f, 0.75f));
-		item->addKeyframe(HOLY_WATER, glm::vec2(0.125f, 0.75f));
-		item->addKeyframe(STOPWATCH, glm::vec2(0.1875f, 0.75f));
-		item->addKeyframe(BIBLE, glm::vec2(0.25f, 0.75f));
-		item->addKeyframe(CROSS, glm::vec2(0.3125f, 0.75f));
-	}
-	item->changeAnimation(5 + !isMaria);
+	
+	item->setNumberAnimations(13);
+	item->addKeyframe(DAGGER, glm::vec2(0.f, 0.75f));
+	item->addKeyframe(AXE, glm::vec2(0.0625f, 0.75f));
+	item->addKeyframe(HOLY_WATER, glm::vec2(0.125f, 0.75f));
+	item->addKeyframe(STOPWATCH, glm::vec2(0.1875f, 0.75f));
+	item->addKeyframe(BIBLE, glm::vec2(0.25f, 0.75f));
+	item->addKeyframe(CROSS, glm::vec2(0.3125f, 0.75f));
+	item->addKeyframe(BIRD, glm::vec2(0.375f, 0.75f));
+	item->addKeyframe(CAT, glm::vec2(0.4375f, 0.75f));
+	item->addKeyframe(TURTLE, glm::vec2(0.5f, 0.75f));
+	item->addKeyframe(EGG, glm::vec2(0.5625f, 0.75f));
+	item->addKeyframe(BOOK, glm::vec2(0.625f, 0.75f));
+	item->addKeyframe(NONE, glm::vec2(0.125f, 0.8125f));
+
+	item->changeAnimation(NONE);
 }
 
 void GUI::refreshNumber(Sprite* num[], int size, int& stat)

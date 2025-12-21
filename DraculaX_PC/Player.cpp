@@ -149,7 +149,6 @@ void Player::render()
 	{
 		whip->render();
 	}
-	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
 	shader->setUniform1i("flip", false);
 }
 

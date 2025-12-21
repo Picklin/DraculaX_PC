@@ -12,6 +12,7 @@ public:
 	void update(int deltaTime);
 	void render();
 	void toggleBoardFrame();
+	void changeItem(int itemId);
 	void takeDmg(int dmg);
 	void heal(int heal);
 	void gainHearts(int hearts);
@@ -29,7 +30,7 @@ private:
 private:
 	Texture tex;
 	Player* player;
-	TexturedQuad* healthFrame, * score, * credit_rest, * boards[2], * dragon;
+	TexturedQuad* healthFrame, * hpBar, * score, * credit_rest, * boards[2], * dragon;
 	Sprite* boardFrame, * scoreNumbers[7], * creditNumbers[4], * lifesNumbers[2], * heartsNumbers[2], *item;
 	ShaderProgram* shader;
 	int hp;
@@ -40,6 +41,7 @@ private:
 	bool secondPlayer = false;
 	bool isMaria = false;
 	bool paused = false;
+	bool renderDragon = false;
 };
 
 #endif !_GUI_INCLUDE

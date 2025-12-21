@@ -107,6 +107,7 @@ void Sprite::render()
 	//glDisable(GL_TEXTURE_2D);
 	invert = false;
 	shaderProgram->setUniform1i("invert", invert);
+	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
 }
 
 void Sprite::render(glm::vec2& position, int anim, int frame)
