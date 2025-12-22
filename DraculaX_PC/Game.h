@@ -62,7 +62,7 @@ private:
 	Level1Sc1 st;
 	Player player;
 	GUI gui;
-	ShaderProgram spriteShader, basicShader;
+	ShaderProgram spriteShader, basicShader, guiShader;
 	using SceneCreator = std::function<Scene* ()>;
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;

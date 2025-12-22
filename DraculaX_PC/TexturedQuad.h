@@ -11,11 +11,11 @@ class TexturedQuad
 {
 
 private:
-	TexturedQuad(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program);
+	TexturedQuad(const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program);
 
 public:
 	// Textured quads can only be created inside an OpenGL context
-	static TexturedQuad* createTexturedQuad(const glm::ivec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program);
+	static TexturedQuad* createTexturedQuad(const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program);
 	void setPosition(const glm::vec2& pos);
 	void setColor(const glm::vec4& color);
 	void render() const;

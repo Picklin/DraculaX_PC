@@ -92,10 +92,10 @@ void Sprite::render()
 {
 	glm::mat4 modelview = glm::mat4(1.f);
 	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
-	modelview = glm::translate(modelview, glm::vec3(center.x, center.y, 0.f));
-	modelview = glm::rotate(modelview, glm::radians(angleDegrees), glm::vec3(0.f, 0.f, 1.f));
-	modelview = glm::translate(modelview, glm::vec3(-center.x, -center.y, 0.f));
-	modelview = glm::scale(modelview, glm::vec3(scale, 1.f));
+	//modelview = glm::translate(modelview, glm::vec3(center.x, center.y, 0.f));
+	//modelview = glm::rotate(modelview, glm::radians(angleDegrees), glm::vec3(0.f, 0.f, 1.f));
+	//modelview = glm::translate(modelview, glm::vec3(-center.x, -center.y, 0.f));
+	//modelview = glm::scale(modelview, glm::vec3(scale, 1.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);

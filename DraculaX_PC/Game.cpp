@@ -14,7 +14,7 @@ void Game::init()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
-	gui.init(basicShader, &player, false);
+	gui.init(guiShader, &player, false);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	//titScreen.init(basicShader);
 	st.init(player, gui, spriteShader, basicShader);
@@ -230,8 +230,25 @@ void Game::initShaders()
 		cout << "" << basicShader.log() << endl << endl;
 	}
 	basicShader.bindFragmentOutput("outColor");
-	vShader.free();
 	fShader.free();
+	fShader.initFromFile(FRAGMENT_SHADER, "shaders/gui.frag");
+	if (!fShader.isCompiled())
+	{
+		cout << "Fragment Shader Error" << endl;
+		cout << "" << fShader.log() << endl << endl;
+	}
+	guiShader.init();
+	guiShader.addShader(vShader);
+	guiShader.addShader(fShader);
+	guiShader.link();
+	if (!guiShader.isLinked())
+	{
+		cout << "Shader Linking Error" << endl;
+		cout << "" << guiShader.log() << endl << endl;
+	}
+	guiShader.bindFragmentOutput("outColor");
+	fShader.free();
+	vShader.free();
 }
 
 void Game::reset()

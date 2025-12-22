@@ -34,14 +34,13 @@ private:
 	Sprite* boardFrame, * scoreNumbers[7], * creditNumbers[4], * lifesNumbers[2], * heartsNumbers[2], *item;
 	ShaderProgram* shader;
 	int hp;
+	int dynamicHp;
 	int currentHearts;
 	int currentScore;
 	int currentCredits;
 	int currentLifes;
-	bool secondPlayer = false;
-	bool isMaria = false;
 	bool paused = false;
 	bool renderDragon = false;
 };
 
-#endif !_GUI_INCLUDE
+ #endif	// !_GUI_INCLUDE

@@ -4,22 +4,23 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-TexturedQuad* TexturedQuad::createTexturedQuad(const glm::ivec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program)
+TexturedQuad* TexturedQuad::createTexturedQuad(const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program)
 {
 
-	TexturedQuad* quad = new TexturedQuad(quadSize, topLeft, bottomRight, tex, program);
+	TexturedQuad* quad = new TexturedQuad(topLeft, bottomRight, tex, program);
 	return quad;
 }
 
 
-TexturedQuad::TexturedQuad(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program)
+TexturedQuad::TexturedQuad(const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program)
 {
+	glm::vec2 quadSize(tex.width() * (bottomRight.x - topLeft.x), tex.height() * (bottomRight.y - topLeft.y));
 	float vertices[24] = { 0.f, 0.f, topLeft.x, topLeft.y,
-												quadSize.x, 0.f, bottomRight.x, topLeft.y,
-												quadSize.x, quadSize.y, bottomRight.x, bottomRight.y,
-												0.f, 0.f, topLeft.x, topLeft.y,
-												quadSize.x, quadSize.y, bottomRight.x, bottomRight.y,
-												0.f, quadSize.y, topLeft.x, bottomRight.y };
+		quadSize.x, 0.f, bottomRight.x, topLeft.y,
+		quadSize.x, quadSize.y, bottomRight.x, bottomRight.y,
+		0.f, 0.f, topLeft.x, topLeft.y,
+		quadSize.x, quadSize.y, bottomRight.x, bottomRight.y,
+		0.f, quadSize.y, topLeft.x, bottomRight.y };
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);

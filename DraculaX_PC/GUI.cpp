@@ -1,5 +1,8 @@
 #include "GUI.h"
 #include "TextureManager.h"
+#include "Game.h"
+
+#define MAX_HP 100
 
 enum itemIDs
 {
@@ -8,21 +11,20 @@ enum itemIDs
 
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
-	isMaria = false;
+	bool isMaria = false;
 	// isMaria = player->getName() == "Maria";
 	this->player = player;
 	this->shader = &shaderProgram;
-	this->secondPlayer = secondPlayer;
 	tex.loadFromFile("images/gui/gui&items.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	tex.setMagFilter(GL_NEAREST);
 	TextureManager::instance().addTexture("gui&items", &tex);
-	healthFrame = TexturedQuad::createTexturedQuad(glm::ivec2(32, 96), glm::vec2(0.125f * isMaria, 0.375f*secondPlayer), glm::vec2(0.125f + 0.125f * isMaria, 0.375f+0.375f*secondPlayer), tex, shaderProgram);
-	hpBar = TexturedQuad::createTexturedQuad(glm::ivec2(8, 96), glm::vec2(0.53125f+0.03125f * isMaria, 0.375f), glm::vec2(0.5625f + 0.03125f * isMaria, 0.75f), tex, shaderProgram);
-	score = TexturedQuad::createTexturedQuad(glm::ivec2(24, 8), glm::vec2(0.75f, 0.f), glm::vec2(0.84375f, 0.03125f), tex, shaderProgram);
-	credit_rest = TexturedQuad::createTexturedQuad(glm::ivec2(64, 8), glm::vec2(0.75f, 0.03125f), glm::vec2(1.f, 0.0625f), tex, shaderProgram);
-	boards[0] = TexturedQuad::createTexturedQuad(glm::ivec2(64, 16), glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
-	boards[1] = TexturedQuad::createTexturedQuad(glm::ivec2(64, 16), glm::vec2(0.75f, 0.125f), glm::vec2(1.f, 0.1875f), tex, shaderProgram);
-	dragon = TexturedQuad::createTexturedQuad(glm::ivec2(32, 32), glm::vec2(0.6875f, 0.75f), glm::vec2(0.8125f, 0.875f), tex, shaderProgram);
+	healthFrame = TexturedQuad::createTexturedQuad(glm::vec2(0.125f * isMaria, 0.375f * secondPlayer), glm::vec2(0.125f + 0.125f * isMaria, 0.375f + 0.375f * secondPlayer), tex, shaderProgram);
+	hpBar = TexturedQuad::createTexturedQuad(glm::vec2(0.53125f + 0.03125f * isMaria, 0.375f), glm::vec2(0.5625f + 0.03125f * isMaria, 0.75f), tex, shaderProgram);
+	score = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.f), glm::vec2(0.84375f, 0.03125f), tex, shaderProgram);
+	credit_rest = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.03125f), glm::vec2(1.f, 0.0625f), tex, shaderProgram);
+	boards[0] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
+	boards[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.125f), glm::vec2(1.f, 0.1875f), tex, shaderProgram);
+	dragon = TexturedQuad::createTexturedQuad(glm::vec2(0.6875f, 0.75f), glm::vec2(0.8125f, 0.875f), tex, shaderProgram);
 	boardFrame = Sprite::createSprite(glm::ivec2(64, 16), glm::vec2(0.25f + 0.25f * isMaria, 0.f), glm::vec2(0.5f + 0.25f * isMaria, 0.06125f), &tex, &shaderProgram);
 	boardFrame->setNumberAnimations(2);
 	boardFrame->setAnimationSpeed(0, 0);
@@ -70,24 +72,42 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	item->setPosition(glm::vec2(13, 12 + 177 * secondPlayer));
 	dragon->setPosition(glm::vec2(5, 2 + 177 * secondPlayer));
 
-	hp = 100;
+	hp = dynamicHp = MAX_HP;
 	currentScore = 0;
 	currentCredits = 0;
 	currentHearts = 10;
 	currentLifes = 3;
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
+	changeItem(CROSS);
 }
 
 void GUI::update(int deltaTime)
 {
+	if (dynamicHp < hp)
+	{
+		dynamicHp++;
+		if (dynamicHp > hp) dynamicHp = hp;
+	}
+	else if (dynamicHp > hp)
+	{
+		dynamicHp--;
+		if (dynamicHp < hp) dynamicHp = hp;
+	}
 	boardFrame->update(deltaTime);
 }
 
 void GUI::render()
 {
+	shader->use();
+	glm::mat4 guiProjection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
+	shader->setUniformMatrix4f("projection", guiProjection);
 	healthFrame->render();
+	float hpPercent = float(dynamicHp) / MAX_HP;
+	float hpPercentAdj = hpPercent * 0.375f + 0.25f;
+	shader->setUniform1f("hpPercent", hpPercentAdj);
 	hpBar->render();
+	shader->setUniform1f("hpPercent", 1.f);
 	if (paused)
 	{
 		boards[1]->render();
@@ -132,7 +152,7 @@ void GUI::takeDmg(int dmg)
 void GUI::heal(int heal)
 {
 	hp += heal;
-	if (hp > 100) hp = 100;
+	if (hp > MAX_HP) hp = MAX_HP;
 }
 
 void GUI::gainHearts(int hearts)
@@ -161,7 +181,7 @@ void GUI::oneUp()
 
 void GUI::respawn()
 {
-	hp = 100;
+	hp = MAX_HP;
 	currentHearts = 10;
 	currentLifes--;
 	refreshNumber(heartsNumbers, 2, currentHearts);
@@ -171,7 +191,7 @@ void GUI::respawn()
 
 void GUI::reset()
 {
-	hp = 100;
+	hp = MAX_HP;
 	currentHearts = 10;
 	currentScore = 0;
 	currentCredits = 0;
