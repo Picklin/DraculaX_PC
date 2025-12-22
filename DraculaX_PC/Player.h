@@ -71,7 +71,6 @@ private:
 
 	float velocityX = 0.f;
 	float startY = 0.f;
-	float timeRunning = 0.f;
 	float timeRecoveringFromJump = 0.f;
 	float dashDistance = 0.f;
 	float prevYpos = 0.f;
@@ -80,7 +79,6 @@ private:
 	bool bJumping = false;
 	bool bCrouching = false;
 	bool bDashing = false;
-	bool bRunning = false;
 	bool bUlting = false;
 	bool backflipping = false;
 	bool whipping = false;

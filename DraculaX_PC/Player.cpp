@@ -15,7 +15,7 @@ enum PlayerStates
 
 enum PlayerAnims
 {
-	IDLE, WALK, RUN, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, ATTACK_UPSTAIRS, ATTACK_UPSTAIRS_SUBWEAPON, ATTACK_DOWNSTAIRS, ATTACK_DOWNSTAIRS_SUBWEAPON,
+	IDLE, WALK, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, ATTACK_UPSTAIRS, ATTACK_UPSTAIRS_SUBWEAPON, ATTACK_DOWNSTAIRS, ATTACK_DOWNSTAIRS_SUBWEAPON,
 	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
@@ -24,18 +24,6 @@ struct Command
 	vector<int> sequence;
 	std::chrono::milliseconds timeWindow;
 	int index;
-};
-
-const Command RIGHT_RUN_COMMAND = {
-	{GLFW_KEY_RIGHT, GLFW_KEY_RIGHT},
-	std::chrono::milliseconds(256),
-	32
-};
-
-const Command LEFT_RUN_COMMAND = {
-	{GLFW_KEY_LEFT, GLFW_KEY_LEFT},
-	std::chrono::milliseconds(256),
-	32
 };
 
 const Command DASH_COMMAND = {
@@ -93,7 +81,6 @@ std::map<int, int> animMap = {
 	{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
 	{ inputMap[UP] | inputMap[X], PlayerAnims::ATTACK_SUBWEAPON},
 	{ inputMap[UP] | inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK_SUBWEAPON},
-	{ RIGHT_RUN_COMMAND.index, PlayerAnims::RUN },
 	{ DASH_COMMAND.index, PlayerAnims::DASH_COMBO },
 	{ UPPERCUT_COMMAND.index, PlayerAnims::UPPERCUT },
 };
@@ -101,7 +88,6 @@ std::map<int, int> animMap = {
 std::map<int, int> animToStateMap = {
 	{ PlayerAnims::IDLE, PlayerStates::STATE_IDLE },
 	{ PlayerAnims::WALK, PlayerStates::STATE_WALKING },
-	{ PlayerAnims::RUN, PlayerStates::STATE_WALKING },
 	{ PlayerAnims::JUMP, PlayerStates::STATE_JUMPING },
 	{ PlayerAnims::JUMP_FW, PlayerStates::STATE_JUMPING },
 	{ PlayerAnims::JUMP_FINAL, PlayerStates::STATE_JUMPING },
@@ -143,7 +129,7 @@ void Player::render()
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
 	int anim = sprite->animation();
-	if (bRunning || (loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
+	if ((loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
 	if (whipping)
 	{
@@ -206,9 +192,6 @@ void Player::setAnimations()
 
 	sprite->setAnimationSpeed(WALK, 10);
 	sprite->animatorX(WALK, 8, 0.f, 0.1f, 0.3f);
-
-	sprite->setAnimationSpeed(RUN, 16);
-	sprite->animatorX(RUN, 8, 0.f, 0.1f, 0.4f);
 
 	sprite->setAnimationSpeed(JUMP, 16);
 	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.f));
@@ -443,7 +426,7 @@ void Player::childUpdate(int deltaTime)
 
 		if (bJumping)
 		{
-			velocityX = (rightPressed - leftPressed) * (1.f + 1.f * bRunning);
+			velocityX = (rightPressed - leftPressed);
 			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 			{
 				Hitbox cb = getTerrainCollisionBox();
@@ -543,7 +526,6 @@ void Player::childUpdate(int deltaTime)
 				}
 				else sprite->changeAnimation(CROUCH);
 				timeRecoveringFromJump = 0;
-				bRunning = false;
 				bDashing = false;
 				velocityX = 0;
 				fallDistance = 0;
@@ -558,9 +540,10 @@ void Player::childUpdate(int deltaTime)
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
 				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
-			canJump = canJump || grounded && !Game::instance().getKey(GLFW_KEY_Z);
+			canJump = canJump || (grounded && !Game::instance().getKey(GLFW_KEY_Z));
 			if (!grounded)
 			{
+				canJump = false;
 				fallDistance += FALL_SPEED;
 				recoverFromJump = fallDistance >= JUMP_HEIGHT;
 				int tile = 0;
@@ -611,7 +594,6 @@ void Player::childUpdate(int deltaTime)
 			}
 			else
 			{
-				timeRunning = (timeRunning + (deltaTime / 1000.f)) * (anim == RUN);
 				if (dashOffLedge)
 				{
 					calcIncrement(velocityX, 0.f, 0.075f);
@@ -619,10 +601,9 @@ void Player::childUpdate(int deltaTime)
 				}
 				else if (!loseMomentum)
 				{
-					loseMomentum = (timeRunning >= .5f) && bRunning && !(rightPressed || leftPressed);
-					bRunning = bRunning && (rightPressed || leftPressed);
+					loseMomentum = !(rightPressed || leftPressed) && backflipping;
 					velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
-						+ ((!lookingLeft - lookingLeft) * loseMomentum)) * (1.f + 1.f * bRunning)) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+						+ ((!lookingLeft - lookingLeft) * loseMomentum))) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
@@ -632,7 +613,7 @@ void Player::childUpdate(int deltaTime)
 						+ inputMap[LEFT] * leftPressed
 						+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
 						+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-						+ inputMap[A] * Game::instance().getKey(GLFW_KEY_Z)
+						+ inputMap[A] * (Game::instance().getKey(GLFW_KEY_Z) && canJump)
 						+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
 					//Register inputs for command detection
 					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
@@ -643,21 +624,12 @@ void Player::childUpdate(int deltaTime)
 				}
 				int tile = 0;
 				int distance = 0;
-				if (rightPressed || leftPressed)
+				int commandInputIndex = 0;
+				if (Game::instance().getKey(GLFW_KEY_X) && (rightPressed || leftPressed)
+					&& (commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed))) > 0)
 				{
-					int commandInputIndex = RIGHT_RUN_COMMAND.index * checkCommand(RIGHT_RUN_COMMAND.sequence, RIGHT_RUN_COMMAND.timeWindow)
-						+ LEFT_RUN_COMMAND.index * checkCommand(LEFT_RUN_COMMAND.sequence, LEFT_RUN_COMMAND.timeWindow)
-						+ RIGHT_RUN_COMMAND.index * bRunning;
-
-					if (Game::instance().getKey(GLFW_KEY_X))
-					{
-						commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed));
-					}
-					if (commandInputIndex > 0)
-					{
-						commandBuffer.clear();
-						inputIndex = commandInputIndex;
-					}
+					commandBuffer.clear();
+					inputIndex = commandInputIndex;
 				}
 				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
 				{
@@ -704,7 +676,6 @@ void Player::childUpdate(int deltaTime)
 					sprite->changeAnimation(ATTACK_CROUCH);
 					sprite->setKeyframe(keyframe);
 				}
-				bRunning = (anim == RUN) || (anim==FALL_FINAL && bRunning);
 				int crouchanim = sprite->animation();
 				bCrouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
 			}
@@ -995,7 +966,6 @@ void Player::climbToStair(int tile)
 	bJumping = false;
 	bClimbing = true;
 	bCrouching = false;
-	bRunning = false;
 	backflipping = false;
 	linedUpStair = true;
 	goDown = false;
