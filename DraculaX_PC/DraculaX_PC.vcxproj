@@ -131,13 +131,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimKeyframes.h" />
+    <ClCompile Include="Axe.cpp" />
+    <ClCompile Include="Bible.cpp" />
+    <ClCompile Include="Bird.cpp" />
+    <ClCompile Include="Book.cpp" />
+    <ClCompile Include="Cat.cpp" />
+    <ClCompile Include="Cross.cpp" />
+    <ClCompile Include="Dagger.cpp" />
+    <ClCompile Include="Dragon.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectsManager.cpp" />
+    <ClCompile Include="Egg.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="HolyWater.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="Level1Sc1.cpp" />
@@ -155,18 +165,30 @@
     <ClCompile Include="TexturedQuad.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="Turtle.cpp" />
+    <ClCompile Include="Watch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Afterimage.h" />
     <ClInclude Include="Afterimages.h" />
+    <ClInclude Include="Axe.h" />
+    <ClInclude Include="Bible.h" />
+    <ClInclude Include="Bird.h" />
+    <ClInclude Include="Book.h" />
+    <ClInclude Include="Cat.h" />
+    <ClInclude Include="Cross.h" />
+    <ClInclude Include="Dagger.h" />
+    <ClInclude Include="Dragon.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectsManager.h" />
+    <ClInclude Include="Egg.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Hitbox.h" />
+    <ClInclude Include="HolyWater.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Level1Sc1.h" />
@@ -184,6 +206,8 @@
     <ClInclude Include="TexturedQuad.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="Turtle.h" />
+    <ClInclude Include="Watch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

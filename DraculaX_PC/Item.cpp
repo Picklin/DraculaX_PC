@@ -25,9 +25,9 @@ void Item::setPosition(const glm::vec2& pos)
     sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)));
 }
 
-const vector<Hitbox> Item::getHitbox() const
+const Hitbox Item::getHitbox() const
 {
-    return vector<Hitbox>(1, { position, position + glm::vec2(quadSize) });
+    return Hitbox{ position, position + glm::vec2(quadSize) };
 }
 
 void Item::setUngrabable()
@@ -86,9 +86,9 @@ void Item::update(int deltaTime)
 
         position.y += velocityY;
         position.x += velocityX;
-        if (!tileMap->collisionMoveDown(getHitbox()[0], &position.y, quadSize.y) && platforms != nullptr)
+        if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y) && platforms != nullptr)
         {
-            platforms->collisionMoveDown(getHitbox()[0], &position.y, quadSize.y);
+            platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y);
         }
         setPosition(position);
         timeElapsed += deltaTime;

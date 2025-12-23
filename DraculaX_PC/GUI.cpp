@@ -4,14 +4,9 @@
 
 #define MAX_HP 100
 
-enum itemIDs
-{
-	NONE, DAGGER, AXE, HOLY_WATER, STOPWATCH, BIBLE, CROSS, BIRD, CAT, TURTLE, EGG, BOOK, DRAGON,
-};
-
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
-	bool isMaria = false;
+	isMaria = true;
 	// isMaria = player->getName() == "Maria";
 	this->player = player;
 	this->shader = &shaderProgram;
@@ -79,7 +74,7 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	currentLifes = 3;
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
-	changeItem(CROSS);
+	changeItem(NONE);
 }
 
 void GUI::update(int deltaTime)
@@ -187,6 +182,16 @@ void GUI::respawn()
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
 	changeItem(NONE);
+}
+
+bool GUI::compatibleItem(int itemId) const
+{
+	return (itemId <= CROSS && !isMaria) || (itemId > CROSS && isMaria);
+}
+
+int GUI::getCurrentTrinketID() const
+{
+	return item->animation() * !renderDragon + DRAGON * renderDragon;
 }
 
 void GUI::reset()

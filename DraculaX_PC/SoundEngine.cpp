@@ -110,6 +110,10 @@ void SoundEngine::stopAllSounds()
 
 }
 
+void SoundEngine::grabTrinket()
+{
+}
+
 SoundEngine& SoundEngine::instance()
 {
 	static SoundEngine se;

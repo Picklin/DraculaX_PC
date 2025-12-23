@@ -165,6 +165,11 @@ string Player::getName() const
 	return "Player";
 }
 
+const vector<Hitbox> Player::getHitbox() const
+{
+	return vector<Hitbox>(1, getTerrainCollisionBox());
+}
+
 const string Player::getSpritesheet() const
 {
 	return "images/Richter/Richter_v4.png";
@@ -193,12 +198,12 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(WALK, 10);
 	sprite->animatorX(WALK, 8, 0.f, 0.1f, 0.3f);
 
-	sprite->setAnimationSpeed(JUMP, 16);
+	sprite->setAnimationSpeed(JUMP, 12);
 	sprite->addKeyframe(JUMP, glm::vec2(0.f, 0.4f));
 	sprite->addKeyframe(JUMP, glm::vec2(0.f, 0.4f));
 	sprite->addKeyframe(JUMP, glm::vec2(0.2f, 0.4f));
 
-	sprite->setAnimationSpeed(JUMP_FW, 16);
+	sprite->setAnimationSpeed(JUMP_FW, 12);
 	sprite->addKeyframe(JUMP_FW, glm::vec2(0.1f, 0.4f));
 	sprite->addKeyframe(JUMP_FW, glm::vec2(0.1f, 0.4f));
 	sprite->addKeyframe(JUMP_FW, glm::vec2(0.2f, 0.4f));

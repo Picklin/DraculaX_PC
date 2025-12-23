@@ -19,6 +19,8 @@ public:
 	void unpauseAllSounds();
 	void stopAllSounds();
 
+	void grabTrinket();
+
 private:
 	SoundEngine();
 	void checkCurrentSound(ISound* sound);

@@ -21,12 +21,19 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
+	bool compatibleItem(int itemId) const;
+	int getCurrentTrinketID() const;
 
 private:
 	void setNumberAnims(Sprite* num);
 	void setItem(Sprite* item);
 	void refreshNumber(Sprite* num[], int size, int& stat);
 
+public:
+	enum trinketIDs
+	{
+		DAGGER, AXE, HOLY_WATER, STOPWATCH, BIBLE, CROSS, BIRD, CAT, TURTLE, EGG, BOOK, DRAGON, NONE,
+	};
 private:
 	Texture tex;
 	Player* player;
@@ -41,6 +48,7 @@ private:
 	int currentLifes;
 	bool paused = false;
 	bool renderDragon = false;
+	bool isMaria = false;
 };
 
  #endif	// !_GUI_INCLUDE

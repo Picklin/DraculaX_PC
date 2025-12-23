@@ -101,7 +101,39 @@ void Scene::setViewportOffset(int offset)
 
 void Scene::updateActors(int deltaTime)
 {
+	if (!player->isEnded())
+	{
+		for (unsigned int i = 0; i < items.size(); i++)
+		{
+			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()[0]))	//habrá que cambiar la hitbox a que no devuelva un vector
+			{
+				int currentTrinket = gui->getCurrentTrinketID();
+				if (items[i]->isTrinket() && gui->compatibleItem(items[i]->getTrinketID()))
+				{
+					if (currentTrinket != GUI::trinketIDs::NONE)
+					{
+						Item* trinket = ItemManager::instance().getTrinket(player->getPosition() + player->myCenter() - glm::vec2(8.f), currentTrinket);
+						trinket->eject(-1 * player->getLookingDirection());
+						trinket->setUngrabable();
+						items.push_back(trinket);
+					}
+					items[i]->grab(*gui);
+				}
+				else if (!items[i]->isTrinket())
+				{
+					items[i]->grab(*gui);
+				}
+			}
+			items[i]->update(deltaTime);
+			if (items[i]->getsRemoved())
+			{
+				delete items[i];
+				items.erase(items.begin() + i);
+			}
+		}
+	}
 	player->update(deltaTime);
+
 }
 
 void Scene::updateCamera()

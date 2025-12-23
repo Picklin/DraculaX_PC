@@ -2,7 +2,8 @@
 #ifndef _ITEM_INCLUDE
 #define _ITEM_INCLUDE
 
-#include "Player.h"
+#include "GUI.h"
+#include "SoundEngine.h"
 
 class Item
 {
@@ -16,21 +17,17 @@ public:
 	void setPosition(const glm::vec2& pos);
 	void eject(int xDir);
 	void end();
-	virtual void makeEndSound() const = 0;
-	virtual void grab(Player* player) = 0;
-	const vector<Hitbox> getHitbox() const;
-	virtual bool isTrinket() const { return false; }
+	virtual void grab(GUI& gui) = 0;
+	const Hitbox getHitbox() const;
+	virtual bool isTrinket() const = 0;
+	virtual int getTrinketID() const { return -1; };
 	bool isGrabable() const;
 	bool isEnded() const;
 	bool getsRemoved() const;
 
 protected:
+	virtual void makeEndSound() const = 0;
 	const glm::vec2 myCenter() const;
-
-public:
-	enum Trinkets {
-		DRUG, SHURIKEN, SPREAD, WATCH
-	};
 
 protected:
 	glm::vec2 position;
