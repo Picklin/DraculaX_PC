@@ -10,6 +10,14 @@ enum Levels
 
 void Game::init()
 {
+	/*
+	Al iniciar el juego, habrá que preguntarle al jugador:
+	- idioma doblaje (original o inglés)
+	- idioma texto (inglés o español)
+	- idioma subtítulos (inglés o español), si los quiere.
+	- musica (original o arranged)
+	Esto se podrá cambiar en la configuración del juego más adelante.
+	*/
 	bPlay = true;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();

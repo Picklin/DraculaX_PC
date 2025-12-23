@@ -34,7 +34,7 @@ const Command DASH_COMMAND = {
 
 const Command UPPERCUT_COMMAND = {
 	{GLFW_KEY_DOWN, GLFW_KEY_UP},
-	std::chrono::milliseconds(128),
+	std::chrono::milliseconds(256),
 	128
 };
 
@@ -167,7 +167,7 @@ string Player::getName() const
 
 const string Player::getSpritesheet() const
 {
-	return "images/Richter/Richter_v3.png";
+	return "images/Richter/Richter_v4.png";
 }
 
 const glm::vec2 Player::getSizeInSpritesheet() const
@@ -194,24 +194,24 @@ void Player::setAnimations()
 	sprite->animatorX(WALK, 8, 0.f, 0.1f, 0.3f);
 
 	sprite->setAnimationSpeed(JUMP, 16);
-	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.f));
-	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.f));
-	sprite->addKeyframe(JUMP, glm::vec2(0.6f, 0.2f));
+	sprite->addKeyframe(JUMP, glm::vec2(0.f, 0.4f));
+	sprite->addKeyframe(JUMP, glm::vec2(0.f, 0.4f));
+	sprite->addKeyframe(JUMP, glm::vec2(0.2f, 0.4f));
 
 	sprite->setAnimationSpeed(JUMP_FW, 16);
-	sprite->addKeyframe(JUMP_FW, glm::vec2(0.7f, 0.f));
-	sprite->addKeyframe(JUMP_FW, glm::vec2(0.7f, 0.f));
-	sprite->addKeyframe(JUMP_FW, glm::vec2(0.6f, 0.2f));
+	sprite->addKeyframe(JUMP_FW, glm::vec2(0.1f, 0.4f));
+	sprite->addKeyframe(JUMP_FW, glm::vec2(0.1f, 0.4f));
+	sprite->addKeyframe(JUMP_FW, glm::vec2(0.2f, 0.4f));
 
 	sprite->setAnimationSpeed(JUMP_FINAL, 0);
-	sprite->addKeyframe(JUMP_FINAL, glm::vec2(0.7f, 0.2f));
+	sprite->addKeyframe(JUMP_FINAL, glm::vec2(0.3f, 0.4f));
 
-	sprite->setAnimationSpeed(FALL, 16);
-	sprite->addKeyframe(FALL, glm::vec2(0.6f, 0.2f));
-	sprite->addKeyframe(FALL, glm::vec2(0.8f, 0.f));
+	sprite->setAnimationSpeed(FALL, 12);
+	sprite->addKeyframe(FALL, glm::vec2(0.4f, 0.4f));
+	sprite->addKeyframe(FALL, glm::vec2(0.5f, 0.4f));
 
 	sprite->setAnimationSpeed(FALL_FINAL, 0);
-	sprite->addKeyframe(FALL_FINAL, glm::vec2(0.9f, 0.f));
+	sprite->addKeyframe(FALL_FINAL, glm::vec2(0.5f, 0.4f));
 
 	sprite->setAnimationSpeed(CROUCH, crouchSpeed);
 	sprite->animatorX(CROUCH, 3, 0.6f, 0.1f, 0.2f);
@@ -426,7 +426,7 @@ void Player::childUpdate(int deltaTime)
 
 		if (bJumping)
 		{
-			velocityX = (rightPressed - leftPressed);
+			velocityX = float(rightPressed - leftPressed);
 			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 			{
 				Hitbox cb = getTerrainCollisionBox();
@@ -489,7 +489,7 @@ void Player::childUpdate(int deltaTime)
 						&& !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
 					JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
 					JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
-					if (state != STATE_FALLING && jumpAngle >= 72 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
+					if (state != STATE_FALLING && jumpAngle >= 128 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
 					else if (!bJumping && backflipping)
 					{
 						loseMomentum = !whipping;
@@ -602,7 +602,7 @@ void Player::childUpdate(int deltaTime)
 				else if (!loseMomentum)
 				{
 					loseMomentum = !(rightPressed || leftPressed) && backflipping;
-					velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
+					velocityX = float(((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
 						+ ((!lookingLeft - lookingLeft) * loseMomentum))) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
 				}
 				// Calculate animation based on input
