@@ -108,7 +108,8 @@ void Scene::updateActors(int deltaTime)
 			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()[0]))	//habrá que cambiar la hitbox a que no devuelva un vector
 			{
 				int currentTrinket = gui->getCurrentTrinketID();
-				if (items[i]->isTrinket() && gui->compatibleItem(items[i]->getTrinketID()))
+				Trinket* trinketItem = dynamic_cast<Trinket*>(items[i]);
+				if (trinketItem && gui->compatibleItem(trinketItem->getTrinketID()))
 				{
 					if (currentTrinket != GUI::trinketIDs::NONE)
 					{
@@ -117,9 +118,9 @@ void Scene::updateActors(int deltaTime)
 						trinket->setUngrabable();
 						items.push_back(trinket);
 					}
-					items[i]->grab(*gui);
+					trinketItem->grab(*gui);
 				}
-				else if (!items[i]->isTrinket())
+				else if (!trinketItem)
 				{
 					items[i]->grab(*gui);
 				}

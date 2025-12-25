@@ -44,7 +44,7 @@ void Enemy::takeDmg(int dmg)
 	if (currentHealth <= 0) {
 		end();
 	}
-	sprite->white();
+	sprite->invertColor();
 }
 
 const glm::vec2 Enemy::getDistEnemyToPlayer() const

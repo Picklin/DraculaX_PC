@@ -94,14 +94,14 @@ void Item::update(int deltaTime)
         timeElapsed += deltaTime;
         if (timeElapsed < ungrabableTime)
         {
-            if ((timeElapsed / (deltaTime * 2)) % 4 == 0) sprite->white();
+            if ((timeElapsed / (deltaTime * 2)) % 4 == 0) sprite->invertColor();
             else sprite->setColor(glm::vec4(1.f));
         }
         /*else if (lifeSpan - timeElapsed <= 2000)
         {
             if ((timeElapsed / (deltaTime * 2)) % 4 == 0) sprite->setColor(glm::vec4(0.f));
             else sprite->setColor(glm::vec4(1.f));
-            if (timeElapsed >= lifeSpan) end();
+            if (timeElapsed >= lifeSpan) endTimer = -1;
         }*/
     }
 }

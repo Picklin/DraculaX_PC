@@ -97,15 +97,18 @@ TileMap* Level1Sc1::setStairsMap()
 
 void Level1Sc1::initItems() 
 {
-	items.push_back(ItemManager::instance().getHolyWater(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getWatch(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getBible(glm::vec2(56 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getCross(glm::vec2(60 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getCat(glm::vec2(64 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getTurtle(glm::vec2(68 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getEgg(glm::vec2(72 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getBook(glm::vec2(76 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getDragon(glm::vec2(80 * map->getTileSize(), 6 * map->getTileSize())));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::DAGGER));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::AXE));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(56 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::HOLY_WATER));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(60 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::STOPWATCH));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(64 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BIBLE));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(68 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::CROSS));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(72 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BIRD));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(76 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::CAT));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(80 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::TURTLE));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(84 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::EGG));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(88 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BOOK));
+	items.push_back(ItemManager::instance().getTrinket(glm::vec2(92 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::DRAGON));
 }
 void Level1Sc1::initActors(Player* player) 
 {

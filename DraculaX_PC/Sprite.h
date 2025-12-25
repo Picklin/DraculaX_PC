@@ -39,7 +39,7 @@ public:
 	void setAlpha(float alpha) { this->color.a = alpha; }
 	void setScale(glm::vec2 scale);
 	void setKeyframe(int frame) { currentKeyframe = frame; }
-	;	void white() { invert = true; }
+	void invertColor() { invert = true; }
 	void addKeyframe(int animId, const glm::vec2& frame);
 	void addAnimations(const vector<AnimKeyframes>& anims);
 	void changeAnimation(int animId);

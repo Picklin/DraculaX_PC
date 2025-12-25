@@ -19,8 +19,6 @@ public:
 	void end();
 	virtual void grab(GUI& gui) = 0;
 	const Hitbox getHitbox() const;
-	virtual bool isTrinket() const = 0;
-	virtual int getTrinketID() const { return -1; };
 	bool isGrabable() const;
 	bool isEnded() const;
 	bool getsRemoved() const;
