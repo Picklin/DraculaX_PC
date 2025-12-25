@@ -42,6 +42,9 @@ void Text::init(ShaderProgram& shader, const string& file, const glm::ivec2 & si
 	this->shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
     this->shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
     glBindVertexArray(0);
+
+	currentAlpha = 1.0f;
+	currentColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
 }
 
 void Text::render(const std::string& text, glm::vec2 position)
@@ -51,6 +54,7 @@ void Text::render(const std::string& text, glm::vec2 position)
     fontTexture.use();
 	shader->use();
 	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
+    shader->setUniform4f("color", currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 
     std::vector<TextVertex> vertices;
     vertices.reserve(text.size() * 6);
@@ -101,7 +105,7 @@ void Text::render(const std::string& text, glm::vec2 position)
 		    }
             else charIndex = (int(c) - 64 - 1);
         
-            if (charIndex < 0 || charIndex > MAX_CHARS) {
+            if (charIndex < 0 || charIndex >= MAX_CHARS) {
 			    charIndex = 27;
             }
 

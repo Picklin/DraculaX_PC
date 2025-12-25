@@ -6,6 +6,7 @@ SoundEngine::SoundEngine()
 	engine = createIrrKlangDevice();
 	trinketSoundSource = engine->getSoundSource("sfx/PickupTrinket.wav");
 	trinketSoundSource->grab();
+	startSource = engine->getSoundSource("sfx/Start.wav");
 	trinketSound = nullptr;
 }
 
@@ -117,6 +118,11 @@ void SoundEngine::grabTrinket()
 {
 	checkCurrentSound(trinketSound);
 	trinketSound = engine->play2D(trinketSoundSource, false, false, true);
+}
+
+void SoundEngine::playStart()
+{
+	engine->play2D(startSource);
 }
 
 SoundEngine& SoundEngine::instance()

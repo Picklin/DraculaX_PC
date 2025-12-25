@@ -20,6 +20,7 @@ public:
 	void stopAllSounds();
 
 	void grabTrinket();
+	void playStart();
 
 private:
 	SoundEngine();
@@ -37,6 +38,8 @@ private:
 
 	ISoundSource* trinketSoundSource;
 	ISound* trinketSound;
+
+	ISoundSource* startSource;
 };
 
 #endif // !_SOUNDENGINE_INCLUDE

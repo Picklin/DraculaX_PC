@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "GUI.h"
 #include "SceneTesting.h"
+#include "TitleScreen.h"
 #include "Level1Sc1.h"
 
 
@@ -61,6 +62,7 @@ private:
 private:
 	Level1Sc1 st;
 	Player player;
+	TitleScreen titScreen;
 	GUI gui;
 	ShaderProgram spriteShader, basicShader, guiShader;
 	using SceneCreator = std::function<Scene* ()>;
@@ -80,7 +82,7 @@ private:
 
 	Key keys[GLFW_KEY_LAST + 1]; // Store key states so that we can have access at any time
 	bool bPlay; // Continue to play game?
-	bool gameStarted = true;
+	bool gameStarted = false;
 	bool paused = false;
 	bool startPressedLastFrame = false;
 	bool next = false;

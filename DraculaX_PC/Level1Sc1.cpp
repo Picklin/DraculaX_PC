@@ -43,8 +43,10 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	projections.resize(3);
 
 	text.init(basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
-	text2.init(basicShader, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 39);
+	text2.init(basicShader, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 40);
+	text2.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
 	text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
+	text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -97,18 +99,7 @@ TileMap* Level1Sc1::setStairsMap()
 
 void Level1Sc1::initItems() 
 {
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::DAGGER));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::AXE));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(56 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::HOLY_WATER));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(60 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::STOPWATCH));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(64 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BIBLE));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(68 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::CROSS));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(72 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BIRD));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(76 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::CAT));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(80 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::TURTLE));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(84 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::EGG));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(88 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::BOOK));
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(92 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::DRAGON));
+	//items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::DAGGER));
 }
 void Level1Sc1::initActors(Player* player) 
 {

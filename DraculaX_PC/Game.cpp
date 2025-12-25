@@ -24,7 +24,8 @@ void Game::init()
 	player.init(MAP_OFFSET, spriteShader);
 	gui.init(guiShader, &player, false);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
-	//titScreen.init(basicShader);
+	basicShader.use();
+	titScreen.init(basicShader);
 	st.init(player, gui, spriteShader, basicShader);
 }
 
@@ -69,9 +70,9 @@ bool Game::update(int deltaTime)
 		startPressedLastFrame = startPressed;
 		if (!paused)
 		{
-			//scene->update(deltaTime);
+			scene->update(deltaTime);
 			SoundEngine::instance().update();
-			st.update(deltaTime);
+			//st.update(deltaTime);
 		}
 		gui.update(deltaTime);
 	}
@@ -82,7 +83,7 @@ bool Game::update(int deltaTime)
 			delete scene;
 			scene = nullptr;
 		}
-		//titScreen.update(deltaTime);
+		titScreen.update(deltaTime);
 	}
 
 	return bPlay;
@@ -93,10 +94,10 @@ void Game::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (gameStarted)
 	{
-		//scene->render();
-		st.render();
+		scene->render();
+		//st.render();
 	}
-	//else titScreen.render();
+	else titScreen.render();
 }
 
 void Game::changeScene(int level, int scene)
@@ -280,6 +281,11 @@ bool Game::getKey(int key) const
 
 Game::Game()
 {
+	scenesFactory.reserve(1);
+	vector<SceneCreator> lvl1SC;
+	lvl1SC.reserve(2);
+	lvl1SC.emplace_back([this]() { return new Level1Sc1(); });
+	scenesFactory.emplace_back(lvl1SC);
 	scene = nullptr;
 }
 
