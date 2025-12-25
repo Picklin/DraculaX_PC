@@ -5,10 +5,6 @@
 #include "Text.h"
 #include "Game.h"
 
-#define CHAR_WIDTH 6
-#define CHAR_HEIGHT 12
-#define MAX_CHARS 64
-
 struct TextVertex {
     glm::vec2 pos;
     glm::vec2 texCoords;
@@ -29,9 +25,13 @@ const map<char, int> specialCharMap = {
     {'ñ', 63}
 };
 
-void Text::init(ShaderProgram& shader, const string& file)
+void Text::init(ShaderProgram& shader, const string& file, const glm::ivec2 & size, int maxChars)
 {
 	this->shader = &shader;
+    this->file = file;
+	this->CHAR_WIDTH = size.x;
+	this->CHAR_HEIGHT = size.y;
+	this->MAX_CHARS = maxChars;
     fontTexture.loadFromFile(file, TEXTURE_PIXEL_FORMAT_RGBA);
 	fontTexture.setMagFilter(GL_NEAREST);
 
@@ -87,15 +87,22 @@ void Text::render(const std::string& text, glm::vec2 position)
                 continue;
             }
             else if (c < 65 || c > 126) {
-                auto it = specialCharMap.find(c);
-                if (it != specialCharMap.end()) {
-                    charIndex = it->second;
+                if ((c >= 48 && c <= 57) && file == "images/fonts/Letters&Nums.png")
+                {
+					charIndex = (int(c) - 48 + 30);
+                }
+                else
+                {
+                    auto it = specialCharMap.find(c);
+                    if (it != specialCharMap.end()) {
+                        charIndex = it->second;
+                    }
                 }
 		    }
             else charIndex = (int(c) - 64 - 1);
         
-            if (charIndex < 0 || charIndex >= MAX_CHARS) {
-			    charIndex = 27; //equivale a poner '?' cuando el caracter no esta en el mapa
+            if (charIndex < 0 || charIndex > MAX_CHARS) {
+			    charIndex = 27;
             }
 
             // --- CÁLCULO DE UVs ---

@@ -21,6 +21,8 @@ protected:
 	void updateCamera();
 	const pair<int, int> setNewLevelAndScene() const;
 	Text text;
+	Text text2;
+	Text text3;
 };
 
 #endif // !_LEVEL1SC1_INCLUDE

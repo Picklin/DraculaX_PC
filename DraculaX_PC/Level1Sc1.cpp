@@ -42,7 +42,9 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	projections.resize(3);
 
-	text.init(basicShader, "images/fonts/font_intro.png");
+	text.init(basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
+	text2.init(basicShader, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 39);
+	text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -71,9 +73,11 @@ void Level1Sc1::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
+	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
+	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
+	//text.render("In der guten alten Zeit,\nlebten die Menschen\nnoch ruhig und in Frieden...", player->getPosition()+glm::vec2(60,0));
 	basicShader->use();
 	for (auto item : items) item->render();
-	//text.render("In der guten alten Zeit,\nlebten die Menschen\nnoch ruhig und in Frieden...", player->getPosition()+glm::vec2(60,0));
 	gui->render();
 }
 
@@ -93,7 +97,7 @@ TileMap* Level1Sc1::setStairsMap()
 
 void Level1Sc1::initItems() 
 {
-	/*items.push_back(ItemManager::instance().getHolyWater(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize())));
+	items.push_back(ItemManager::instance().getHolyWater(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize())));
 	items.push_back(ItemManager::instance().getWatch(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize())));
 	items.push_back(ItemManager::instance().getBible(glm::vec2(56 * map->getTileSize(), 6 * map->getTileSize())));
 	items.push_back(ItemManager::instance().getCross(glm::vec2(60 * map->getTileSize(), 6 * map->getTileSize())));
@@ -101,7 +105,7 @@ void Level1Sc1::initItems()
 	items.push_back(ItemManager::instance().getTurtle(glm::vec2(68 * map->getTileSize(), 6 * map->getTileSize())));
 	items.push_back(ItemManager::instance().getEgg(glm::vec2(72 * map->getTileSize(), 6 * map->getTileSize())));
 	items.push_back(ItemManager::instance().getBook(glm::vec2(76 * map->getTileSize(), 6 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getDragon(glm::vec2(80 * map->getTileSize(), 6 * map->getTileSize())));*/
+	items.push_back(ItemManager::instance().getDragon(glm::vec2(80 * map->getTileSize(), 6 * map->getTileSize())));
 }
 void Level1Sc1::initActors(Player* player) 
 {

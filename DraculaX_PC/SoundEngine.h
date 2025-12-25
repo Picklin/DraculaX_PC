@@ -35,6 +35,8 @@ private:
 
 	ISoundEngine* engine;
 
+	ISoundSource* trinketSoundSource;
+	ISound* trinketSound;
 };
 
 #endif // !_SOUNDENGINE_INCLUDE

@@ -105,7 +105,7 @@ bool TileMap::loadLevel(const string& levelFile)
 void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& shader)
 {
 	int tile;
-	glm::vec2 posTile, texCoordTile[2], halfTexel;
+	glm::vec2 posTile, texCoordTile[2];
 	vector<float> vertices;
 
 	nTiles = 0;
