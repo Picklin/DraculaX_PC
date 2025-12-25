@@ -5,6 +5,8 @@
 #include "Player.h"
 #include "TexturedQuad.h"
 
+#define MAX_HP 92
+
 class GUI
 {
 public:

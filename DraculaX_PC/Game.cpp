@@ -26,7 +26,7 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
-	st.init(player, gui, spriteShader, basicShader);
+	//st.init(player, gui, spriteShader, basicShader);
 }
 
 bool Game::update(int deltaTime)
@@ -43,6 +43,7 @@ bool Game::update(int deltaTime)
 			currentLevel = nextLevel;
 			currentScene = nextScene;
 			next = false;
+			gui.heal(MAX_HP);
 		}
 		else if (restart)
 		{
@@ -50,6 +51,7 @@ bool Game::update(int deltaTime)
 			scene = scenesFactory[currentLevel][currentScene]();
 			scene->init(player, gui, spriteShader, basicShader);
 			restart = false;
+			gui.heal(MAX_HP);
 		}
 
 		bool startPressed = getKey(GLFW_KEY_ENTER);
@@ -59,7 +61,7 @@ bool Game::update(int deltaTime)
 			if (paused)
 			{
 				SoundEngine::instance().pauseAllSounds();
-				//SoundEngine::instance().playPause();
+				SoundEngine::instance().playPause();
 			}
 			else
 			{
@@ -127,6 +129,7 @@ void Game::start()
 	gameStarted = true;
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
+	gui.reset();
 }
 
 void Game::keyPressed(int key)

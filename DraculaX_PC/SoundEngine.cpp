@@ -4,10 +4,14 @@
 SoundEngine::SoundEngine()
 {
 	engine = createIrrKlangDevice();
-	trinketSoundSource = engine->getSoundSource("sfx/PickupTrinket.wav");
-	trinketSoundSource->grab();
+	pauseSource = engine->getSoundSource("sfx/Pause.wav");
+	pauseSource->grab();
+	pickupTrinketSource = engine->getSoundSource("sfx/PickupTrinket.wav");
+	pickupTrinketSource->grab();
 	startSource = engine->getSoundSource("sfx/Start.wav");
-	trinketSound = nullptr;
+	startSource->grab();
+	pauseSound = nullptr;
+	pickupTrinketSound = nullptr;
 }
 
 void SoundEngine::checkCurrentSound(ISound* sound)
@@ -114,10 +118,16 @@ void SoundEngine::stopAllSounds()
 
 }
 
-void SoundEngine::grabTrinket()
+void SoundEngine::playGrabTrinket()
 {
-	checkCurrentSound(trinketSound);
-	trinketSound = engine->play2D(trinketSoundSource, false, false, true);
+	checkCurrentSound(pickupTrinketSound);
+	pickupTrinketSound = engine->play2D(pickupTrinketSource, false, false, true);
+}
+
+void SoundEngine::playPause()
+{
+	checkCurrentSound(pauseSound);
+	pauseSound = engine->play2D(pauseSource, false, false, true);
 }
 
 void SoundEngine::playStart()

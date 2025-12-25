@@ -45,6 +45,11 @@ void TexturedQuad::setColor(const glm::vec4& color)
 	this->color = color;
 }
 
+void TexturedQuad::setAlpha(float aplha)
+{
+	this->color.a = aplha;
+}
+
 void TexturedQuad::render() const
 {
 	glm::mat4 modelview = glm::mat4(1.f);

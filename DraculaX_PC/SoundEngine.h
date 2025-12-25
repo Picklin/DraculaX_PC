@@ -19,7 +19,8 @@ public:
 	void unpauseAllSounds();
 	void stopAllSounds();
 
-	void grabTrinket();
+	void playGrabTrinket();
+	void playPause();
 	void playStart();
 
 private:
@@ -36,8 +37,11 @@ private:
 
 	ISoundEngine* engine;
 
-	ISoundSource* trinketSoundSource;
-	ISound* trinketSound;
+	ISoundSource* pauseSource;
+	ISound* pauseSound;
+
+	ISoundSource* pickupTrinketSource;
+	ISound* pickupTrinketSound;
 
 	ISoundSource* startSource;
 };

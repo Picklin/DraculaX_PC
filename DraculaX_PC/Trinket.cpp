@@ -13,5 +13,5 @@ int Trinket::getTrinketID() const
 
 void Trinket::makeEndSound() const
 {
-	SoundEngine::instance().grabTrinket();
+	SoundEngine::instance().playGrabTrinket();
 }

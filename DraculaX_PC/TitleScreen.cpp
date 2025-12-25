@@ -53,7 +53,7 @@ void TitleScreen::update(int deltaTime)
 			Game::instance().start();
 			reset();
 		}
-		else renderText = fmod(timeBeforeStart, .5f) < .25f;
+		else if (timeBeforeStart > 3.f) renderText = fmod(timeBeforeStart, .5f) < .25f;
 	}
 }
 
@@ -64,7 +64,14 @@ void TitleScreen::render()
 	{
 		sprites[0]->render();
 		quads[0]->render();
-		if (renderText) pushRunButton.render(" PUSH  RUN  BUTTON!", glm::vec2(128.f, 144.f));
+		if (timeBeforeStart <= 3.f)
+		{
+			float alpha = timeBeforeStart - 2;
+			sprites[0]->setAlpha(alpha);
+			quads[0]->setAlpha(alpha+1.25f);
+		}
+		else if (renderText) pushRunButton.render(" PUSH  RUN  BUTTON!", glm::vec2(128.f, 144.f));
+		
 	}
 }
 

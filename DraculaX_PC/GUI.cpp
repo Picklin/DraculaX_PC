@@ -2,8 +2,6 @@
 #include "TextureManager.h"
 #include "Game.h"
 
-#define MAX_HP 100
-
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
 	isMaria = false;
@@ -66,15 +64,6 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	boards[1]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
 	item->setPosition(glm::vec2(13, 12 + 177 * secondPlayer));
 	dragon->setPosition(glm::vec2(5, 2 + 177 * secondPlayer));
-
-	hp = dynamicHp = MAX_HP;
-	currentScore = 0;
-	currentCredits = 0;
-	currentHearts = 10;
-	currentLifes = 3;
-	refreshNumber(heartsNumbers, 2, currentHearts);
-	refreshNumber(lifesNumbers, 2, currentLifes);
-	changeItem(NONE);
 }
 
 void GUI::update(int deltaTime)
