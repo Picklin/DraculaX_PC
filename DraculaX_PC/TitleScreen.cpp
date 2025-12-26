@@ -3,6 +3,10 @@
 #include "TextureManager.h"
 #include "SoundEngine.h"
 
+#define VANISH_TIME 3.F
+#define BOLT_FREQ 2.F
+#define BOLT_DURATION 64	//milisecs
+
 void TitleScreen::init(ShaderProgram& program)
 {
 	this->texProgram = &program;
@@ -22,11 +26,23 @@ void TitleScreen::init(ShaderProgram& program)
 	TextureManager::instance().addTexture("bolts", &textures[2]);
 	//background
 	sprites.emplace_back(Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f, 0.2f), &textures[0], texProgram));
+	sprites[0]->setNumberAnimations(2);
+	sprites[0]->setAnimationSpeed(0, 0);
+	sprites[0]->addKeyframe(0, glm::vec2(0.f, 0.f));
+	sprites[0]->setAnimationSpeed(1, 20);
+	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.2f));
+	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.0f));
+	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.2f));
+	sprites[0]->setTransition(1, 0);
+	sprites[0]->changeAnimation(0);
 	//title
 	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.875f), glm::vec2(1.f, 1.f), textures[1], *texProgram));
 	//bolts
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), textures[2], *texProgram));
 	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(1.f, 1.f), textures[2], *texProgram));
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), textures[2], *texProgram));
+
+	quads[1]->setPosition(glm::vec2(145, 55));
+	quads[2]->setPosition(glm::vec2(88, 15));
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	texProgram->setUniformMatrix4f("projection", projection);
@@ -34,12 +50,28 @@ void TitleScreen::init(ShaderProgram& program)
 	pushRunButton.init(*texProgram, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 40);
 	pushRunButton.setColor(glm::vec4(252 / 255.f, 0.f, 0.f, 1.f));
 
+	boltTimer = BOLT_FREQ;
+	boltDuration = BOLT_DURATION;
+	renderBigBolt = true;
+
 	reset();
 }
 
 void TitleScreen::update(int deltaTime)
 {
 	timeElapsed += deltaTime / 1000.f;
+	boltTimer -= deltaTime / 1000.f;
+	if (boltTimer <= 0)
+	{
+		if (sprites[0]->animation() != 1) sprites[0]->changeAnimation(1);
+		boltDuration -= deltaTime;
+		if (boltDuration == 0)
+		{
+			boltTimer = BOLT_FREQ;
+			boltDuration = BOLT_DURATION;
+			renderBigBolt = !renderBigBolt;
+		}
+	}
 	if (!startPressed && Game::instance().getKey(GLFW_KEY_ENTER))
 	{
 		startPressed = true;
@@ -53,8 +85,9 @@ void TitleScreen::update(int deltaTime)
 			Game::instance().start();
 			reset();
 		}
-		else if (timeBeforeStart > 3.f) renderText = fmod(timeBeforeStart, .5f) < .25f;
+		else if (timeBeforeStart > VANISH_TIME) renderText = fmod(timeBeforeStart, .5f) < .25f;
 	}
+	sprites[0]->update(deltaTime);
 }
 
 void TitleScreen::render()
@@ -63,22 +96,22 @@ void TitleScreen::render()
 	if (timeBeforeStart > 1.f)
 	{
 		sprites[0]->render();
+		if (boltTimer <= 0) quads[1 + renderBigBolt]->render();
 		quads[0]->render();
-		if (timeBeforeStart <= 3.f)
+		if (timeBeforeStart <= VANISH_TIME)
 		{
-			float alpha = timeBeforeStart - 2;
+			float alpha = timeBeforeStart - (VANISH_TIME - 1);
 			sprites[0]->setAlpha(alpha);
 			quads[0]->setAlpha(alpha+1.25f);
 		}
 		else if (renderText) pushRunButton.render(" PUSH  RUN  BUTTON!", glm::vec2(128.f, 144.f));
-		
 	}
 }
 
 void TitleScreen::reset()
 {
 	timeElapsed = 0.f;
-	timeBeforeStart = 6.f;
+	timeBeforeStart = 5.f;
 	startPressed = false;
 	renderText = true;
 }

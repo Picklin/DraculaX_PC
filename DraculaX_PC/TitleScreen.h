@@ -18,9 +18,12 @@ private:
 private:
 	Text pushRunButton;
 	float timeElapsed;
+	float boltTimer;
+	int boltDuration;
 	float timeBeforeStart;
 	bool startPressed;
 	bool renderText;
+	bool renderBigBolt;
 };
 
 #endif // !_TITLESCREEN_INCLUDE

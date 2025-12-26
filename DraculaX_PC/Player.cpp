@@ -278,7 +278,6 @@ void Player::setAnimations()
 	sprite->addKeyframe(SKID, glm::vec2(0.0f, 0.5f));
 
 	sprite->setAnimationSpeed(DASH1, 24);
-	sprite->addKeyframe(DASH1, glm::vec2(0.9f, 0.f));
 	sprite->animatorX(DASH1, 4, 0.f, 0.1f, 0.5f);
 
 	sprite->setAnimationSpeed(DASH1_FINAL, 0);
