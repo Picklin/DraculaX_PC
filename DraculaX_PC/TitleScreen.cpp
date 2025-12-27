@@ -10,7 +10,8 @@
 void TitleScreen::init(ShaderProgram& program)
 {
 	this->texProgram = &program;
-	
+	this->lang = Game::instance().getCurrentTxtLang();
+
 	textures.resize(3);
 	sprites.reserve(1);
 	quads.reserve(3);
@@ -25,14 +26,14 @@ void TitleScreen::init(ShaderProgram& program)
 	textures[2].setMagFilter(GL_NEAREST);
 	TextureManager::instance().addTexture("bolts", &textures[2]);
 	//background
-	sprites.emplace_back(Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f, 0.2f), &textures[0], texProgram));
+	sprites.emplace_back(Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.5f, 0.25f), &textures[0], texProgram));
 	sprites[0]->setNumberAnimations(2);
 	sprites[0]->setAnimationSpeed(0, 0);
 	sprites[0]->addKeyframe(0, glm::vec2(0.f, 0.f));
 	sprites[0]->setAnimationSpeed(1, 20);
-	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.2f));
+	sprites[0]->addKeyframe(1, glm::vec2(0.5f, 0.f));
 	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.0f));
-	sprites[0]->addKeyframe(1, glm::vec2(0.f, 0.2f));
+	sprites[0]->addKeyframe(1, glm::vec2(0.5f, 0.f));
 	sprites[0]->setTransition(1, 0);
 	sprites[0]->changeAnimation(0);
 	//title
@@ -59,13 +60,12 @@ void TitleScreen::init(ShaderProgram& program)
 
 void TitleScreen::update(int deltaTime)
 {
-	timeElapsed += deltaTime / 1000.f;
 	boltTimer -= deltaTime / 1000.f;
-	if (boltTimer <= 0)
+	if (!startPressed && boltTimer <= 0)
 	{
 		if (sprites[0]->animation() != 1) sprites[0]->changeAnimation(1);
 		boltDuration -= deltaTime;
-		if (boltDuration == 0)
+		if (boltDuration < 0)
 		{
 			boltTimer = BOLT_FREQ;
 			boltDuration = BOLT_DURATION;
@@ -96,7 +96,7 @@ void TitleScreen::render()
 	if (timeBeforeStart > 1.f)
 	{
 		sprites[0]->render();
-		if (boltTimer <= 0) quads[1 + renderBigBolt]->render();
+		if (!startPressed && boltTimer <= 0) quads[1 + renderBigBolt]->render();
 		quads[0]->render();
 		if (timeBeforeStart <= VANISH_TIME)
 		{
@@ -104,13 +104,12 @@ void TitleScreen::render()
 			sprites[0]->setAlpha(alpha);
 			quads[0]->setAlpha(alpha+1.25f);
 		}
-		else if (renderText) pushRunButton.render(" PUSH  RUN  BUTTON!", glm::vec2(128.f, 144.f));
+		else if (renderText) pushRunButton.render(msg[lang], glm::vec2(128.f, 144.f));
 	}
 }
 
 void TitleScreen::reset()
 {
-	timeElapsed = 0.f;
 	timeBeforeStart = 5.f;
 	startPressed = false;
 	renderText = true;

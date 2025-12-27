@@ -2,6 +2,9 @@
 #include "TextureManager.h"
 #include "Game.h"
 
+#define X_OFFSET 8
+#define Y_OFFSET 16
+
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
 	isMaria = false;
@@ -16,7 +19,7 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	score = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.f), glm::vec2(0.84375f, 0.03125f), tex, shaderProgram);
 	credit_rest = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.03125f), glm::vec2(1.f, 0.0625f), tex, shaderProgram);
 	boards[0] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
-	boards[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.125f), glm::vec2(1.f, 0.1875f), tex, shaderProgram);
+	boards[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
 	dragon = TexturedQuad::createTexturedQuad(glm::vec2(0.6875f, 0.75f), glm::vec2(0.8125f, 0.875f), tex, shaderProgram);
 	boardFrame = Sprite::createSprite(glm::ivec2(64, 16), glm::vec2(0.25f + 0.25f * isMaria, 0.f), glm::vec2(0.5f + 0.25f * isMaria, 0.06125f), &tex, &shaderProgram);
 	boardFrame->setNumberAnimations(2);
@@ -27,43 +30,47 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	boardFrame->setTransition(1, 0);
 	boardFrame->changeAnimation(0);
 	int secondPlayerOffset = 208 * secondPlayer;
+	int yOffset = Y_OFFSET * (!secondPlayer - secondPlayer) * !Game::instance().isTwoPlayerMode();
+	int xOffset = X_OFFSET * !Game::instance().isTwoPlayerMode();
 	for (int i = 0; i < 7; ++i)
 	{
 		scoreNumbers[i] = Sprite::createSprite(glm::ivec2(8, 8), glm::vec2(0.f, 0.f), glm::vec2(0.03125f, 0.03125f), &tex, &shaderProgram);
 		setNumberAnims(scoreNumbers[i]);
-		scoreNumbers[i]->setPosition(glm::vec2(38 + (6 - i) * 8, 8 + secondPlayerOffset));
+		scoreNumbers[i]->setPosition(glm::vec2(xOffset + 38 + (6 - i) * 8, yOffset + 8 + secondPlayerOffset));
 	}
 	for (int i = 0; i < 4; ++i)
 	{
 		creditNumbers[i] = Sprite::createSprite(glm::ivec2(8, 8), glm::vec2(0.f, 0.f), glm::vec2(0.03125f, 0.03125f), &tex, &shaderProgram);
 		setNumberAnims(creditNumbers[i]);
-		creditNumbers[i]->setPosition(glm::vec2(38 + i * 8, 8 + secondPlayerOffset));
+		creditNumbers[i]->setPosition(glm::vec2(xOffset + 38 + i * 8, yOffset + 8 + secondPlayerOffset));
 	}
 	for (int i = 0; i < 2; ++i)
 	{
 		lifesNumbers[i] = Sprite::createSprite(glm::ivec2(8, 8), glm::vec2(0.f, 0.f), glm::vec2(0.03125f, 0.03125f), &tex, &shaderProgram);
 		setNumberAnims(lifesNumbers[i]);
-		lifesNumbers[i]->setPosition(glm::vec2(78 + (1 - i) * 8, 8 + secondPlayerOffset));
+		lifesNumbers[i]->setPosition(glm::vec2(xOffset + 78 + (1 - i) * 8, yOffset + 8 + secondPlayerOffset));
 	}
 	for (int i = 0; i < 2; ++i)
 	{
 		heartsNumbers[i] = Sprite::createSprite(glm::ivec2(8, 8), glm::vec2(0.f, 0.f), glm::vec2(0.03125f, 0.03125f), &tex, &shaderProgram);
 		setNumberAnims(heartsNumbers[i]);
-		heartsNumbers[i]->setPosition(glm::vec2(14 + (1 - i) * 8, 6 + secondPlayerOffset));
+		heartsNumbers[i]->setPosition(glm::vec2(xOffset + 14 + (1 - i) * 8, yOffset + 6 + secondPlayerOffset));
 	}
 	item = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.f,0.f), glm::vec2(0.0625f, 0.0625f), &tex, &shaderProgram);
 	setItem(item);
-	healthFrame->setPosition(glm::vec2(0, 128 * secondPlayer));
-	hpBar->setPosition(glm::vec2(0, 128 * secondPlayer));
-	score->setPosition(glm::vec2(35, 3 + secondPlayerOffset));
-	credit_rest->setPosition(glm::vec2(35, 3 + secondPlayerOffset));
-	boards[0]->setPosition(glm::vec2(32, secondPlayerOffset));
-	boards[1]->setPosition(glm::vec2(32, secondPlayerOffset));
-	boardFrame->setPosition(glm::vec2(32, secondPlayerOffset));
+	healthFrame->setPosition(glm::vec2(xOffset, yOffset + 128 * secondPlayer));
+	hpBar->setPosition(glm::vec2(xOffset, yOffset + 128 * secondPlayer));
+	score->setPosition(glm::vec2(xOffset + 35, yOffset + 3 + secondPlayerOffset));
+	credit_rest->setPosition(glm::vec2(xOffset + 35, yOffset + 3 + secondPlayerOffset));
+	boards[0]->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
+	boards[1]->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
+	boardFrame->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
 	boards[0]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
 	boards[1]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
-	item->setPosition(glm::vec2(13, 12 + 177 * secondPlayer));
-	dragon->setPosition(glm::vec2(5, 2 + 177 * secondPlayer));
+	item->setPosition(glm::vec2(xOffset + 13, yOffset + 12 + 177 * secondPlayer));
+	dragon->setPosition(glm::vec2(xOffset + 5, yOffset + 2 + 177 * secondPlayer));
+
+	player->setKey();
 }
 
 void GUI::update(int deltaTime)
@@ -175,7 +182,7 @@ void GUI::respawn()
 
 bool GUI::compatibleItem(int itemId) const
 {
-	return (itemId <= CROSS && !isMaria) || (itemId > CROSS && isMaria);
+	return (itemId <= CROSS && !isMaria) || (itemId > CROSS && isMaria) || itemId == KEY;
 }
 
 int GUI::getCurrentTrinketID() const
@@ -208,7 +215,7 @@ void GUI::setNumberAnims(Sprite* num)
 void GUI::setItem(Sprite* item)
 {
 	
-	item->setNumberAnimations(13);
+	item->setNumberAnimations(14);
 	item->addKeyframe(DAGGER, glm::vec2(0.f, 0.75f));
 	item->addKeyframe(AXE, glm::vec2(0.0625f, 0.75f));
 	item->addKeyframe(HOLY_WATER, glm::vec2(0.125f, 0.75f));
@@ -220,6 +227,7 @@ void GUI::setItem(Sprite* item)
 	item->addKeyframe(TURTLE, glm::vec2(0.5f, 0.75f));
 	item->addKeyframe(EGG, glm::vec2(0.5625f, 0.75f));
 	item->addKeyframe(BOOK, glm::vec2(0.625f, 0.75f));
+	item->addKeyframe(KEY, glm::vec2(0.8125f, 0.75f));
 	item->addKeyframe(NONE, glm::vec2(0.125f, 0.8125f));
 
 	item->changeAnimation(NONE);

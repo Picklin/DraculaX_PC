@@ -51,6 +51,10 @@ public:
 	void setScreenWidth(int width);
 	void setViewportOffset(int offset);
 
+	int getCurrentDubLang();
+	int getCurrentTxtLang();
+
+	bool isTwoPlayerMode();
 	bool getKey(int key) const;
 
 private:
@@ -69,6 +73,8 @@ private:
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
 
+	int currDubLang;
+	int currTxtLang;
 	int currentLevel = 0;
 	int currentScene = 0;
 	int nextLevel;
@@ -87,6 +93,7 @@ private:
 	bool startPressedLastFrame = false;
 	bool next = false;
 	bool restart = false;
+	bool twoPlayerMode;
 };
 
 

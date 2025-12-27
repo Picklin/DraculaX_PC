@@ -56,8 +56,9 @@ Item* ItemManager::getCommonRandomItem(const glm::vec2& position)
 Item* ItemManager::getTrinket(const glm::vec2& position, int trinketID)
 {
 	Trinket* trinket = new Trinket();
-    initItem(trinket, position, glm::vec2(0.0625f * trinketID, 0.75f), 
-        glm::vec2(0.0625f + 0.0625f * trinketID + 0.0625f * (trinketID == GUI::trinketIDs::DRAGON), 0.8125f + (trinketID == GUI::trinketIDs::DRAGON) * 0.0625f));
+    initItem(trinket, position, glm::vec2(0.0625f * trinketID + (trinketID == GUI::trinketIDs::KEY) * 0.0625f, 0.75f),
+        glm::vec2(0.0625f + 0.0625f * trinketID + 0.0625f * (trinketID == GUI::trinketIDs::DRAGON) + (trinketID == GUI::trinketIDs::KEY) * 0.0625f,
+            0.8125f + (trinketID == GUI::trinketIDs::DRAGON) * 0.0625f));
 	trinket->setTrinketID(trinketID);
 	return trinket;
 }

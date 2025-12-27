@@ -18,6 +18,8 @@ public:
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
+	void setKey();
+	void useKey();
 	string getName() const;
 	const vector<Hitbox> getHitbox() const override;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
@@ -95,6 +97,7 @@ private:
 	bool dashOffLedge = false;
 	bool recoverFromJump = false;
 	bool canJump = true;
+	bool hasKey = false;
 
 	//stairs booleans
 	bool bClimbing = false;

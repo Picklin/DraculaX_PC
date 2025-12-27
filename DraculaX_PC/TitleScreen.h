@@ -17,7 +17,11 @@ private:
 
 private:
 	Text pushRunButton;
-	float timeElapsed;
+	const string msg[2]{
+		" PUSH  RUN  BUTTON!",
+		"¡PULSA EL BOTON RUN!"
+	};
+	int lang;
 	float boltTimer;
 	int boltDuration;
 	float timeBeforeStart;

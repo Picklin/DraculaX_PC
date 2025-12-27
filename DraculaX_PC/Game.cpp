@@ -8,6 +8,16 @@ enum Levels
 	STAGE1,
 };
 
+enum VoiceLanguages
+{
+	JP_DUB, EN_DUB
+};
+
+enum TextLanguages
+{
+	EN_TXT, ES_TXT
+};
+
 void Game::init()
 {
 	/*
@@ -19,13 +29,18 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
+	gameStarted = true;
+	twoPlayerMode = false;
+	currDubLang = JP_DUB;
+	currTxtLang = ES_TXT;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
-	gui.init(guiShader, &player, false);
+	gui.init(guiShader, &player, false && twoPlayerMode);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
+	start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 
@@ -170,6 +185,16 @@ void Game::setViewportOffset(int offset)
 	//scene->setviewportOffset(offset);
 }
 
+int Game::getCurrentDubLang()
+{
+	return currDubLang;
+}
+
+int Game::getCurrentTxtLang()
+{
+	return currTxtLang;
+}
+
 void Game::updateGameInputs()
 {
 	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return;
@@ -275,6 +300,11 @@ void Game::gameOver()
 	//titScreen.gameOver();
 	gameStarted = false;
 	reset();
+}
+
+bool Game::isTwoPlayerMode()
+{
+	return twoPlayerMode;
 }
 
 bool Game::getKey(int key) const

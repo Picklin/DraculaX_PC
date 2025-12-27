@@ -22,7 +22,8 @@ const map<char, int> specialCharMap = {
     {'í', 60},
     {'ó', 61},
     {'ú', 62},
-    {'ñ', 63}
+    {'ñ', 63},
+    {'Ñ', 26},
 };
 
 void Text::init(ShaderProgram& shader, const string& file, const glm::ivec2 & size, int maxChars)

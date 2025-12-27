@@ -160,6 +160,16 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	whip->changeAnimation(0);
 }
 
+void Player::setKey()
+{
+	hasKey = true;
+}
+
+void Player::useKey()
+{
+	hasKey = false;
+}
+
 string Player::getName() const
 {
 	return "Player";
@@ -668,6 +678,7 @@ void Player::childUpdate(int deltaTime)
 				{
 					sprite->changeAnimation(it->second);
 					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);
+					else if (sprite->animation() == ATTACK_SUBWEAPON && hasKey) sprite->changeAnimation(ATTACK);
 					lookingLeftAtk = lookingLeft;
 				}
 				else if (!grounded && state != STATE_FALLING && !whipping)
@@ -796,8 +807,8 @@ void Player::childUpdate(int deltaTime)
 				else if (goingDown) bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
 				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 				{
-					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs);
-					whip->changeAnimation(0);
+					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
+					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey)) whip->changeAnimation(0);
 					whipping = true;
 					attackInStairs = useSubweaponInStairs = false;
 					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
