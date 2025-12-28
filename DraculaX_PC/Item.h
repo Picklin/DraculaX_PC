@@ -23,6 +23,8 @@ public:
 	bool isEnded() const;
 	bool getsRemoved() const;
 
+	static void setUngrabableTime(int timeMilisecs);
+
 protected:
 	virtual void makeEndSound() const = 0;
 	const glm::vec2 myCenter() const;
@@ -37,17 +39,11 @@ private:
 	TileMap* tileMap;
 	Sprite* sprite;
 	const int lifeSpan = 5000;	//milisegundos
-	const int ungrabableTime = 1000;
-	int timeElapsed = ungrabableTime;
-
-	//para cuando se lanze el que ya tenía equipado el jugador al coger un trinket nuevo
+	static int ungrabableTime;
+	int timeElapsed;
 	float velocityX = 0.f;
 	float velocityY = 0.f;
 	int xDir;
-	const float minSpeedX = 3.f;
-	const float friction = 0.15f;
-	const float minSpeedY = 3.f;
-	const float gravity = 0.3f;
 	float endTimer = 1;
 	bool beingEjected = false;
 	bool ended = false;

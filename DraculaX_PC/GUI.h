@@ -23,7 +23,9 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
-	bool compatibleItem(int itemId) const;
+	bool isMaria();
+	bool compatibleTrinket(int trinketId) const;
+	bool compatibleFood(int foodId) const;
 	int getCurrentTrinketID() const;
 
 private:
@@ -35,6 +37,10 @@ public:
 	enum trinketIDs
 	{
 		DAGGER, AXE, HOLY_WATER, STOPWATCH, BIBLE, CROSS, BIRD, CAT, TURTLE, EGG, BOOK, DRAGON, KEY, NONE,
+	};
+	enum foodIds
+	{
+		HALF_ROAST, ROAST, BIG_ROAST, PARFAIT, LOLLIPOP, CAKE, FLAN, CHEESE, CUCURUCHO, SUSHI, BURGER, STAR, ICECREAM, RAMEN, BIRTHDAY_CAKE
 	};
 private:
 	Texture tex;
@@ -50,7 +56,7 @@ private:
 	int currentLifes;
 	bool paused = false;
 	bool renderDragon = false;
-	bool isMaria = false;
+	bool Maria = false;
 };
 
  #endif	// !_GUI_INCLUDE

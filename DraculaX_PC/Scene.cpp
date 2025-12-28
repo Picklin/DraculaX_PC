@@ -108,7 +108,7 @@ void Scene::updateActors(int deltaTime)
 			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()[0]))	//habrá que cambiar la hitbox a que no devuelva un vector
 			{
 				Trinket* trinketItem = dynamic_cast<Trinket*>(items[i]);
-				if (trinketItem && gui->compatibleItem(trinketItem->getTrinketID()))
+				if (trinketItem && gui->compatibleTrinket(trinketItem->getTrinketID()))
 				{
 					int currentTrinket = gui->getCurrentTrinketID();
 					if (currentTrinket != GUI::trinketIDs::NONE)
@@ -209,7 +209,7 @@ void Scene::updateEffects(int deltaTime)
 
 void Scene::initManagers()
 {
-	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms);
+	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms, *gui);
 	EffectsManager::instance().init(MAP_OFFSET, *spriteShader);
 	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
 }

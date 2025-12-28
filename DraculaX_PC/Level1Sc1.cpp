@@ -100,6 +100,7 @@ TileMap* Level1Sc1::setStairsMap()
 void Level1Sc1::initItems() 
 {
 	items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
+	items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE));
 }
 void Level1Sc1::initActors(Player* player) 
 {

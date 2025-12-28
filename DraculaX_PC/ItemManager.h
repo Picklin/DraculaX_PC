@@ -5,6 +5,7 @@
 #include "TileMap.h"
 #include "ShaderProgram.h"
 #include "Trinket.h"
+#include "Food.h"
 #include <functional>
 #include <random>
 #include <chrono>
@@ -14,11 +15,12 @@ class ItemManager
 {
 public:
 	static ItemManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms);
+	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui);
 	
 	Item* getRandomItem(const glm::vec2& position);
 	Item* getCommonRandomItem(const glm::vec2& position);
 	Item* getTrinket(const glm::vec2& position, int trinketID);
+	Item* getFood(const glm::vec2& position, int foodID);
 
 private:
 	ItemManager();
@@ -30,6 +32,7 @@ private:
 	TileMap* map;
 	TileMap* platforms;
 	ShaderProgram* shader;
+	GUI* gui;
 	using ItemCreator = std::function<Item* (const glm::vec2&)>;
 	vector<ItemCreator> randomItem;
 	vector<ItemCreator> commonRandomItem;

@@ -2,11 +2,21 @@
 
 #define FALL_SPEED 3.f
 
+namespace
+{
+    const float minSpeedX = 3.f;
+    const float friction = 0.15f;
+    const float minSpeedY = 3.f;
+    const float gravity = 0.3f;
+}
+int Item::ungrabableTime = 1000;
+
 void Item::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex)
 {
     this->tileMapDispl = tileMapDispl;
     this->quadSize = glm::ivec2((bottomRight.x - topLeft.x) * itemsTex.width(), (bottomRight.y - topLeft.y) * itemsTex.height());
     sprite = Sprite::createSprite(quadSize, topLeft, bottomRight, &itemsTex, &shader);
+    timeElapsed = ungrabableTime;
 }
 
 void Item::setTileMap(TileMap& map)
@@ -27,7 +37,7 @@ void Item::setPosition(const glm::vec2& pos)
 
 const Hitbox Item::getHitbox() const
 {
-    return Hitbox{ position, position + glm::vec2(quadSize) };
+    return Hitbox{ position, position + glm::vec2(quadSize.x, quadSize.y-1) };
 }
 
 void Item::setUngrabable()
@@ -48,6 +58,11 @@ bool Item::isEnded() const
 bool Item::getsRemoved() const
 {
     return endTimer <= 0;
+}
+
+void Item::setUngrabableTime(int timeMilisecs)
+{
+    ungrabableTime = timeMilisecs;
 }
 
 void Item::eject(int xDir)
@@ -86,9 +101,9 @@ void Item::update(int deltaTime)
 
         position.y += velocityY;
         position.x += velocityX;
-        if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y) && platforms != nullptr)
+        if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y-1) && platforms != nullptr)
         {
-            platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y);
+            platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y-1);
         }
         setPosition(position);
         timeElapsed += deltaTime;

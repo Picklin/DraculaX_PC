@@ -1,5 +1,29 @@
+#include <map>
 #include "ItemManager.h"
 #include "TextureManager.h"
+
+static const int foodEquivalents[12]
+{
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::HALF_ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::ROAST,
+    GUI::foodIds::BIG_ROAST
+};
+
+const pair<glm::vec2, glm::vec2> RichterFoodCoords[3]
+{
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.875f), glm::vec2(0.0625f, 0.9375f)),
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.9375f), glm::vec2(0.0625f, 1.f)),
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.0625f, 0.875f), glm::vec2(0.1875f, 1.f))
+};
 
 ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
 {
@@ -31,12 +55,13 @@ ItemManager& ItemManager::instance()
     return im;
 }
 
-void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms)
+void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui)
 {
     this->tileMapDispl = tileMapDispl;
     this->shader = &shader;
     this->map = map;
     this->platforms = platforms;
+    this->gui = &gui;
 }
 
 
@@ -61,4 +86,25 @@ Item* ItemManager::getTrinket(const glm::vec2& position, int trinketID)
             0.8125f + (trinketID == GUI::trinketIDs::DRAGON) * 0.0625f));
 	trinket->setTrinketID(trinketID);
 	return trinket;
+}
+
+Item* ItemManager::getFood(const glm::vec2& position, int foodID)
+{
+    bool isRichter = !gui->isMaria();
+    if (isRichter && foodID >= GUI::foodIds::PARFAIT)
+    {
+        foodID = foodEquivalents[foodID-3];
+    }
+    Food* food = new Food();
+    if (foodID < GUI::foodIds::PARFAIT)
+    {
+        initItem(food, position, RichterFoodCoords[foodID].first, RichterFoodCoords[foodID].second);
+    }
+    else
+    {
+        initItem(food, position, glm::vec2(0.0625f * foodID, 0.875f + 0.0625f * (foodID != GUI::foodIds::BIRTHDAY_CAKE)),
+            glm::vec2(0.0625f + 0.0625f * foodID + 0.0625f * (foodID == GUI::foodIds::BIRTHDAY_CAKE), 1.f));
+    }
+    food->setFoodID(foodID);
+    return food;
 }

@@ -1,9 +1,8 @@
 #include <cmath>
-#include <iostream>
+#include <unordered_map>
 #include <GL/glew.h>
 #include "Player.h"
 #include "Game.h"
-#include <map>
 
 #define FALL_SPEED 4
 #define DASH_KICK_HEIGHT 32
@@ -19,6 +18,11 @@ enum PlayerAnims
 	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
+enum Inputs
+{
+	RIGHT, LEFT, DOWN, UP, A, X
+};
+
 struct Command
 {
 	vector<int> sequence;
@@ -26,103 +30,99 @@ struct Command
 	int index;
 };
 
-const Command DASH_COMMAND = {
-	{GLFW_KEY_UP, GLFW_KEY_DOWN},
-	std::chrono::milliseconds(512),
-	64
-};
-
-const Command UPPERCUT_COMMAND = {
-	{GLFW_KEY_DOWN, GLFW_KEY_UP},
-	std::chrono::milliseconds(256),
-	128
-};
-
-const vector<glm::vec2> crouchWhipOffset = {
-	glm::vec2(0,16), glm::vec2(1,14), glm::vec2(1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),
-};
-
-const vector<glm::vec2> leftCrouchWhipOffset = {
-	glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16),
-};
-
-const vector<glm::vec2> stairsOffset = {
-	glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), //para arriba
-	glm::vec2(0,-2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,4), glm::vec2(2,2), glm::vec2(1,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(1,2) //para abajo
-};
-
-enum Inputs
+namespace
 {
-	RIGHT, LEFT, DOWN, UP, A, X
-};
+	const Command DASH_COMMAND = {
+		{GLFW_KEY_UP, GLFW_KEY_DOWN},
+		std::chrono::milliseconds(512),
+		64
+	};
 
-std::map<int, int> inputMap = {
-	{ RIGHT, 1 },
-	{ LEFT, 1},
-	{ A, 2 },
-	{ DOWN, 4 },
-	{ X, 8 },
-	{ UP, 16 },
-};
+	const Command UPPERCUT_COMMAND = {
+		{GLFW_KEY_DOWN, GLFW_KEY_UP},
+		std::chrono::milliseconds(256),
+		128
+	};
 
-std::map<int, int> animMap = {
-	{ 0, PlayerAnims::IDLE },
-	{ inputMap[RIGHT], PlayerAnims::WALK},
-	{ inputMap[DOWN], PlayerAnims::CROUCH},
-	{ inputMap[DOWN] | inputMap[A], PlayerAnims::DASH1},
-	{ inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::CROUCH},
-	{ inputMap[X], PlayerAnims::ATTACK},
-	{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
-	{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
-	{ inputMap[X] | inputMap[DOWN], PlayerAnims::ATTACK_CROUCH},
-	{ inputMap[X] | inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::ATTACK_CROUCH},
-	{ inputMap[UP], PlayerAnims::PREP_ATK},
-	{ inputMap[UP] | inputMap[RIGHT], PlayerAnims::WALK},
-	{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
-	{ inputMap[UP] | inputMap[X], PlayerAnims::ATTACK_SUBWEAPON},
-	{ inputMap[UP] | inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK_SUBWEAPON},
-	{ DASH_COMMAND.index, PlayerAnims::DASH_COMBO },
-	{ UPPERCUT_COMMAND.index, PlayerAnims::UPPERCUT },
-};
+	const vector<glm::vec2> crouchWhipOffset = {
+		glm::vec2(0,16), glm::vec2(1,14), glm::vec2(1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),glm::vec2(-1,16),
+	};
 
-std::map<int, int> animToStateMap = {
-	{ PlayerAnims::IDLE, PlayerStates::STATE_IDLE },
-	{ PlayerAnims::WALK, PlayerStates::STATE_WALKING },
-	{ PlayerAnims::JUMP, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::JUMP_FW, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::JUMP_FINAL, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::FALL, PlayerStates::STATE_FALLING },
-	{ PlayerAnims::FALL_FINAL, PlayerStates::STATE_FALLING },
-	{ PlayerAnims::CROUCH, PlayerStates::STATE_CROUCHING },
-	{ PlayerAnims::CROUCH_FINAL, PlayerStates::STATE_CROUCHING },
-	{ PlayerAnims::GETUP, PlayerStates::STATE_IDLE },
-	{ PlayerAnims::PREP_ATK, PlayerStates::STATE_PREP_ATK },
-	{ PlayerAnims::ATTACK, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::ATTACK_CROUCH, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::ATTACK_SUBWEAPON, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::SKID, PlayerStates::STATE_IDLE },
-	{ PlayerAnims::DASH1, PlayerStates::STATE_DASHING },
-	{ PlayerAnims::DASH1_FINAL, PlayerStates::STATE_DASHING },
-	{ PlayerAnims::DASH1_GETUP, PlayerStates::STATE_DASHING },
-	{ PlayerAnims::DASH_KICK, PlayerStates::STATE_DASHKICKING },
-	{ PlayerAnims::DASH_KICK_FINAL, PlayerStates::STATE_DASHKICKING },
-	{ PlayerAnims::DASH_COMBO, PlayerStates::STATE_COMBO_DASHING },
-	{ PlayerAnims::DASH_COMBO_FINAL, PlayerStates::STATE_COMBO_DASHING },
-	{ PlayerAnims::UPPERCUT, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::BACKFLIP, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::BACKFLIP_FINAL, PlayerStates::STATE_JUMPING },
-	{ PlayerAnims::BACKFLIP_SKID, PlayerStates::STATE_IDLE },
-	{ PlayerAnims::ULT, PlayerStates::STATE_ULTING },
-	{ PlayerAnims::ULT_FINAL, PlayerStates::STATE_ULTING },
-	{ PlayerAnims::CLIMB_IDLE_UP, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims:: UPSTAIRS, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims::DOWNSTAIRS, PlayerStates::STATE_CLIMBING },
-	{ PlayerAnims::ATTACK_UPSTAIRS, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::ATTACK_UPSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::ATTACK_DOWNSTAIRS, PlayerStates::STATE_ATTACKING },
-	{ PlayerAnims::ATTACK_DOWNSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
-};
+	const vector<glm::vec2> leftCrouchWhipOffset = {
+		glm::vec2(0,16), glm::vec2(-1,14), glm::vec2(-1,13), glm::vec2(0,11), glm::vec2(0,11), glm::vec2(0,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16), glm::vec2(1,16),
+	};
+
+	const vector<glm::vec2> stairsOffset = {
+		glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), //para arriba
+		glm::vec2(0,-2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,4), glm::vec2(2,2), glm::vec2(1,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(1,2) //para abajo
+	};
+	std::unordered_map<int, int> inputMap = {
+		{ RIGHT, 1 },
+		{ LEFT, 1},
+		{ A, 2 },
+		{ DOWN, 4 },
+		{ X, 8 },
+		{ UP, 16 },
+	};
+	const std::unordered_map<int, int> animMap = {
+		{ 0, PlayerAnims::IDLE },
+		{ inputMap[RIGHT], PlayerAnims::WALK},
+		{ inputMap[DOWN], PlayerAnims::CROUCH},
+		{ inputMap[DOWN] | inputMap[A], PlayerAnims::DASH1},
+		{ inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::CROUCH},
+		{ inputMap[X], PlayerAnims::ATTACK},
+		{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
+		{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
+		{ inputMap[X] | inputMap[DOWN], PlayerAnims::ATTACK_CROUCH},
+		{ inputMap[X] | inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::ATTACK_CROUCH},
+		{ inputMap[UP], PlayerAnims::PREP_ATK},
+		{ inputMap[UP] | inputMap[RIGHT], PlayerAnims::WALK},
+		{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
+		{ inputMap[UP] | inputMap[X], PlayerAnims::ATTACK_SUBWEAPON},
+		{ inputMap[UP] | inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK_SUBWEAPON},
+		{ DASH_COMMAND.index, PlayerAnims::DASH_COMBO },
+		{ UPPERCUT_COMMAND.index, PlayerAnims::UPPERCUT },
+	};
+
+	const std::unordered_map<int, int> animToStateMap = {
+		{ PlayerAnims::IDLE, PlayerStates::STATE_IDLE },
+		{ PlayerAnims::WALK, PlayerStates::STATE_WALKING },
+		{ PlayerAnims::JUMP, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::JUMP_FW, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::JUMP_FINAL, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::FALL, PlayerStates::STATE_FALLING },
+		{ PlayerAnims::FALL_FINAL, PlayerStates::STATE_FALLING },
+		{ PlayerAnims::CROUCH, PlayerStates::STATE_CROUCHING },
+		{ PlayerAnims::CROUCH_FINAL, PlayerStates::STATE_CROUCHING },
+		{ PlayerAnims::GETUP, PlayerStates::STATE_IDLE },
+		{ PlayerAnims::PREP_ATK, PlayerStates::STATE_PREP_ATK },
+		{ PlayerAnims::ATTACK, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::ATTACK_CROUCH, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::ATTACK_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::SKID, PlayerStates::STATE_IDLE },
+		{ PlayerAnims::DASH1, PlayerStates::STATE_DASHING },
+		{ PlayerAnims::DASH1_FINAL, PlayerStates::STATE_DASHING },
+		{ PlayerAnims::DASH1_GETUP, PlayerStates::STATE_DASHING },
+		{ PlayerAnims::DASH_KICK, PlayerStates::STATE_DASHKICKING },
+		{ PlayerAnims::DASH_KICK_FINAL, PlayerStates::STATE_DASHKICKING },
+		{ PlayerAnims::DASH_COMBO, PlayerStates::STATE_COMBO_DASHING },
+		{ PlayerAnims::DASH_COMBO_FINAL, PlayerStates::STATE_COMBO_DASHING },
+		{ PlayerAnims::UPPERCUT, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::BACKFLIP, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::BACKFLIP_FINAL, PlayerStates::STATE_JUMPING },
+		{ PlayerAnims::BACKFLIP_SKID, PlayerStates::STATE_IDLE },
+		{ PlayerAnims::ULT, PlayerStates::STATE_ULTING },
+		{ PlayerAnims::ULT_FINAL, PlayerStates::STATE_ULTING },
+		{ PlayerAnims::CLIMB_IDLE_UP, PlayerStates::STATE_CLIMBING },
+		{ PlayerAnims::CLIMB_IDLE_DOWN, PlayerStates::STATE_CLIMBING },
+		{ PlayerAnims:: UPSTAIRS, PlayerStates::STATE_CLIMBING },
+		{ PlayerAnims::DOWNSTAIRS, PlayerStates::STATE_CLIMBING },
+		{ PlayerAnims::ATTACK_UPSTAIRS, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::ATTACK_UPSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::ATTACK_DOWNSTAIRS, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::ATTACK_DOWNSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+	};
+}
 
 void Player::render()
 {
@@ -390,8 +390,7 @@ void Player::childUpdate(int deltaTime)
 	//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
 	int anim = sprite->animation();
 	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
-	int state = animToStateMap[anim];
-
+    int state = animToStateMap.at(anim);
 	if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
 	{
 		sprite->changeAnimation(ULT);
@@ -674,7 +673,7 @@ void Player::childUpdate(int deltaTime)
 					Game::instance().keyReleased(GLFW_KEY_Z);
 				}
 				auto it = animMap.find(inputIndex);
-				if (it != animMap.end() && state != animToStateMap[it->second] && state != STATE_ATTACKING && grounded && !whipping)
+				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded && !whipping)
 				{
 					sprite->changeAnimation(it->second);
 					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);

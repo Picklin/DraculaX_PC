@@ -7,21 +7,21 @@
 
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
-	isMaria = false;
+	Maria = true;
 	// isMaria = player->getName() == "Maria";
 	this->player = player;
 	this->shader = &shaderProgram;
 	tex.loadFromFile("images/gui/gui&items.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	tex.setMagFilter(GL_NEAREST);
 	TextureManager::instance().addTexture("gui&items", &tex);
-	healthFrame = TexturedQuad::createTexturedQuad(glm::vec2(0.125f * isMaria, 0.375f * secondPlayer), glm::vec2(0.125f + 0.125f * isMaria, 0.375f + 0.375f * secondPlayer), tex, shaderProgram);
-	hpBar = TexturedQuad::createTexturedQuad(glm::vec2(0.53125f + 0.03125f * isMaria, 0.375f), glm::vec2(0.5625f + 0.03125f * isMaria, 0.75f), tex, shaderProgram);
+	healthFrame = TexturedQuad::createTexturedQuad(glm::vec2(0.125f * Maria, 0.375f * secondPlayer), glm::vec2(0.125f + 0.125f * Maria, 0.375f + 0.375f * secondPlayer), tex, shaderProgram);
+	hpBar = TexturedQuad::createTexturedQuad(glm::vec2(0.53125f + 0.03125f * Maria, 0.375f), glm::vec2(0.5625f + 0.03125f * Maria, 0.75f), tex, shaderProgram);
 	score = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.f), glm::vec2(0.84375f, 0.03125f), tex, shaderProgram);
 	credit_rest = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.03125f), glm::vec2(1.f, 0.0625f), tex, shaderProgram);
 	boards[0] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
 	boards[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.0625f), glm::vec2(1.f, 0.125f), tex, shaderProgram);
 	dragon = TexturedQuad::createTexturedQuad(glm::vec2(0.6875f, 0.75f), glm::vec2(0.8125f, 0.875f), tex, shaderProgram);
-	boardFrame = Sprite::createSprite(glm::ivec2(64, 16), glm::vec2(0.25f + 0.25f * isMaria, 0.f), glm::vec2(0.5f + 0.25f * isMaria, 0.06125f), &tex, &shaderProgram);
+	boardFrame = Sprite::createSprite(glm::ivec2(64, 16), glm::vec2(0.25f + 0.25f * Maria, 0.f), glm::vec2(0.5f + 0.25f * Maria, 0.06125f), &tex, &shaderProgram);
 	boardFrame->setNumberAnimations(2);
 	boardFrame->setAnimationSpeed(0, 0);
 	boardFrame->addKeyframe(0, glm::vec2(0.f, 0.f));
@@ -180,9 +180,19 @@ void GUI::respawn()
 	changeItem(NONE);
 }
 
-bool GUI::compatibleItem(int itemId) const
+bool GUI::isMaria()
 {
-	return (itemId <= CROSS && !isMaria) || (itemId > CROSS && isMaria) || itemId == KEY;
+	return Maria;
+}
+
+bool GUI::compatibleTrinket(int trinketId) const
+{
+	return (trinketId <= CROSS && !Maria) || (trinketId > CROSS && Maria) || trinketId == KEY;
+}
+
+bool GUI::compatibleFood(int foodId) const
+{
+	return (foodId <= BIG_ROAST && !Maria) || (foodId > BIG_ROAST && Maria);
 }
 
 int GUI::getCurrentTrinketID() const
