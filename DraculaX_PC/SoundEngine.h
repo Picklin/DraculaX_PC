@@ -20,6 +20,7 @@ public:
 	void stopAllSounds();
 
 	void playGrabTrinket();
+	void playHeal();
 	void playPause();
 	void playStart();
 
@@ -36,6 +37,9 @@ private:
 	std::vector<ISound*> activeSounds;
 
 	ISoundEngine* engine;
+
+	ISoundSource* healSource;
+	ISound* healSound;
 
 	ISoundSource* pauseSource;
 	ISound* pauseSound;

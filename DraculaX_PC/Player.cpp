@@ -18,11 +18,6 @@ enum PlayerAnims
 	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
 };
 
-enum Inputs
-{
-	RIGHT, LEFT, DOWN, UP, A, X
-};
-
 struct Command
 {
 	vector<int> sequence;
@@ -56,30 +51,32 @@ namespace
 		glm::vec2(2,-3), glm::vec2(2,-1), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), glm::vec2(2,-2), //para arriba
 		glm::vec2(0,-2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,4), glm::vec2(2,2), glm::vec2(1,0), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(2,2), glm::vec2(1,2) //para abajo
 	};
-	std::unordered_map<int, int> inputMap = {
-		{ RIGHT, 1 },
-		{ LEFT, 1},
-		{ A, 2 },
-		{ DOWN, 4 },
-		{ X, 8 },
-		{ UP, 16 },
+
+	enum inputMap {
+		RIGHT = 1 ,
+		LEFT = 1,
+		A = 2 ,
+		DOWN = 4 ,
+		X = 8 ,
+		UP = 16 ,
 	};
+
 	const std::unordered_map<int, int> animMap = {
 		{ 0, PlayerAnims::IDLE },
-		{ inputMap[RIGHT], PlayerAnims::WALK},
-		{ inputMap[DOWN], PlayerAnims::CROUCH},
-		{ inputMap[DOWN] | inputMap[A], PlayerAnims::DASH1},
-		{ inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::CROUCH},
-		{ inputMap[X], PlayerAnims::ATTACK},
-		{ inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK},
-		{ inputMap[X] | inputMap[A], PlayerAnims::ATTACK},
-		{ inputMap[X] | inputMap[DOWN], PlayerAnims::ATTACK_CROUCH},
-		{ inputMap[X] | inputMap[DOWN] | inputMap[RIGHT], PlayerAnims::ATTACK_CROUCH},
-		{ inputMap[UP], PlayerAnims::PREP_ATK},
-		{ inputMap[UP] | inputMap[RIGHT], PlayerAnims::WALK},
-		{ inputMap[UP] | inputMap[DOWN], PlayerAnims::CROUCH},
-		{ inputMap[UP] | inputMap[X], PlayerAnims::ATTACK_SUBWEAPON},
-		{ inputMap[UP] | inputMap[X] | inputMap[RIGHT], PlayerAnims::ATTACK_SUBWEAPON},
+		{ RIGHT, PlayerAnims::WALK},
+		{ DOWN, PlayerAnims::CROUCH},
+		{ DOWN | A, PlayerAnims::DASH1},
+		{ DOWN | RIGHT, PlayerAnims::CROUCH},
+		{ X, PlayerAnims::ATTACK},
+		{ X | RIGHT, PlayerAnims::ATTACK},
+		{ X | A, PlayerAnims::ATTACK},
+		{ X | DOWN, PlayerAnims::ATTACK_CROUCH},
+		{ X | DOWN | RIGHT, PlayerAnims::ATTACK_CROUCH},
+		{ UP, PlayerAnims::PREP_ATK},
+		{ UP | RIGHT, PlayerAnims::WALK},
+		{ UP | DOWN, PlayerAnims::CROUCH},
+		{ UP | X, PlayerAnims::ATTACK_SUBWEAPON},
+		{ UP | X | RIGHT, PlayerAnims::ATTACK_SUBWEAPON},
 		{ DASH_COMMAND.index, PlayerAnims::DASH_COMBO },
 		{ UPPERCUT_COMMAND.index, PlayerAnims::UPPERCUT },
 	};
@@ -156,7 +153,8 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	whip->addKeyframe(0, glm::vec2(0.8f, 0.f));
 	whip->setAnimationSpeed(1, 0);
 	whip->addKeyframe(1, glm::vec2(0.9f, 0.f));
-	whip->setTransition(0, 1);
+	//whip->setTransition(0, 1);
+	//whip->setTransition(1, 0);
 	whip->changeAnimation(0);
 }
 
@@ -622,12 +620,12 @@ void Player::childUpdate(int deltaTime)
 				int inputIndex = 0;
 				if (anim != BACKFLIP_SKID && anim != BACKFLIP_FINAL)
 				{
-					inputIndex += inputMap[RIGHT] * rightPressed
-						+ inputMap[LEFT] * leftPressed
-						+ inputMap[UP] * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
-						+ inputMap[DOWN] * Game::instance().getKey(GLFW_KEY_DOWN)
-						+ inputMap[A] * (Game::instance().getKey(GLFW_KEY_Z) && canJump)
-						+ inputMap[X] * Game::instance().getKey(GLFW_KEY_X);
+					inputIndex += RIGHT * rightPressed
+						+ LEFT * leftPressed
+						+ UP * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
+						+ DOWN * Game::instance().getKey(GLFW_KEY_DOWN)
+						+ A * (Game::instance().getKey(GLFW_KEY_Z) && canJump)
+						+ X * Game::instance().getKey(GLFW_KEY_X);
 					//Register inputs for command detection
 					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
 						+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
@@ -644,7 +642,7 @@ void Player::childUpdate(int deltaTime)
 					commandBuffer.clear();
 					inputIndex = commandInputIndex;
 				}
-				else if (inputIndex == inputMap[UP] && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
+				else if (inputIndex == UP && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true; 
 					linedUpStair = false;
@@ -653,7 +651,7 @@ void Player::childUpdate(int deltaTime)
 					stairPosX = (int)position.x - distance;
 					stairPosY = (int)position.y;
 				}
-				else if (inputIndex == inputMap[DOWN] && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
+				else if (inputIndex == DOWN && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true;
 					linedUpStair = false;

@@ -4,12 +4,15 @@
 SoundEngine::SoundEngine()
 {
 	engine = createIrrKlangDevice();
+	healSource = engine->getSoundSource("sfx/Heal.wav");
+	healSource->grab();
 	pauseSource = engine->getSoundSource("sfx/Pause.wav");
 	pauseSource->grab();
 	pickupTrinketSource = engine->getSoundSource("sfx/PickupTrinket.wav");
 	pickupTrinketSource->grab();
 	startSource = engine->getSoundSource("sfx/Start.wav");
 	startSource->grab();
+	healSound = nullptr;
 	pauseSound = nullptr;
 	pickupTrinketSound = nullptr;
 }
@@ -122,6 +125,12 @@ void SoundEngine::playGrabTrinket()
 {
 	checkCurrentSound(pickupTrinketSound);
 	pickupTrinketSound = engine->play2D(pickupTrinketSource, false, false, true);
+}
+
+void SoundEngine::playHeal()
+{
+	checkCurrentSound(healSound);
+	healSound = engine->play2D(healSource, false, false, true);
 }
 
 void SoundEngine::playPause()
