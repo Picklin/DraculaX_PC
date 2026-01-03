@@ -128,7 +128,7 @@ void Player::render()
 	int anim = sprite->animation();
 	if ((loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
-	if (whipping)
+	if (whipping && !whip->animationEnded())
 	{
 		whip->render();
 	}
@@ -510,7 +510,7 @@ void Player::childUpdate(int deltaTime)
 		}
 		else if (getup)
 		{
-			if (anim == ATTACK_CROUCH && !Game::instance().getKey(GLFW_KEY_DOWN))
+			if (anim == ATTACK_CROUCH && !Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
 			{
 				int keyframe = sprite->getCurrentKeyframe();
 				sprite->changeAnimation(ATTACK);
@@ -682,7 +682,7 @@ void Player::childUpdate(int deltaTime)
 				{
 					sprite->changeAnimation(FALL + backflipping);
 				}
-				else if (anim == ATTACK && Game::instance().getKey(GLFW_KEY_DOWN))
+				else if (anim == ATTACK && Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
 				{
 					int keyframe = sprite->getCurrentKeyframe();
 					sprite->changeAnimation(ATTACK_CROUCH);
@@ -981,6 +981,8 @@ void Player::climbToStair(int tile)
 	backflipping = false;
 	linedUpStair = true;
 	goDown = false;
+	recoverFromJump = false;
+	fallDistance = 0;
 	velocityX = 0;
 	sprite->changeAnimation(CLIMB_IDLE_UP);
 	rightUpStair = tile == 1;
@@ -1044,14 +1046,13 @@ void Player::registerInput(int key)
 			}),
 		commandBuffer.end());
 	//cout << commandBuffer.size() << endl;
-	
 	//if (commandBuffer.size()>2) cout << commandBuffer[commandBuffer.size() - 3].key << ' ' << commandBuffer[commandBuffer.size()-2].key << ' ' << commandBuffer[commandBuffer.size() - 1].key << endl;
-	
 }
 
 void Player::whipUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
+	//cout << "current keyframe: " << whip->getCurrentKeyframe() << " animation ended?: " << whip->animationEnded() << endl;
 	whipping = ((anim == ATTACK) || (anim == ATTACK_CROUCH) || (anim == ATTACK_UPSTAIRS) || (anim == ATTACK_DOWNSTAIRS));
 	if (whipping)
 	{

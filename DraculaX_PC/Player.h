@@ -97,6 +97,7 @@ private:
 	bool dashOffLedge = false;
 	bool recoverFromJump = false;
 	bool canJump = true;
+	//bool hasCrouchedOrStandedDuringAttack = false;
 	bool hasKey = false;
 
 	//stairs booleans
