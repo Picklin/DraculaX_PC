@@ -6,6 +6,7 @@
 #include <atomic>
 #include <vector>
 #include <irrKlang.h>
+#include <string>
 using namespace irrklang;
 
 class SoundEngine
@@ -19,10 +20,14 @@ public:
 	void unpauseAllSounds();
 	void stopAllSounds();
 
+	void playStageMusic(int stageNum);
+
 	void playGrabTrinket();
 	void playHeal();
 	void playPause();
 	void playStart();
+	void loadOSTpaths();
+	void playStageSong(int stageNum);
 
 private:
 	SoundEngine();
@@ -32,9 +37,10 @@ private:
 	void fadeInThreadFunc(ISound* sound, int durationMs);
 
 private:
-	std::atomic<bool> paused;
-
+	std::vector<ISoundSource*> originalStageMusicSources;
+	std::vector<ISoundSource*> otherMusicSource;
 	std::vector<ISound*> activeSounds;
+	ISound* musicSound;
 
 	ISoundEngine* engine;
 
@@ -48,6 +54,7 @@ private:
 	ISound* pickupTrinketSound;
 
 	ISoundSource* startSource;
+	std::atomic<bool> paused;
 };
 
 #endif // !_SOUNDENGINE_INCLUDE

@@ -77,7 +77,8 @@ void Level1Sc1::render()
 	player->render();
 	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
 	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
-	//text.render("In der guten alten Zeit,\nlebten die Menschen\nnoch ruhig und in Frieden...", player->getPosition()+glm::vec2(60,0));
+	//text.render("La fe es lo que mueve a las personas\na unirse y seguir adelante.", player->getPosition()+glm::vec2(66,0));
+	//text.render("Solo pueden ser gobernados por quienes\nson valiosos, respetados y apreciados.", player->getPosition()+glm::vec2(66,0));
 	basicShader->use();
 	for (auto item : items) item->render();
 	gui->render();

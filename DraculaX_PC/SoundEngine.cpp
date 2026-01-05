@@ -1,5 +1,12 @@
 #include "SoundEngine.h"
 #include <thread>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+namespace
+{
+	std::vector<std::string> songPaths_orig;
+}
 
 SoundEngine::SoundEngine()
 {
@@ -15,6 +22,7 @@ SoundEngine::SoundEngine()
 	healSound = nullptr;
 	pauseSound = nullptr;
 	pickupTrinketSound = nullptr;
+	musicSound = nullptr;
 }
 
 void SoundEngine::checkCurrentSound(ISound* sound)
@@ -76,6 +84,29 @@ void SoundEngine::fadeInThreadFunc(ISound* sound, int durationMs)
 	}
 }
 
+void SoundEngine::loadOSTpaths()
+{
+	for (const auto& entrada : fs::directory_iterator("[Orig] Akumajo Dracula X OST/Stage Music"))
+	{
+		songPaths_orig.push_back(entrada.path().filename().string());
+	}
+	originalStageMusicSources.resize(songPaths_orig.size());
+}
+
+void SoundEngine::playStageSong(int stageNum)
+{
+	if (originalStageMusicSources[stageNum] == nullptr)
+	{
+		std::string fullPath = "[Orig] Akumajo Dracula X OST/Stage Music/" + songPaths_orig[stageNum];
+		originalStageMusicSources[stageNum] = engine->getSoundSource(fullPath.c_str());
+		originalStageMusicSources[stageNum]->setDefaultVolume(0.25f);
+		originalStageMusicSources[stageNum]->grab();
+	}
+	checkCurrentSound(musicSound);
+	musicSound = engine->play2D(originalStageMusicSources[stageNum], true, false, true);
+	addActiveSound(musicSound);
+}
+
 void SoundEngine::update()
 {
 	for (auto it = activeSounds.begin(); it != activeSounds.end(); ) {
@@ -119,6 +150,13 @@ void SoundEngine::stopAllSounds()
 {
 	engine->stopAllSounds();
 
+}
+
+void SoundEngine::playStageMusic(int stageNum)
+{
+	checkCurrentSound(musicSound);
+	musicSound = engine->play2D(originalStageMusicSources[stageNum], true, false, true);
+	addActiveSound(musicSound);
 }
 
 void SoundEngine::playGrabTrinket()

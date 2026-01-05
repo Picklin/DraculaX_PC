@@ -40,6 +40,7 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
+	SoundEngine::instance().loadOSTpaths();
 	start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
@@ -144,6 +145,7 @@ void Game::start()
 	gameStarted = true;
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
+	SoundEngine::instance().playStageSong(currentScene);
 	gui.reset();
 }
 

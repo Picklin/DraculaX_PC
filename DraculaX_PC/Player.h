@@ -19,7 +19,7 @@ public:
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
 	void setKey();
-	void useKey();
+	void unsetKey();
 	string getName() const;
 	const vector<Hitbox> getHitbox() const override;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }

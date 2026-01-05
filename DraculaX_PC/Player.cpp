@@ -132,6 +132,10 @@ void Player::render()
 	{
 		whip->render();
 	}
+	else
+	{
+		whip->changeAnimation(0);
+	}
 	shader->setUniform1i("flip", false);
 }
 
@@ -163,7 +167,7 @@ void Player::setKey()
 	hasKey = true;
 }
 
-void Player::useKey()
+void Player::unsetKey()
 {
 	hasKey = false;
 }
@@ -451,8 +455,8 @@ void Player::childUpdate(int deltaTime)
 				}
 				else
 				{
-					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
-					whip->changeAnimation(0);
+					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP) * !hasKey);
+					whipping = !hasKey || !Game::instance().getKey(GLFW_KEY_UP);
 					lookingLeftAtk = lookingLeft;
 				}
 			}
@@ -565,7 +569,6 @@ void Player::childUpdate(int deltaTime)
 				if (Game::instance().getKey(GLFW_KEY_X) && !whipping)
 				{
 					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
-					whip->changeAnimation(0);
 					whipping = true;
 				}
 				else if (Game::instance().getKey(GLFW_KEY_UP)
@@ -674,7 +677,7 @@ void Player::childUpdate(int deltaTime)
 				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded && !whipping)
 				{
 					sprite->changeAnimation(it->second);
-					if (sprite->animation() == (ATTACK + bCrouching * 2)) whip->changeAnimation(0);
+					if (sprite->animation() == (ATTACK + bCrouching * 2)) whipping = true;
 					else if (sprite->animation() == ATTACK_SUBWEAPON && hasKey) sprite->changeAnimation(ATTACK);
 					lookingLeftAtk = lookingLeft;
 				}
@@ -805,8 +808,7 @@ void Player::childUpdate(int deltaTime)
 				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 				{
 					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
-					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey)) whip->changeAnimation(0);
-					whipping = true;
+					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey)) whipping = true;
 					attackInStairs = useSubweaponInStairs = false;
 					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
 					position.y -= float(correction);
@@ -1053,7 +1055,7 @@ void Player::whipUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
 	//cout << "current keyframe: " << whip->getCurrentKeyframe() << " animation ended?: " << whip->animationEnded() << endl;
-	whipping = ((anim == ATTACK) || (anim == ATTACK_CROUCH) || (anim == ATTACK_UPSTAIRS) || (anim == ATTACK_DOWNSTAIRS));
+	whipping = whipping && ((anim == ATTACK) || (anim == ATTACK_CROUCH) || (anim == ATTACK_UPSTAIRS) || (anim == ATTACK_DOWNSTAIRS));
 	if (whipping)
 	{
 		whip->update(deltaTime);
