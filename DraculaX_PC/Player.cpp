@@ -3,8 +3,9 @@
 #include <GL/glew.h>
 #include "Player.h"
 #include "Game.h"
+#include "SoundEngine.h"
 
-#define FALL_SPEED 4
+#define FALL_SPEED 5
 #define DASH_KICK_HEIGHT 32
 
 enum PlayerStates
@@ -455,8 +456,7 @@ void Player::childUpdate(int deltaTime)
 				}
 				else
 				{
-					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP) * !hasKey);
-					whipping = !hasKey || !Game::instance().getKey(GLFW_KEY_UP);
+					attack();
 					lookingLeftAtk = lookingLeft;
 				}
 			}
@@ -568,8 +568,7 @@ void Player::childUpdate(int deltaTime)
 				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
 				if (Game::instance().getKey(GLFW_KEY_X) && !whipping)
 				{
-					sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP));
-					whipping = true;
+					attack();
 				}
 				else if (Game::instance().getKey(GLFW_KEY_UP)
 					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
@@ -677,8 +676,10 @@ void Player::childUpdate(int deltaTime)
 				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded && !whipping)
 				{
 					sprite->changeAnimation(it->second);
-					if (sprite->animation() == (ATTACK + bCrouching * 2)) whipping = true;
-					else if (sprite->animation() == ATTACK_SUBWEAPON && hasKey) sprite->changeAnimation(ATTACK);
+					if (animToStateMap.at(it->second) == STATE_ATTACKING)
+					{
+						attack();
+					}
 					lookingLeftAtk = lookingLeft;
 				}
 				else if (!grounded && state != STATE_FALLING && !whipping)
@@ -808,7 +809,11 @@ void Player::childUpdate(int deltaTime)
 				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 				{
 					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
-					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey)) whipping = true;
+					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey && !hasTrinket))
+					{
+						whipping = true;
+						SoundEngine::instance().playWhip();
+					}
 					attackInStairs = useSubweaponInStairs = false;
 					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
 					position.y -= float(correction);
@@ -1014,6 +1019,13 @@ void Player::climbToStair(int tile)
 		//cout << "posicion X despues del ajuste: " << position.x << endl;
 		//cout << "posicion Y despues del ajuste: " << position.y << endl;
 	}
+}
+
+void Player::attack()
+{
+	sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP) * !hasKey * hasTrinket + bCrouching * 2);
+	whipping = (!hasKey && !hasTrinket) || !Game::instance().getKey(GLFW_KEY_UP);
+	if (whipping) SoundEngine::instance().playWhip();
 }
 
 void Player::jump()

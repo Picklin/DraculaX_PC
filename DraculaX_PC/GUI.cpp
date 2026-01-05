@@ -7,7 +7,7 @@
 
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
-	Maria = true;
+	Maria = false;
 	// isMaria = player->getName() == "Maria";
 	this->player = player;
 	this->shader = &shaderProgram;

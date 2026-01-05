@@ -19,9 +19,12 @@ SoundEngine::SoundEngine()
 	pickupTrinketSource->grab();
 	startSource = engine->getSoundSource("sfx/Start.wav");
 	startSource->grab();
+	whipSource = engine->getSoundSource("sfx/Whip.wav");
+	whipSource->grab();
 	healSound = nullptr;
 	pauseSound = nullptr;
 	pickupTrinketSound = nullptr;
+	whipSound = nullptr;
 	musicSound = nullptr;
 }
 
@@ -180,6 +183,12 @@ void SoundEngine::playPause()
 void SoundEngine::playStart()
 {
 	engine->play2D(startSource);
+}
+
+void SoundEngine::playWhip()
+{
+	checkCurrentSound(whipSound);
+	whipSound = engine->play2D(whipSource, false, false, true);
 }
 
 SoundEngine& SoundEngine::instance()

@@ -26,6 +26,7 @@ public:
 	void playHeal();
 	void playPause();
 	void playStart();
+	void playWhip();
 	void loadOSTpaths();
 	void playStageSong(int stageNum);
 
@@ -54,6 +55,9 @@ private:
 	ISound* pickupTrinketSound;
 
 	ISoundSource* startSource;
+
+	ISoundSource* whipSource;
+	ISound* whipSound;
 	std::atomic<bool> paused;
 };
 
