@@ -20,13 +20,12 @@ public:
 	void unpauseAllSounds();
 	void stopAllSounds();
 
-	void playStageMusic(int stageNum);
-
 	void playGrabTrinket();
 	void playHeal();
 	void playPause();
 	void playStart();
 	void playWhip();
+	void setMusicMode(bool arranged);
 	void loadOSTpaths();
 	void playStageSong(int stageNum);
 
@@ -38,8 +37,8 @@ private:
 	void fadeInThreadFunc(ISound* sound, int durationMs);
 
 private:
-	std::vector<ISoundSource*> originalStageMusicSources;
-	std::vector<ISoundSource*> otherMusicSource;
+	std::vector<ISoundSource*> stageMusicSources[2];
+	std::vector<ISoundSource*> otherMusicSource[2];
 	std::vector<ISound*> activeSounds;
 	ISound* musicSound;
 
@@ -59,6 +58,7 @@ private:
 	ISoundSource* whipSource;
 	ISound* whipSound;
 	std::atomic<bool> paused;
+	bool arrangeMode = false;
 };
 
 #endif // !_SOUNDENGINE_INCLUDE

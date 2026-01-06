@@ -5,7 +5,11 @@
 namespace fs = std::filesystem;
 namespace
 {
-	std::vector<std::string> songPaths_orig;
+	std::vector<std::string> songPaths[2];
+	const std::string stageMusicRoot[2]
+	{
+		"[Orig] Akumajo Dracula X OST/Stage Music/", "[Arra] Akumajo Dracula X OST/Stage Music/"
+	};
 }
 
 SoundEngine::SoundEngine()
@@ -89,24 +93,24 @@ void SoundEngine::fadeInThreadFunc(ISound* sound, int durationMs)
 
 void SoundEngine::loadOSTpaths()
 {
-	for (const auto& entrada : fs::directory_iterator("[Orig] Akumajo Dracula X OST/Stage Music"))
+	for (const auto& entrada : fs::directory_iterator(stageMusicRoot[arrangeMode]))
 	{
-		songPaths_orig.push_back(entrada.path().filename().string());
+		songPaths[arrangeMode].push_back(entrada.path().filename().string());
 	}
-	originalStageMusicSources.resize(songPaths_orig.size());
+	stageMusicSources[arrangeMode].resize(songPaths[arrangeMode].size());
 }
 
 void SoundEngine::playStageSong(int stageNum)
 {
-	if (originalStageMusicSources[stageNum] == nullptr)
+	if (stageMusicSources[arrangeMode][stageNum] == nullptr)
 	{
-		std::string fullPath = "[Orig] Akumajo Dracula X OST/Stage Music/" + songPaths_orig[stageNum];
-		originalStageMusicSources[stageNum] = engine->getSoundSource(fullPath.c_str());
-		originalStageMusicSources[stageNum]->setDefaultVolume(0.25f);
-		originalStageMusicSources[stageNum]->grab();
+		std::string fullPath = stageMusicRoot[arrangeMode] + songPaths[arrangeMode][stageNum];
+		stageMusicSources[arrangeMode][stageNum] = engine->getSoundSource(fullPath.c_str());
+		stageMusicSources[arrangeMode][stageNum]->setDefaultVolume(0.25f);
+		stageMusicSources[arrangeMode][stageNum]->grab();
 	}
 	checkCurrentSound(musicSound);
-	musicSound = engine->play2D(originalStageMusicSources[stageNum], true, false, true);
+	musicSound = engine->play2D(stageMusicSources[arrangeMode][stageNum], true, false, true);
 	addActiveSound(musicSound);
 }
 
@@ -155,13 +159,6 @@ void SoundEngine::stopAllSounds()
 
 }
 
-void SoundEngine::playStageMusic(int stageNum)
-{
-	checkCurrentSound(musicSound);
-	musicSound = engine->play2D(originalStageMusicSources[stageNum], true, false, true);
-	addActiveSound(musicSound);
-}
-
 void SoundEngine::playGrabTrinket()
 {
 	checkCurrentSound(pickupTrinketSound);
@@ -189,6 +186,11 @@ void SoundEngine::playWhip()
 {
 	checkCurrentSound(whipSound);
 	whipSound = engine->play2D(whipSource, false, false, true);
+}
+
+void SoundEngine::setMusicMode(bool arranged)
+{
+	arrangeMode = arranged;
 }
 
 SoundEngine& SoundEngine::instance()

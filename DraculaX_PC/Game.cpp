@@ -29,7 +29,7 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	gameStarted = true;
+	gameStarted = false;
 	twoPlayerMode = false;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
@@ -40,8 +40,9 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
+	SoundEngine::instance().setMusicMode(false);
 	SoundEngine::instance().loadOSTpaths();
-	start();		//comentar cuando se deje de testear
+	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 
