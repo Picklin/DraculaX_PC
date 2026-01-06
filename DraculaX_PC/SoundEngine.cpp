@@ -100,17 +100,22 @@ void SoundEngine::loadOSTpaths()
 
 void SoundEngine::playStageSong(int stageNum)
 {
-	auto& stageSong = stageMusicSources[arrangeMode][stageNum];
-	if (stageSong == nullptr)
+	auto& songSource = stageMusicSources[arrangeMode][stageNum];
+	if (songSource == nullptr)
 	{
 		std::string path = songPaths[arrangeMode][stageNum];
-		stageSong = engine->addSoundSourceFromFile(path.c_str());
-		stageSong->setDefaultVolume(0.25f);
-		stageSong->grab();
+		songSource = engine->addSoundSourceFromFile(path.c_str());
+		songSource->setDefaultVolume(0.25f);
 	}
 	checkCurrentSound(musicSound);
-	musicSound = engine->play2D(stageSong, true, false, true);
+	musicSound = engine->play2D(songSource, true, false, true);
 	addActiveSound(musicSound);
+}
+
+void SoundEngine::stopStageSong(int stageNum)
+{
+	engine->removeSoundSource(songPaths[arrangeMode][stageNum].c_str());
+	musicSound = nullptr;
 }
 
 void SoundEngine::playSFX(int sfxId)

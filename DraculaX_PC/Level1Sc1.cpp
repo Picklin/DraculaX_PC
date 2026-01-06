@@ -47,6 +47,8 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	text2.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
 	text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
 	text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+
+	SoundEngine::instance().playStageSong(Game::STAGE9);
 }
 void Level1Sc1::update(int deltaTime) 
 {

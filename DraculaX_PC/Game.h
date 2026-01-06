@@ -31,7 +31,7 @@ public:
 
 	enum Levels
 	{
-		STAGE1,
+		STAGE1, STAGE2, STAGE3, STAGE4, STAGE5, STAGE6, STAGE7, STAGE8, STAGE9, STAGE10, STAGE11
 	};
 
 	void init();
