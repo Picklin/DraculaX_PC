@@ -812,7 +812,7 @@ void Player::childUpdate(int deltaTime)
 					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey && !hasTrinket))
 					{
 						whipping = true;
-						SoundEngine::instance().playWhip();
+						SoundEngine::instance().playSFX(SoundEngine::WHIP);
 					}
 					attackInStairs = useSubweaponInStairs = false;
 					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
@@ -1025,7 +1025,7 @@ void Player::attack()
 {
 	sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP) * !hasKey * hasTrinket + bCrouching * 2);
 	whipping = (!hasKey && !hasTrinket) || !Game::instance().getKey(GLFW_KEY_UP);
-	if (whipping) SoundEngine::instance().playWhip();
+	if (whipping) SoundEngine::instance().playSFX(SoundEngine::WHIP);
 }
 
 void Player::jump()

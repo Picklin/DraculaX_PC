@@ -2,9 +2,7 @@
 #ifndef _ENEMY_INCLUDE
 #define _ENEMY_INCLUDE
 
-#include "Item.h"
 #include "EffectsManager.h"
-#include "SoundEngine.h"
 #include "ItemManager.h"
 
 class Enemy : public Entity

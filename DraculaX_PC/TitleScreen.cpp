@@ -75,7 +75,7 @@ void TitleScreen::update(int deltaTime)
 	if (!startPressed && Game::instance().getKey(GLFW_KEY_ENTER))
 	{
 		startPressed = true;
-		SoundEngine::instance().playStart();
+		SoundEngine::instance().playSFX(SoundEngine::START);
 	}
 	else if (startPressed)
 	{

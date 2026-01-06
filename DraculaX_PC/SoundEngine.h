@@ -20,14 +20,9 @@ public:
 	void unpauseAllSounds();
 	void stopAllSounds();
 
-	void playGrabTrinket();
-	void playHeal();
-	void playPause();
-	void playStart();
-	void playWhip();
 	void setMusicMode(bool arranged);
-	void loadOSTpaths();
 	void playStageSong(int stageNum);
+	void playSFX(int sfxId);
 
 private:
 	SoundEngine();
@@ -35,28 +30,27 @@ private:
 	void addActiveSound(ISound* sound);
 	void fadeOutThreadFunc(ISound* sound, int durationMs);
 	void fadeInThreadFunc(ISound* sound, int durationMs);
+	void loadSFX();
+	void loadOSTpaths();
+
+public:
+	enum SFX
+	{
+		CRUCIFIX, DESTROY_BIG_BLOCK, DESTROY_BLOCK, DESTROY_GLASS, DESTROY_GLASS_HEAVY, ENEMY_ATTACK, ENEMY_BIG_DEATH, ENEMY_DEATH_FUNNY, ENEMY_SWIPE,
+		EXPLOSION_BIG, EXPLOSION_HUGE, EXPLOSION_HUGE_LONG, EXPLOSION_MEDIUM, EXPLOSION_MINI, FUEGOTE, FUEGUITO,
+		HEAL, ONEUP, PAUSE, PICKUP_HEART, PICKUP_HEART_SMALL, PICKUP_TRINKET, START, WHIP
+	};
 
 private:
 	std::vector<ISoundSource*> stageMusicSources[2];
 	std::vector<ISoundSource*> otherMusicSource[2];
+	std::vector<std::pair<ISoundSource*, ISound*>> sfx;
+
 	std::vector<ISound*> activeSounds;
 	ISound* musicSound;
 
 	ISoundEngine* engine;
 
-	ISoundSource* healSource;
-	ISound* healSound;
-
-	ISoundSource* pauseSource;
-	ISound* pauseSound;
-
-	ISoundSource* pickupTrinketSource;
-	ISound* pickupTrinketSound;
-
-	ISoundSource* startSource;
-
-	ISoundSource* whipSource;
-	ISound* whipSound;
 	std::atomic<bool> paused;
 	bool arrangeMode = false;
 };

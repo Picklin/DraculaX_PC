@@ -18,5 +18,5 @@ void Food::setFoodID(int foodID)
 
 void Food::makeEndSound() const
 {
-	SoundEngine::instance().playHeal();
+	SoundEngine::instance().playSFX(SoundEngine::HEAL);
 }

@@ -15,21 +15,8 @@ namespace
 SoundEngine::SoundEngine()
 {
 	engine = createIrrKlangDevice();
-	healSource = engine->getSoundSource("sfx/Heal.wav");
-	healSource->grab();
-	pauseSource = engine->getSoundSource("sfx/Pause.wav");
-	pauseSource->grab();
-	pickupTrinketSource = engine->getSoundSource("sfx/PickupTrinket.wav");
-	pickupTrinketSource->grab();
-	startSource = engine->getSoundSource("sfx/Start.wav");
-	startSource->grab();
-	whipSource = engine->getSoundSource("sfx/Whip.wav");
-	whipSource->grab();
-	healSound = nullptr;
-	pauseSound = nullptr;
-	pickupTrinketSound = nullptr;
-	whipSound = nullptr;
-	musicSound = nullptr;
+	loadSFX();
+	loadOSTpaths();
 }
 
 void SoundEngine::checkCurrentSound(ISound* sound)
@@ -37,7 +24,6 @@ void SoundEngine::checkCurrentSound(ISound* sound)
 	if (sound)
 	{
 		sound->stop();
-		sound->drop();
 		sound = nullptr;
 	}
 }
@@ -91,27 +77,47 @@ void SoundEngine::fadeInThreadFunc(ISound* sound, int durationMs)
 	}
 }
 
+void SoundEngine::loadSFX()
+{
+	for (const auto& entrada : fs::directory_iterator("sfx/"))
+	{
+		std::string path = entrada.path().string();
+		sfx.push_back(std::pair<ISoundSource*, ISound*>(engine->addSoundSourceFromFile(path.c_str()), nullptr));
+	}
+}
+
 void SoundEngine::loadOSTpaths()
 {
-	for (const auto& entrada : fs::directory_iterator(stageMusicRoot[arrangeMode]))
+	for (int i = 0; i < 2; i++)
 	{
-		songPaths[arrangeMode].push_back(entrada.path().filename().string());
+		for (const auto& entrada : fs::directory_iterator(stageMusicRoot[i]))
+		{
+			songPaths[i].push_back(entrada.path().string());
+		}
+		stageMusicSources[i].resize(songPaths[i].size());
 	}
-	stageMusicSources[arrangeMode].resize(songPaths[arrangeMode].size());
 }
 
 void SoundEngine::playStageSong(int stageNum)
 {
-	if (stageMusicSources[arrangeMode][stageNum] == nullptr)
+	auto& stageSong = stageMusicSources[arrangeMode][stageNum];
+	if (stageSong == nullptr)
 	{
-		std::string fullPath = stageMusicRoot[arrangeMode] + songPaths[arrangeMode][stageNum];
-		stageMusicSources[arrangeMode][stageNum] = engine->getSoundSource(fullPath.c_str());
-		stageMusicSources[arrangeMode][stageNum]->setDefaultVolume(0.25f);
-		stageMusicSources[arrangeMode][stageNum]->grab();
+		std::string path = songPaths[arrangeMode][stageNum];
+		stageSong = engine->addSoundSourceFromFile(path.c_str());
+		stageSong->setDefaultVolume(0.25f);
+		stageSong->grab();
 	}
 	checkCurrentSound(musicSound);
-	musicSound = engine->play2D(stageMusicSources[arrangeMode][stageNum], true, false, true);
+	musicSound = engine->play2D(stageSong, true, false, true);
 	addActiveSound(musicSound);
+}
+
+void SoundEngine::playSFX(int sfxId)
+{
+	checkCurrentSound(sfx[sfxId].second);
+	sfx[sfxId].second = engine->play2D(sfx[sfxId].first, false, false, true);
+	addActiveSound(sfx[sfxId].second);
 }
 
 void SoundEngine::update()
@@ -157,35 +163,6 @@ void SoundEngine::stopAllSounds()
 {
 	engine->stopAllSounds();
 
-}
-
-void SoundEngine::playGrabTrinket()
-{
-	checkCurrentSound(pickupTrinketSound);
-	pickupTrinketSound = engine->play2D(pickupTrinketSource, false, false, true);
-}
-
-void SoundEngine::playHeal()
-{
-	checkCurrentSound(healSound);
-	healSound = engine->play2D(healSource, false, false, true);
-}
-
-void SoundEngine::playPause()
-{
-	checkCurrentSound(pauseSound);
-	pauseSound = engine->play2D(pauseSource, false, false, true);
-}
-
-void SoundEngine::playStart()
-{
-	engine->play2D(startSource);
-}
-
-void SoundEngine::playWhip()
-{
-	checkCurrentSound(whipSound);
-	whipSound = engine->play2D(whipSource, false, false, true);
 }
 
 void SoundEngine::setMusicMode(bool arranged)

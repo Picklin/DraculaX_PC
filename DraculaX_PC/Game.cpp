@@ -1,7 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Game.h"
-#include "SoundEngine.h"
 
 enum Levels
 {
@@ -40,8 +39,7 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
-	SoundEngine::instance().setMusicMode(false);
-	SoundEngine::instance().loadOSTpaths();
+	SoundEngine::instance().setMusicMode(false);	//cargamos sfx y paths para la música y establecemos si es arranged
 	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
@@ -78,7 +76,7 @@ bool Game::update(int deltaTime)
 			if (paused)
 			{
 				SoundEngine::instance().pauseAllSounds();
-				SoundEngine::instance().playPause();
+				SoundEngine::instance().playSFX(SoundEngine::PAUSE);
 			}
 			else
 			{
