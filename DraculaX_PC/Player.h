@@ -98,6 +98,7 @@ private:
 	bool dashOffLedge = false;
 	bool recoverFromJump = false;
 	bool canJump = true;
+	bool fallFromDash = false;
 	//bool hasCrouchedOrStandedDuringAttack = false;
 	bool hasKey = false;
 	//trinket other than key

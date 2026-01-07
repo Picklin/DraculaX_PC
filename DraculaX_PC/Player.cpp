@@ -416,6 +416,7 @@ void Player::childUpdate(int deltaTime)
 			{
 				if (anim != ATTACK)
 				{
+					if (backflipping) SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
 					sprite->changeAnimation(SKID + backflipping);
 					anim = SKID + backflipping;
 					state = STATE_IDLE;
@@ -453,6 +454,7 @@ void Player::childUpdate(int deltaTime)
 					bDashing = true;
 					bJumping = false;
 					commandBuffer.clear();
+					SoundEngine::instance().playSFX(SoundEngine::DASH);
 				}
 				else
 				{
@@ -544,6 +546,7 @@ void Player::childUpdate(int deltaTime)
 				bDashing = false;
 				velocityX = 0;
 				fallDistance = 0;
+				SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
 			}
 			else
 			{
@@ -671,6 +674,7 @@ void Player::childUpdate(int deltaTime)
 					bDashing = true;
 					velocityX = (!lookingLeft - lookingLeft) * 8.f;
 					Game::instance().keyReleased(GLFW_KEY_Z);
+					SoundEngine::instance().playSFX(SoundEngine::DASH);
 				}
 				auto it = animMap.find(inputIndex);
 				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded && !whipping)
@@ -703,21 +707,26 @@ void Player::childUpdate(int deltaTime)
 			{
 				calcIncrement(velocityX, 0.f, 0.075f);
 				bDashing = velocityX != 0;
-				if (bDashing && anim == DASH1 && Game::instance().getKey(GLFW_KEY_Z))
+				if (bDashing && Game::instance().getKey(GLFW_KEY_Z))
 				{
-					sprite->changeAnimation(DASH_KICK);
-					velocityX = ((!lookingLeft - lookingLeft) * 10.f);
-					jumpAngle = 0;
-					startY = position.y;
-				}
-				else if (bDashing && anim == DASH1_FINAL && Game::instance().getKey(GLFW_KEY_Z))
-				{
-					sprite->changeAnimation(DASH1);
-					velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+					if (anim == DASH1)
+					{
+						sprite->changeAnimation(DASH_KICK);
+						velocityX = ((!lookingLeft - lookingLeft) * 10.f);
+						jumpAngle = 0;
+						startY = position.y;
+					}
+					else if (anim == DASH1_FINAL)
+					{
+						sprite->changeAnimation(DASH1);
+						velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+						SoundEngine::instance().playSFX(SoundEngine::DASH);
+					}
 				}
 				else if (anim != DASH1_GETUP && abs(velocityX) <= 1.f)
 				{
 					sprite->changeAnimation(DASH1_GETUP);
+					fallFromDash = false;
 				}
 			}
 			else if (state == STATE_DASHKICKING)
@@ -739,10 +748,11 @@ void Player::childUpdate(int deltaTime)
 					platforms->collisionMoveDown(cb, &position.y, quadSize.y);
 					//cout << jumpAngle << endl;
 				}
-				bDashing = velocityX != 0 || (anim != DASH_KICK_FINAL);
+				bDashing = velocityX != 0;
 				if (!bDashing)
 				{
 					sprite->changeAnimation(CROUCH_FINAL);
+					fallFromDash = false;
 				}
 			}
 			else if (state == STATE_COMBO_DASHING)
@@ -753,16 +763,21 @@ void Player::childUpdate(int deltaTime)
 					velocityX = (!lookingLeft - lookingLeft) * 1.f;
 					bDashing = false;
 					loseMomentum = true;
+					fallFromDash = false;
 				}
 			}
 			Game::instance().keyReleased(GLFW_KEY_Z);
 			position.y += FALL_SPEED * (state != STATE_COMBO_DASHING);
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
 				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
-			if (!grounded && !bDashing)
+			if (!fallFromDash && sprite->animation() == DASH_KICK_FINAL && grounded)
+			{
+				SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
+				fallFromDash = true;
+			}
+			else if (!grounded && !bDashing)
 			{
 				sprite->changeAnimation(FALL);
-				bDashing = false;
 				dashOffLedge = true;
 			}
 		}
