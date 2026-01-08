@@ -677,7 +677,7 @@ void Player::childUpdate(int deltaTime)
 					SoundEngine::instance().playSFX(SoundEngine::DASH);
 				}
 				auto it = animMap.find(inputIndex);
-				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded && !whipping)
+				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded)
 				{
 					sprite->changeAnimation(it->second);
 					if (animToStateMap.at(it->second) == STATE_ATTACKING)
@@ -705,7 +705,7 @@ void Player::childUpdate(int deltaTime)
 			//cout << anim << endl;
 			if (state == STATE_DASHING)
 			{
-				calcIncrement(velocityX, 0.f, 0.075f);
+				calcIncrement(velocityX, 0.f, 0.065f);
 				bDashing = velocityX != 0;
 				if (bDashing && Game::instance().getKey(GLFW_KEY_Z))
 				{

@@ -6,17 +6,14 @@ namespace fs = std::filesystem;
 namespace
 {
 	std::vector<std::string> songPaths[2];
-	const std::string stageMusicRoot[2]
-	{
-		"[Orig] Akumajo Dracula X OST/Stage Music/", "[Arra] Akumajo Dracula X OST/Stage Music/"
-	};
+	std::vector<std::string> otherMusicPaths[2];
 }
 
 SoundEngine::SoundEngine()
 {
 	engine = createIrrKlangDevice();
 	loadSFX();
-	loadOSTpaths();
+	loadMusic();
 }
 
 void SoundEngine::checkCurrentSound(ISound* sound)
@@ -86,36 +83,80 @@ void SoundEngine::loadSFX()
 	}
 }
 
-void SoundEngine::loadOSTpaths()
+void SoundEngine::loadMusic()
 {
-	for (int i = 0; i < 2; i++)
+	const std::string stageMusicRoot[2]
 	{
-		for (const auto& entrada : fs::directory_iterator(stageMusicRoot[i]))
-		{
-			songPaths[i].push_back(entrada.path().string());
-		}
-		stageMusicSources[i].resize(songPaths[i].size());
+		"[Orig] Akumajo Dracula X OST/Stage Music/", "[Arra] Akumajo Dracula X OST/Stage Music/"
+	};
+	const std::string otherMusicRoot[2]
+	{
+		"[Orig] Akumajo Dracula X OST/Other Music/", "[Arra] Akumajo Dracula X OST/Other Music/"
+	};
+	for (int i = 0; i < 2; ++i)
+	{
+		loadMusicPaths(songPaths[i], stageMusicRoot[i]);
+		stageMusicSources[i].resize(songPaths[i].size(), nullptr);
 	}
+	for (int i = 0; i < 2; ++i)
+	{
+		loadMusicPaths(otherMusicPaths[i], otherMusicRoot[i]);
+		otherMusicSources[i].resize(otherMusicPaths[i].size(), nullptr);
+	}
+	overtureSource = engine->addSoundSourceFromFile("[Orig] Akumajo Dracula X OST/1. Overture.flac");
+	overtureSource->setDefaultVolume(0.25f);
+	musicSound = nullptr;
+}
+
+void SoundEngine::loadMusicPaths(std::vector<std::string>& pathsContainer, const std::string& root)
+{
+	for (const auto& entrada : fs::directory_iterator(root))
+	{
+		pathsContainer.push_back(entrada.path().string());
+	}
+}
+
+void SoundEngine::playMusic(const std::string& path, ISoundSource* source, bool loop)
+{
+	if (source == nullptr)
+	{
+		source = engine->addSoundSourceFromFile(path.c_str());
+		source->setDefaultVolume(0.25f);
+	}
+	checkCurrentSound(musicSound);
+	musicSound = engine->play2D(source, loop, false, true);
+	addActiveSound(musicSound);
+}
+
+void SoundEngine::stopMusic(const std::string& path)
+{
+	engine->removeSoundSource(path.c_str());
+	musicSound = nullptr;
 }
 
 void SoundEngine::playStageSong(int stageNum)
 {
-	auto& songSource = stageMusicSources[arrangeMode][stageNum];
-	if (songSource == nullptr)
-	{
-		std::string path = songPaths[arrangeMode][stageNum];
-		songSource = engine->addSoundSourceFromFile(path.c_str());
-		songSource->setDefaultVolume(0.25f);
-	}
-	checkCurrentSound(musicSound);
-	musicSound = engine->play2D(songSource, true, false, true);
-	addActiveSound(musicSound);
+	playMusic(songPaths[arrangeMode][stageNum], stageMusicSources[arrangeMode][stageNum], true);
 }
 
 void SoundEngine::stopStageSong(int stageNum)
 {
-	engine->removeSoundSource(songPaths[arrangeMode][stageNum].c_str());
-	musicSound = nullptr;
+	stopMusic(songPaths[arrangeMode][stageNum]);
+}
+
+void SoundEngine::playNonStageSong(int songId)
+{
+	playMusic(otherMusicPaths[arrangeMode][songId], otherMusicSources[arrangeMode][songId], true);
+}
+
+void SoundEngine::playNonStageSong(int songId, bool loop)
+{
+	playMusic(otherMusicPaths[arrangeMode][songId], otherMusicSources[arrangeMode][songId], loop);
+}
+
+void SoundEngine::stopNonStageSong(int songId)
+{
+	stopMusic(otherMusicPaths[arrangeMode][songId]);
 }
 
 void SoundEngine::playSFX(int sfxId)
@@ -123,6 +164,13 @@ void SoundEngine::playSFX(int sfxId)
 	checkCurrentSound(sfx[sfxId].second);
 	sfx[sfxId].second = engine->play2D(sfx[sfxId].first, false, false, true);
 	addActiveSound(sfx[sfxId].second);
+}
+
+void SoundEngine::playOverture()
+{
+	checkCurrentSound(musicSound);
+	musicSound = engine->play2D(overtureSource, false, false, true);
+	addActiveSound(musicSound);
 }
 
 void SoundEngine::update()
