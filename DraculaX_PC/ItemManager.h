@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "Trinket.h"
 #include "Food.h"
+#include "Heart.h"
 #include <functional>
 #include <random>
 #include <chrono>
@@ -21,6 +22,10 @@ public:
 	Item* getCommonRandomItem(const glm::vec2& position);
 	Item* getTrinket(const glm::vec2& position, int trinketID);
 	Item* getFood(const glm::vec2& position, int foodID);
+	//tone 0-5: darker to lighter
+	Item* getHeart(const glm::vec2& position, int tone);
+	//tone 0-5: darker to lighter
+	Item* getHeart(const glm::vec2& position, int tone, int heartAmmount);
 
 private:
 	ItemManager();

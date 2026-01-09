@@ -121,6 +121,9 @@
     <ClCompile Include="Food.cpp">
       <Filter>Archivos de código fuente\Items</Filter>
     </ClCompile>
+    <ClCompile Include="Heart.cpp">
+      <Filter>Archivos de código fuente\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -214,6 +217,9 @@
       <Filter>Archivos de encabezado\Screens</Filter>
     </ClInclude>
     <ClInclude Include="Food.h">
+      <Filter>Archivos de encabezado\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Heart.h">
       <Filter>Archivos de encabezado\Items</Filter>
     </ClInclude>
   </ItemGroup>

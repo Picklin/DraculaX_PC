@@ -103,6 +103,7 @@ void Scene::updateActors(int deltaTime)
 {
 	if (!player->isEnded())
 	{
+		//cout << items.size() << endl;
 		for (unsigned int i = 0; i < items.size(); i++)
 		{
 			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()[0]))	//habrá que cambiar la hitbox a que no devuelva un vector

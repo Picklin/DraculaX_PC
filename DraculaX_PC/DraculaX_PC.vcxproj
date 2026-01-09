@@ -140,6 +140,7 @@
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="Heart.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="Level1Sc1.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Food.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="Heart.h" />
     <ClInclude Include="Hitbox.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />

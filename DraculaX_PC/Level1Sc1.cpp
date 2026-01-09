@@ -48,9 +48,9 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
 	text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
 
-	SoundEngine::instance().playStageSong(Game::STAGE1);
+	//SoundEngine::instance().playStageSong(Game::STAGE1);
 	//SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, false);
-	SoundEngine::instance().playOverture();
+	//SoundEngine::instance().playOverture();
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -104,8 +104,11 @@ TileMap* Level1Sc1::setStairsMap()
 
 void Level1Sc1::initItems() 
 {
-	items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
-	items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE));
+	//items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
+	//items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE));
+	//items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
+	items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize()), 5, 5));
+	items.push_back(ItemManager::instance().getHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize()), 5));
 }
 void Level1Sc1::initActors(Player* player) 
 {
