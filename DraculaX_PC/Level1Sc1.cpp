@@ -102,7 +102,7 @@ TileMap* Level1Sc1::setStairsMap()
 	return TileMap::createTileMap("levels/level1sc1/stairs.txt", MAP_OFFSET, *basicShader);
 }
 
-void Level1Sc1::initItems() 
+void Level1Sc1::initItems()
 {
 	//items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
 	//items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE));

@@ -81,6 +81,7 @@ void SoundEngine::loadSFX()
 		std::string path = entrada.path().string();
 		sfx.push_back(std::pair<ISoundSource*, ISound*>(engine->addSoundSourceFromFile(path.c_str()), nullptr));
 	}
+	sfx[DASH].first->setDefaultVolume(0.75f);
 }
 
 void SoundEngine::loadMusic()

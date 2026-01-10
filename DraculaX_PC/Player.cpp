@@ -672,7 +672,7 @@ void Player::childUpdate(int deltaTime)
 				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING && state != STATE_FALLING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
 				{
 					bDashing = true;
-					velocityX = (!lookingLeft - lookingLeft) * 8.f;
+					velocityX = (!lookingLeft - lookingLeft) * 10.f;
 					Game::instance().keyReleased(GLFW_KEY_Z);
 					SoundEngine::instance().playSFX(SoundEngine::DASH);
 				}

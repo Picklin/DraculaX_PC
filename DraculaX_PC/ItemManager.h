@@ -23,9 +23,9 @@ public:
 	Item* getTrinket(const glm::vec2& position, int trinketID);
 	Item* getFood(const glm::vec2& position, int foodID);
 	//tone 0-5: darker to lighter
-	Item* getHeart(const glm::vec2& position, int tone);
+	Item* getHeart(const glm::vec2& position, int colorTone);
 	//tone 0-5: darker to lighter
-	Item* getHeart(const glm::vec2& position, int tone, int heartAmmount);
+	Item* getHeart(const glm::vec2& position, int colorTone, int heartAmmount);
 
 private:
 	ItemManager();

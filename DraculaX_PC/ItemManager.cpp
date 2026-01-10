@@ -109,19 +109,18 @@ Item* ItemManager::getFood(const glm::vec2& position, int foodID)
     return food;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position, int tone)
+Item* ItemManager::getHeart(const glm::vec2& position, int colorTone)
 {
 	TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.3125f), glm::vec2(0.9375f, 0.375f), *itemsTex, *shader);
-	heartTone->setColor(glm::vec4(1.f, 1.f, 1.f, 1.f));
-    Heart* heart = new Heart(heartTone, tone);
+    Heart* heart = new Heart(heartTone, colorTone);
     initItem(heart, position, glm::vec2(0.75f, 0.3125f), glm::vec2(0.8125f, 0.375f));
 	return heart;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position, int tone, int heartAmmount)
+Item* ItemManager::getHeart(const glm::vec2& position, int colorTone, int heartAmmount)
 {
     TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.9375f, 0.3125f), glm::vec2(1.f, 0.375f), *itemsTex, *shader);
-    Heart* heart = new Heart(heartTone, tone, heartAmmount);
+    Heart* heart = new Heart(heartTone, colorTone, heartAmmount);
     initItem(heart, position, glm::vec2(0.8125f, 0.3125f), glm::vec2(0.875f, 0.375f));
     return heart;
 }
