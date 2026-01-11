@@ -23,7 +23,7 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
-	bool isMaria();
+	bool isMaria() const;
 	bool compatibleTrinket(int trinketId) const;
 	bool compatibleFood(int foodId) const;
 	int getCurrentTrinketID() const;

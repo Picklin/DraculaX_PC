@@ -124,6 +124,9 @@
     <ClCompile Include="Heart.cpp">
       <Filter>Archivos de código fuente\Items</Filter>
     </ClCompile>
+    <ClCompile Include="Candle.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -222,5 +225,6 @@
     <ClInclude Include="Heart.h">
       <Filter>Archivos de encabezado\Items</Filter>
     </ClInclude>
+    <ClInclude Include="Candle.h" />
   </ItemGroup>
 </Project>

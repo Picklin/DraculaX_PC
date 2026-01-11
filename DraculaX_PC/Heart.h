@@ -8,8 +8,8 @@
 class Heart : public Item
 {
 public:
-	Heart(TexturedQuad* tone, int toneId);
-	Heart(TexturedQuad* tone, int toneId, int heartAmmount);
+	Heart(TexturedQuad* tone);
+	Heart(TexturedQuad* tone, int heartAmmount);
 	void update(int deltaTime) override;
 	void render() override;
 	void setPosition(const glm::vec2& pos) override;

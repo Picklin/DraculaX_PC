@@ -61,7 +61,6 @@ void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap*
     this->shader = &shader;
     this->map = map;
     this->platforms = platforms;
-    this->gui = &gui;
 }
 
 
@@ -88,12 +87,12 @@ Item* ItemManager::getTrinket(const glm::vec2& position, int trinketID)
 	return trinket;
 }
 
-Item* ItemManager::getFood(const glm::vec2& position, int foodID)
+Item* ItemManager::getFood(const glm::vec2& position, int foodID, const GUI& gui)
 {
-    bool isRichter = !gui->isMaria();
+    bool isRichter = !gui.isMaria();
     if (isRichter && foodID >= GUI::foodIds::PARFAIT)
     {
-        foodID = foodEquivalents[foodID-3];
+        foodID = foodEquivalents[foodID - 3];
     }
     Food* food = new Food();
     if (foodID < GUI::foodIds::PARFAIT)
@@ -109,18 +108,26 @@ Item* ItemManager::getFood(const glm::vec2& position, int foodID)
     return food;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position, int colorTone)
+Item* ItemManager::getHeart(const glm::vec2& position)
 {
-	TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.3125f), glm::vec2(0.9375f, 0.375f), *itemsTex, *shader);
-    Heart* heart = new Heart(heartTone, colorTone);
-    initItem(heart, position, glm::vec2(0.75f, 0.3125f), glm::vec2(0.8125f, 0.375f));
+	TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.1875f), glm::vec2(0.9375f, 0.25f), *itemsTex, *shader);
+    Heart* heart = new Heart(heartTone);
+    initItem(heart, position, glm::vec2(0.75f, 0.1875f), glm::vec2(0.8125f, 0.25f));
 	return heart;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position, int colorTone, int heartAmmount)
+Item* ItemManager::getHeart(const glm::vec2& position, int heartAmmount)
 {
-    TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.9375f, 0.3125f), glm::vec2(1.f, 0.375f), *itemsTex, *shader);
-    Heart* heart = new Heart(heartTone, colorTone, heartAmmount);
-    initItem(heart, position, glm::vec2(0.8125f, 0.3125f), glm::vec2(0.875f, 0.375f));
+    TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.9375f, 0.1875f), glm::vec2(1.f, 0.25f), *itemsTex, *shader);
+    Heart* heart = new Heart(heartTone, heartAmmount);
+    initItem(heart, position, glm::vec2(0.8125f, 0.1875f), glm::vec2(0.875f, 0.25f));
+    return heart;
+}
+
+Item* ItemManager::getBigHeart(const glm::vec2& position)
+{
+    TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.25f), glm::vec2(1.f, 0.375f), *itemsTex, *shader);
+    Heart* heart = new Heart(heartTone, 50);
+    initItem(heart, position, glm::vec2(0.75f, 0.25f), glm::vec2(0.875f, 0.375f));
     return heart;
 }

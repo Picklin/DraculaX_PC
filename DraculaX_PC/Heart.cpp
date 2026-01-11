@@ -6,25 +6,23 @@ namespace
 	const float amplitude = 16.f;
 	const float frequency = 5.f;
 	const float redTones[] = {
-		67 / 255.f,
-		104 / 255.f,
-		141 / 255.f,
-		178 / 255.f,
+		72 / 255.f,
+		108 / 255.f,
+		144 / 255.f,
+		180 / 255.f,
 		216 / 255.f, 
-		255 / 255.f,
+		252 / 255.f,
 	};
 }
 
-Heart::Heart(TexturedQuad* tone, int toneId) : tone(tone), heartAmmount(1)
+Heart::Heart(TexturedQuad* tone) : tone(tone), heartAmmount(1)
 {
-	if (toneId < 0 || toneId > 5) toneId = 5;
-	tone->setColor(glm::vec4(redTones[toneId], 0.f, 0.f, 1.f));
+	tone->setColor(glm::vec4(redTones[5], 0.f, 0.f, 1.f));
 }
 
-Heart::Heart(TexturedQuad* tone, int toneId, int heartAmmount) : tone(tone), heartAmmount(heartAmmount)
+Heart::Heart(TexturedQuad* tone, int heartAmmount) : tone(tone), heartAmmount(heartAmmount)
 {
-	if (toneId < 0 || toneId > 5) toneId = 5;
-	tone->setColor(glm::vec4(redTones[toneId], 0.f, 0.f, 1.f));
+	tone->setColor(glm::vec4(redTones[5], 0.f, 0.f, 1.f));
 }
 
 void Heart::update(int deltaTime)
@@ -35,6 +33,8 @@ void Heart::update(int deltaTime)
 	}
 	else
 	{
+		int colorIndex = int(sin(timeElapsed * 10.f) * 2 + 2);
+		tone->setColor(glm::vec4(redTones[colorIndex], 0.f, 0.f, 1.f));
 		position.y += fallSpeed[heartAmmount > 1];
 		if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y - 1) && platforms != nullptr
 			&& !platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y - 1) && heartAmmount == 1)

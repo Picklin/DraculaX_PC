@@ -85,21 +85,19 @@ void Entity::render()
 	sprite->render();
 }
 
-const vector<Hitbox> Entity::getHitbox() const
+const Hitbox Entity::getHitbox() const
 {
-	vector<Hitbox> frame_hitboxes = hitboxes[sprite->animation()][sprite->getCurrentKeyframe()];
-	int numHitboxesPerFrame = frame_hitboxes.size();
-	for (int hitbox = 0; hitbox < numHitboxesPerFrame; hitbox++)
+	Hitbox frame_hitbox = hitboxes[sprite->animation()][sprite->getCurrentKeyframe()];
+	
+	float angle = sprite->getAngleDegrees();
+	if (angle != 0.f)
 	{
-		float angle = sprite->getAngleDegrees();
-		if (angle != 0.f)
-		{
-			frame_hitboxes[hitbox] = getRotatedHitbox(frame_hitboxes[hitbox], angle);
-		}
-		frame_hitboxes[hitbox].min += position;
-		frame_hitboxes[hitbox].max += position;
+		frame_hitbox = getRotatedHitbox(frame_hitbox, angle);
 	}
-	return frame_hitboxes;
+	frame_hitbox.min += position;
+	frame_hitbox.max += position;
+	
+	return frame_hitbox;
 }
 
 void Entity::rotate(float angle)

@@ -11,6 +11,15 @@ namespace
 }
 int Item::ungrabableTime = 1000;
 
+Item::~Item()
+{
+    if (sprite != nullptr)
+    {
+        sprite->free();
+        delete sprite;
+	}
+}
+
 void Item::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex)
 {
     this->tileMapDispl = tileMapDispl;
@@ -37,7 +46,7 @@ void Item::setPosition(const glm::vec2& pos)
 
 const Hitbox Item::getHitbox() const
 {
-    return Hitbox{ position, position + glm::vec2(quadSize.x, quadSize.y-1) };
+    return Hitbox{ position, position + glm::vec2(quadSize.x-1, quadSize.y-1) };
 }
 
 void Item::setUngrabable()
@@ -76,6 +85,7 @@ void Item::eject(int xDir)
 void Item::end()
 {
     ended = true;
+	setEndTimer();
     makeEndSound();
 }
 

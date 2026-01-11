@@ -21,7 +21,7 @@ public:
 	virtual const glm::vec2 myCenter() const;
 	glm::vec2 getPosition() const { return position; }
 	glm::vec2* getPointerPos() { return &position; }
-	const virtual vector<Hitbox> getHitbox() const;
+	const virtual Hitbox getHitbox() const;
 	bool isEnded() const { return ended; }
 	bool getsRemoved() const { return endTimer <= 0; }
 	void rotate(float angle);
@@ -54,7 +54,7 @@ protected:
 	bool ended = false;
 	int endTimer = 1;
 	TileMap* tileMap;
-	vector<vector<vector<Hitbox>>> hitboxes; //hitboxes de cada frame de cada animacion
+	vector<vector<Hitbox>> hitboxes; //hitboxes de cada frame de cada animacion
 	ShaderProgram* shader;
 };
 #endif // _ENTITY_INCLUDE

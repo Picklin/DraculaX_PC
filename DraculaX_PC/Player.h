@@ -21,7 +21,7 @@ public:
 	void setKey();
 	void unsetKey();
 	string getName() const;
-	const vector<Hitbox> getHitbox() const override;
+	const Hitbox getHitbox() const override;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
 
 protected:

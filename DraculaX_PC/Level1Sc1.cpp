@@ -76,6 +76,7 @@ void Level1Sc1::render()
 	map->render();
 	platforms->render();
 	stairs->render();
+	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	player->render();
@@ -105,11 +106,16 @@ TileMap* Level1Sc1::setStairsMap()
 void Level1Sc1::initItems()
 {
 	//items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
-	//items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE));
+	//items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE, *gui));
 	//items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize()), 5, 5));
-	items.push_back(ItemManager::instance().getHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize()), 5));
+	items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize()), 5));
+	items.push_back(ItemManager::instance().getHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize())));
+	items.push_back(ItemManager::instance().getBigHeart(glm::vec2(12 * map->getTileSize(), 0 * map->getTileSize())));
+	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(16 * map->getTileSize(), 19 * map->getTileSize()), 
+		ItemManager::instance().getHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize())));
+	candles.push_back(candle1);
 }
+
 void Level1Sc1::initActors(Player* player) 
 {
 	this->player = player;

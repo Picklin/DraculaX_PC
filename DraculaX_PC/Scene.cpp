@@ -106,7 +106,7 @@ void Scene::updateActors(int deltaTime)
 		//cout << items.size() << endl;
 		for (unsigned int i = 0; i < items.size(); i++)
 		{
-			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()[0]))	//habrá que cambiar la hitbox a que no devuelva un vector
+			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()))	//habrá que cambiar la hitbox a que no devuelva un vector
 			{
 				Trinket* trinketItem = dynamic_cast<Trinket*>(items[i]);
 				if (trinketItem && gui->compatibleTrinket(trinketItem->getTrinketID()))
@@ -131,6 +131,15 @@ void Scene::updateActors(int deltaTime)
 			{
 				delete items[i];
 				items.erase(items.begin() + i);
+			}
+		}
+		for (unsigned int i = 0; i < candles.size(); i++)
+		{
+			candles[i]->update(deltaTime);
+			if (candles[i]->getsRemoved())
+			{
+				delete candles[i];
+				candles.erase(candles.begin() + i);
 			}
 		}
 	}

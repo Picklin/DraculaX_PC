@@ -27,14 +27,14 @@ void Enemy::setPlayerPos(glm::vec2* playerPos)
 	this->playerPos = playerPos;
 }
 
-const vector<Hitbox> Enemy::getVulnerableArea() const
+const Hitbox Enemy::getVulnerableArea() const
 {
 	return getHitbox();
 }
 
-const pair<bool, vector<Hitbox>> Enemy::getSweetspot()
+const pair<bool, Hitbox> Enemy::getSweetspot()
 {
-	return pair<bool, vector<Hitbox>>(false, {});
+	return pair<bool, Hitbox>(false, {});
 }
 
 void Enemy::takeDmg(int dmg)

@@ -10,6 +10,7 @@
 #include "SpawnPoint.h"
 #include "EffectsManager.h"
 #include "EnemyManager.h"
+#include "Candle.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -68,6 +69,7 @@ protected:
 	glm::vec2 cameraPos;
 
 	vector<Item*> items;
+	vector<Candle*> candles;
 	vector<Enemy*> enemies;
 
 	vector<InfSpawnPoint> infSpawnPoints;

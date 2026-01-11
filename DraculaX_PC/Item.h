@@ -8,6 +8,7 @@
 class Item
 {
 public:
+	~Item();
 	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& itemsTex);
 	void setTileMap(TileMap& map);
 	virtual void update(int deltaTime);
@@ -27,6 +28,7 @@ public:
 
 protected:
 	virtual void makeEndSound() const = 0;
+	virtual int setEndTimer() { return  1; }
 	const glm::vec2 myCenter() const;
 
 protected:
@@ -35,7 +37,7 @@ protected:
 	glm::ivec2 tileMapDispl;
 	TileMap* platforms;
 	TileMap* tileMap;
-	float endTimer = 1;
+	int endTimer = 1;
 	bool ended = false;
 
 private:

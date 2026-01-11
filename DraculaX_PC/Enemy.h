@@ -13,8 +13,8 @@ public:
 	virtual void end();
 	void setPlayerPos(glm::vec2* playerPos);
 	void setPlayerCenter(const glm::vec2& playerCenter) { this->playerCenter = playerCenter; }
-	virtual const vector<Hitbox> getVulnerableArea() const;
-	virtual const pair<bool, vector<Hitbox>> getSweetspot();
+	virtual const Hitbox getVulnerableArea() const;
+	virtual const pair<bool, Hitbox> getSweetspot();
 	virtual void sweetspotHitAction() {};
 	virtual void takeDmg(int dmg);
 	virtual int getDamageFromAttack() const { return 10; }

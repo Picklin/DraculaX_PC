@@ -21,11 +21,10 @@ public:
 	Item* getRandomItem(const glm::vec2& position);
 	Item* getCommonRandomItem(const glm::vec2& position);
 	Item* getTrinket(const glm::vec2& position, int trinketID);
-	Item* getFood(const glm::vec2& position, int foodID);
-	//tone 0-5: darker to lighter
-	Item* getHeart(const glm::vec2& position, int colorTone);
-	//tone 0-5: darker to lighter
-	Item* getHeart(const glm::vec2& position, int colorTone, int heartAmmount);
+	Item* getFood(const glm::vec2& position, int foodID, const GUI& gui);
+	Item* getHeart(const glm::vec2& position);
+	Item* getHeart(const glm::vec2& position, int heartAmmount);
+	Item* getBigHeart(const glm::vec2& position);
 
 private:
 	ItemManager();
@@ -37,7 +36,6 @@ private:
 	TileMap* map;
 	TileMap* platforms;
 	ShaderProgram* shader;
-	GUI* gui;
 	using ItemCreator = std::function<Item* (const glm::vec2&)>;
 	vector<ItemCreator> randomItem;
 	vector<ItemCreator> commonRandomItem;

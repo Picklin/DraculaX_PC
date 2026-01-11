@@ -178,9 +178,9 @@ string Player::getName() const
 	return "Player";
 }
 
-const vector<Hitbox> Player::getHitbox() const
+const Hitbox Player::getHitbox() const
 {
-	return vector<Hitbox>(1, getTerrainCollisionBox());
+	return getTerrainCollisionBox();	//provisional
 }
 
 const string Player::getSpritesheet() const
