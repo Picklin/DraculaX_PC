@@ -2,28 +2,43 @@
 
 Candle::~Candle()
 {
-	if (drop != nullptr)
+	if (fire)
 	{
 		fire->free();
 		delete fire;
-		base->free();
-		delete base;
 		fireTex->free();
 		delete fireTex;
-		baseTex->free();
-		delete baseTex;
-		delete drop;
 	}
+	base->free();
+	delete base;
+	baseTex->free();
+	delete baseTex;
 }
 
-Candle* Candle::createCandle(ShaderProgram& shaderProgram, const glm::vec2& position, Item* item)
+Candle* Candle::createCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId)
 {
-	return nullptr;
+	Candle* candle = new Candle(itemId);
+	candle->fireTex = new Texture();
+	candle->fireTex->loadFromFile("images/gui&items/fire1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->fireTex->setMagFilter(GL_NEAREST);
+	candle->baseTex = new Texture();
+	candle->baseTex->loadFromFile("images/gui&items/base1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->setMagFilter(GL_NEAREST);
+	candle->fire = Sprite::createSprite(glm::ivec2(16), glm::vec2(0.5f, 1.f), candle->fireTex, &shaderProgram);
+	candle->base = Sprite::createSprite(glm::ivec2(16), glm::vec2(1.f), candle->baseTex, &shaderProgram);
+	candle->fire->setNumberAnimations(2);
+	candle->fire->setAnimationSpeed(0, 30);
+	candle->fire->animatorX(0, 2, 0.f, 0.5f, 0.f);
+	candle->fire->changeAnimation(0);
+	candle->fire->setPosition(position);
+	candle->base->setPosition(position);
+	candle->setHitbox(candle, position);
+	return candle;
 }
 
-Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2& position, Item* item)
+Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId)
 {
-	Candle* candle = new Candle(item);
+	Candle* candle = new Candle(itemId);
 	candle->fireTex = new Texture();
 	candle->fireTex->loadFromFile("images/gui&items/torch_fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->fireTex->setMagFilter(GL_NEAREST);
@@ -47,6 +62,30 @@ Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2&
 	candle->base->changeAnimation(0);
 	candle->fire->setPosition(position + glm::vec2(8, 16));
 	candle->base->setPosition(position);
+	glm::ivec2 quadSize = glm::ivec2(candle->baseTex->width(), candle->baseTex->height());
+	candle->hitbox.min = position + glm::vec2(5, 23);
+	candle->hitbox.max = candle->hitbox.min + glm::vec2(16, 40);
+	return candle;
+}
+
+Candle* Candle::createPilarCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId)
+{
+	Candle* candle = new Candle(itemId);
+	candle->fireTex = new Texture();
+	candle->fireTex->loadFromFile("images/gui&items/fire2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->fireTex->setMagFilter(GL_NEAREST);
+	candle->baseTex = new Texture();
+	candle->baseTex->loadFromFile("images/gui&items/base2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->setMagFilter(GL_NEAREST);
+	candle->fire = Sprite::createSprite(glm::ivec2(16), glm::vec2(0.25f, 1.f), candle->fireTex, &shaderProgram);
+	candle->base = Sprite::createSprite(glm::ivec2(16, 32), glm::vec2(1.f), candle->baseTex, &shaderProgram);
+	candle->fire->setNumberAnimations(1);
+	candle->fire->setAnimationSpeed(0, 30);
+	candle->fire->animatorX(0, 4, 0.f, 0.25f, 0.f);
+	candle->fire->changeAnimation(0);
+	candle->fire->setPosition(position - glm::vec2(0, 16));
+	candle->base->setPosition(position);
+	candle->setHitbox(candle, position);
 	return candle;
 }
 
@@ -108,4 +147,29 @@ bool Candle::isDestroyed() const
 bool Candle::getsRemoved() const
 {
 	return destroyed && endTimer == 0;
+}
+
+int Candle::getDropId() const
+{
+	return dropId;
+}
+
+Hitbox Candle::getHitbox() const
+{
+	return hitbox;
+}
+
+glm::vec2 Candle::getDropPosition() const
+{
+	glm::vec2 pos = hitbox.min;
+	pos.x -= 32;
+	pos.y -= 16;
+	return pos;
+}
+
+void Candle::setHitbox(Candle* candle, const glm::vec2& position)
+{
+	glm::ivec2 quadSize = glm::ivec2(candle->baseTex->width(), candle->baseTex->height());
+	candle->hitbox.min = position;
+	candle->hitbox.max = position + glm::vec2(quadSize - 1);
 }

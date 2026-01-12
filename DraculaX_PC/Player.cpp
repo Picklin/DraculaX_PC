@@ -183,6 +183,20 @@ const Hitbox Player::getHitbox() const
 	return getTerrainCollisionBox();	//provisional
 }
 
+const Hitbox Player::getWhipHitbox() const
+{
+	Hitbox hb;
+	hb.min = whipPos + glm::vec2(55-30*lookingLeft, 31);
+	hb.max = hb.min + glm::vec2(48, 5);
+	return hb;
+}
+
+bool Player::isAttacking() const
+{
+	int keyframe = whip->getCurrentKeyframe();
+	return keyframe >= 6 && keyframe <= 11;
+}
+
 const string Player::getSpritesheet() const
 {
 	return "images/Richter/Richter_v4.png";
@@ -1087,7 +1101,8 @@ void Player::whipUpdate(int deltaTime)
 	{
 		whip->update(deltaTime);
 		int whipKF = whip->getCurrentKeyframe();
-		whip->setPosition(glm::vec2(position.x + crouchWhipOffset[whipKF].x * !lookingLeft + leftCrouchWhipOffset[whipKF].x * lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y));
+		whipPos = glm::vec2(position.x + crouchWhipOffset[whipKF].x * !lookingLeft + leftCrouchWhipOffset[whipKF].x * lookingLeft * bCrouching + tileMapDispl.x - 64 * lookingLeft, position.y + 1 + crouchWhipOffset[whipKF].y * bCrouching + tileMapDispl.y);
+		whip->setPosition(whipPos);
 	}
 	Game::instance().keyReleased(GLFW_KEY_X);
 }

@@ -37,7 +37,7 @@ protected:
 	glm::ivec2 tileMapDispl;
 	TileMap* platforms;
 	TileMap* tileMap;
-	int endTimer = 1;
+	int endTimer = 0;
 	bool ended = false;
 
 private:

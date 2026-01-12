@@ -20,16 +20,23 @@ public:
 	
 	Item* getRandomItem(const glm::vec2& position);
 	Item* getCommonRandomItem(const glm::vec2& position);
+	Item* getHeartsOrMoneyBag(const glm::vec2& position, int id);
 	Item* getTrinket(const glm::vec2& position, int trinketID);
 	Item* getFood(const glm::vec2& position, int foodID, const GUI& gui);
+	Item* getSmallHeart(const glm::vec2& position);
 	Item* getHeart(const glm::vec2& position);
-	Item* getHeart(const glm::vec2& position, int heartAmmount);
 	Item* getBigHeart(const glm::vec2& position);
 
 private:
 	ItemManager();
 	void initializeRandom();
 	void initItem(Item* i, const glm::vec2& pos, const glm::vec2& topLeft, const glm::vec2& bottomRight);
+
+public:
+	enum DropIds
+	{
+		HEART_SMALL, HEART, ONE_HUNDRED, FOUR_HUNDRED, SEVEN_HUNDRED, THOUSAND, 
+	};
 
 private:
 	glm::ivec2 tileMapDispl;
@@ -39,6 +46,7 @@ private:
 	using ItemCreator = std::function<Item* (const glm::vec2&)>;
 	vector<ItemCreator> randomItem;
 	vector<ItemCreator> commonRandomItem;
+	vector<ItemCreator> heartsMoneyBags;
 	vector<float> itemWeights;
 	vector<float> commonItemWeights;
 

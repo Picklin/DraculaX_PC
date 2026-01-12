@@ -17,12 +17,10 @@ namespace
 
 Heart::Heart(TexturedQuad* tone) : tone(tone), heartAmmount(1)
 {
-	tone->setColor(glm::vec4(redTones[5], 0.f, 0.f, 1.f));
 }
 
 Heart::Heart(TexturedQuad* tone, int heartAmmount) : tone(tone), heartAmmount(heartAmmount)
 {
-	tone->setColor(glm::vec4(redTones[5], 0.f, 0.f, 1.f));
 }
 
 void Heart::update(int deltaTime)

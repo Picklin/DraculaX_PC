@@ -66,7 +66,7 @@ bool Item::isEnded() const
 
 bool Item::getsRemoved() const
 {
-    return endTimer <= 0;
+    return ended && endTimer <= 0;
 }
 
 void Item::setUngrabableTime(int timeMilisecs)

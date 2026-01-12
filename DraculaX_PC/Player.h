@@ -22,7 +22,9 @@ public:
 	void unsetKey();
 	string getName() const;
 	const Hitbox getHitbox() const override;
+	const Hitbox getWhipHitbox() const;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
+	bool isAttacking() const;
 
 protected:
 	const string getSpritesheet() const;
@@ -60,6 +62,8 @@ private:
 	};
 	vector<InputEvent> commandBuffer;
 	vector<Hitbox> terrainCollisionBoxes;
+
+	glm::vec2 whipPos;
 
 	TileMap* platforms;
 	TileMap* stairs;

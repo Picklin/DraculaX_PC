@@ -103,6 +103,20 @@ void Scene::updateActors(int deltaTime)
 {
 	if (!player->isEnded())
 	{
+		if (player->isAttacking())
+		{
+			//cout << "Player attacking" << endl;
+			for (auto candle : candles)
+			{
+				if (!candle->isDestroyed() && collision(candle->getHitbox(), player->getWhipHitbox()))
+				{
+					int dropId = candle->getDropId();
+					if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(candle->getDropPosition(), dropId - !gui->isMaria()*6));
+					else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(candle->getDropPosition(), candle->getDropId()));
+					candle->destroy();
+				}
+			}
+		}
 		//cout << items.size() << endl;
 		for (unsigned int i = 0; i < items.size(); i++)
 		{

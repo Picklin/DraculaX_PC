@@ -2,36 +2,44 @@
 #include "ItemManager.h"
 #include "TextureManager.h"
 
-static const int foodEquivalents[12]
+namespace
 {
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::HALF_ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::ROAST,
-    GUI::foodIds::BIG_ROAST
-};
+    const int foodEquivalents[12]
+    {
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::HALF_ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::ROAST,
+        GUI::foodIds::BIG_ROAST
+    };
+    const pair<glm::vec2, glm::vec2> RichterFoodCoords[3]
+    {
+        pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.875f), glm::vec2(0.0625f, 0.9375f)),
+        pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.9375f), glm::vec2(0.0625f, 1.f)),
+        pair<glm::vec2, glm::vec2>(glm::vec2(0.0625f, 0.875f), glm::vec2(0.1875f, 1.f))
+    };
+}
 
-const pair<glm::vec2, glm::vec2> RichterFoodCoords[3]
-{
-    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.875f), glm::vec2(0.0625f, 0.9375f)),
-    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.9375f), glm::vec2(0.0625f, 1.f)),
-    pair<glm::vec2, glm::vec2>(glm::vec2(0.0625f, 0.875f), glm::vec2(0.1875f, 1.f))
-};
 
 ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
 {
     initializeRandom();
-
     itemsDist = std::discrete_distribution<int>(itemWeights.begin(), itemWeights.end());
-
     commonItemsDist = std::discrete_distribution<int>(commonItemWeights.begin(), commonItemWeights.end());
+
+    heartsMoneyBags =
+    {
+        [this](const glm::vec2& pos) { return this->getSmallHeart(pos); },
+        [this](const glm::vec2& pos) { return this->getHeart(pos); },
+        //[this](const glm::vec2& pos) { return this->getBigHeart(pos); },
+	};
 
     itemsTex = TextureManager::instance().getTexture("gui&items");
 }
@@ -77,6 +85,11 @@ Item* ItemManager::getCommonRandomItem(const glm::vec2& position)
     return commonRandomItem[randomIndex](position);
 }
 
+Item* ItemManager::getHeartsOrMoneyBag(const glm::vec2& position, int id)
+{
+	return heartsMoneyBags[id](position);
+}
+
 Item* ItemManager::getTrinket(const glm::vec2& position, int trinketID)
 {
 	Trinket* trinket = new Trinket();
@@ -108,7 +121,7 @@ Item* ItemManager::getFood(const glm::vec2& position, int foodID, const GUI& gui
     return food;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position)
+Item* ItemManager::getSmallHeart(const glm::vec2& position)
 {
 	TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.1875f), glm::vec2(0.9375f, 0.25f), *itemsTex, *shader);
     Heart* heart = new Heart(heartTone);
@@ -116,10 +129,10 @@ Item* ItemManager::getHeart(const glm::vec2& position)
 	return heart;
 }
 
-Item* ItemManager::getHeart(const glm::vec2& position, int heartAmmount)
+Item* ItemManager::getHeart(const glm::vec2& position)
 {
     TexturedQuad* heartTone = TexturedQuad::createTexturedQuad(glm::vec2(0.9375f, 0.1875f), glm::vec2(1.f, 0.25f), *itemsTex, *shader);
-    Heart* heart = new Heart(heartTone, heartAmmount);
+    Heart* heart = new Heart(heartTone, 5);
     initItem(heart, position, glm::vec2(0.8125f, 0.1875f), glm::vec2(0.875f, 0.25f));
     return heart;
 }
