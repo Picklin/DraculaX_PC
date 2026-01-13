@@ -79,6 +79,7 @@ void Level1Sc1::render()
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
+	for (auto axe : axes) axe->render();
 	player->render();
 	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
 	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
@@ -123,7 +124,6 @@ void Level1Sc1::initItems()
 	candles.push_back(candle1);
 	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(89 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-
 }
 
 void Level1Sc1::initActors(Player* player) 

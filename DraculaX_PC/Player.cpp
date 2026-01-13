@@ -126,6 +126,7 @@ void Player::render()
 {
 	shader->use();
 	shader->setUniform1i("flip", lookingLeft);
+	shader->setUniform1f("frameWidth", 0.1f);
 	int anim = sprite->animation();
 	if ((loseMomentum && (anim == SKID || anim == BACKFLIP_SKID)) || sprite->animation() == UPPERCUT || bDashing || backflipping) afterimages.render();
 	sprite->render();
@@ -163,6 +164,11 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	whip->changeAnimation(0);
 }
 
+void Player::setTrinket()
+{
+	hasTrinket = true;
+}
+
 void Player::setKey()
 {
 	hasKey = true;
@@ -171,6 +177,11 @@ void Player::setKey()
 void Player::unsetKey()
 {
 	hasKey = false;
+}
+
+void Player::unsetTrinket()
+{
+	hasTrinket = false;
 }
 
 string Player::getName() const
@@ -195,6 +206,13 @@ bool Player::isAttacking() const
 {
 	int keyframe = whip->getCurrentKeyframe();
 	return keyframe >= 6 && keyframe <= 11;
+}
+
+bool Player::usingSubweapon() const
+{
+	int anim = sprite->animation();
+	bool throwSub = (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && hasTrinket;
+	return throwSub;
 }
 
 const string Player::getSpritesheet() const
@@ -408,7 +426,7 @@ void Player::childUpdate(int deltaTime)
 	int anim = sprite->animation();
 	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
     int state = animToStateMap.at(anim);
-	if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
+	/*if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
 	{
 		sprite->changeAnimation(ULT);
 		bJumping = false;
@@ -418,12 +436,11 @@ void Player::childUpdate(int deltaTime)
 		startY = position.y;
 		Game::instance().keyReleased(GLFW_KEY_TAB);
 	}
-	else if (!bUlting && !bClimbing)
+	else */if (!bUlting && !bClimbing)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) && !bDashing && !backflipping && anim != BACKFLIP_SKID;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) && !rightPressed && !bDashing && !backflipping && anim != BACKFLIP_SKID;
 		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING && state != STATE_CROUCHING) + lookingLeftAtk * (state == STATE_ATTACKING || state == STATE_CROUCHING);
-
 		if (loseMomentum)
 		{
 			if (abs(velocityX) == (1 + backflipping) && anim != (SKID + backflipping))

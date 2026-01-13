@@ -124,13 +124,22 @@ void GUI::toggleBoardFrame()
 
 void GUI::changeItem(int itemId)
 {
-	if (itemId == DRAGON) renderDragon = true;
+	if (itemId == DRAGON)
+	{
+		renderDragon = true;
+		player->setTrinket();
+	}
 	else
 	{
 		renderDragon = false;
 		item->changeAnimation(itemId);
 		if (itemId == KEY) player->setKey();
-		else player->unsetKey();
+		else
+		{
+			player->unsetKey();
+			if (itemId != NONE) player->setTrinket();
+			else player->unsetTrinket();
+		}
 	}
 }
 

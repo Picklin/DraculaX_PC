@@ -32,6 +32,12 @@
     <Filter Include="Archivos de encabezado\Screens">
       <UniqueIdentifier>{3d8987a6-b8c2-4265-9796-552b5d1a70ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Subweapons">
+      <UniqueIdentifier>{16d6fc33-1a7f-4412-86fb-716b29785fab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Subweapons">
+      <UniqueIdentifier>{f2485bcd-7c3b-4b2a-9a3e-ab15fd1671a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,6 +135,12 @@
     </ClCompile>
     <ClCompile Include="Bag.cpp">
       <Filter>Archivos de código fuente\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Subweapon.cpp">
+      <Filter>Archivos de código fuente\Subweapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Axe.cpp">
+      <Filter>Archivos de código fuente\Subweapons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +245,12 @@
     </ClInclude>
     <ClInclude Include="Bag.h">
       <Filter>Archivos de encabezado\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Subweapon.h">
+      <Filter>Archivos de encabezado\Subweapons</Filter>
+    </ClInclude>
+    <ClInclude Include="Axe.h">
+      <Filter>Archivos de encabezado\Subweapons</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimKeyframes.h" />
+    <ClCompile Include="Axe.cpp" />
     <ClCompile Include="Bag.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="SoundEngine.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
+    <ClCompile Include="Subweapon.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TexturedQuad.cpp" />
@@ -167,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="Afterimage.h" />
     <ClInclude Include="Afterimages.h" />
+    <ClInclude Include="Axe.h" />
     <ClInclude Include="Bag.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="Effect.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="SpawnPoint.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteManager.h" />
+    <ClInclude Include="Subweapon.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturedQuad.h" />

@@ -11,6 +11,7 @@
 #include "EffectsManager.h"
 #include "EnemyManager.h"
 #include "Candle.h"
+#include "Axe.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -55,6 +56,7 @@ private:
 protected:
 	int screenWidth;
 	int viewportOffset;
+	int maxSubweaponInstances = 1;
 
 protected:
 	TileMap* map;
@@ -70,6 +72,8 @@ protected:
 
 	vector<Item*> items;
 	vector<Candle*> candles;
+	vector<Axe*> axes;
+	
 	vector<Enemy*> enemies;
 
 	vector<InfSpawnPoint> infSpawnPoints;

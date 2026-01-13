@@ -117,6 +117,14 @@ void Scene::updateActors(int deltaTime)
 				}
 			}
 		}
+		else if (player->usingSubweapon() && int(axes.size()) < maxSubweaponInstances)
+		{
+			Axe* axe = new Axe();
+			axe->init(MAP_OFFSET, *spriteShader, player->getLookingDirection());
+			axe->setPosition(player->getPosition() + player->myCenter());
+			axes.push_back(axe);
+		}
+		//cout << axes.size() << endl;
 		//cout << items.size() << endl;
 		for (unsigned int i = 0; i < items.size(); i++)
 		{
@@ -154,6 +162,15 @@ void Scene::updateActors(int deltaTime)
 			{
 				delete candles[i];
 				candles.erase(candles.begin() + i);
+			}
+		}
+		for (unsigned int i = 0; i < axes.size(); i++)
+		{
+			axes[i]->update(deltaTime);
+			if (axes[i]->getsRemoved())
+			{
+				delete axes[i];
+				axes.erase(axes.begin() + i);
 			}
 		}
 	}

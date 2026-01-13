@@ -18,13 +18,16 @@ public:
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
+	void setTrinket();
 	void setKey();
 	void unsetKey();
+	void unsetTrinket();
 	string getName() const;
 	const Hitbox getHitbox() const override;
 	const Hitbox getWhipHitbox() const;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
 	bool isAttacking() const;
+	bool usingSubweapon() const;
 
 protected:
 	const string getSpritesheet() const;
