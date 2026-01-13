@@ -113,9 +113,9 @@ void Level1Sc1::initItems()
 	//items.push_back(ItemManager::instance().getBigHeart(glm::vec2(12 * map->getTileSize(), 0 * map->getTileSize())));
 	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(24 * map->getTileSize(), 17 * map->getTileSize()), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * map->getTileSize(), 8 * map->getTileSize()), GUI::BIRD);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * map->getTileSize(), 8 * map->getTileSize()), ItemManager::ONE_HUNDRED);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(48 * map->getTileSize(), 19 * map->getTileSize()), GUI::BIRD);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(48 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
 	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(56 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART);
 	candles.push_back(candle1);

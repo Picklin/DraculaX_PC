@@ -37,11 +37,11 @@ protected:
 	glm::ivec2 tileMapDispl;
 	TileMap* platforms;
 	TileMap* tileMap;
+	Sprite* sprite;
 	int endTimer = 0;
 	bool ended = false;
 
 private:
-	Sprite* sprite;
 	const int lifeSpan = 5000;	//milisegundos
 	static int ungrabableTime;
 	float velocityX = 0.f;

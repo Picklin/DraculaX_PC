@@ -19,10 +19,10 @@ Candle* Candle::createCandle(ShaderProgram& shaderProgram, const glm::vec2& posi
 {
 	Candle* candle = new Candle(itemId);
 	candle->fireTex = new Texture();
-	candle->fireTex->loadFromFile("images/gui&items/fire1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->fireTex->loadFromFile("images/candles/fire1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->fireTex->setMagFilter(GL_NEAREST);
 	candle->baseTex = new Texture();
-	candle->baseTex->loadFromFile("images/gui&items/base1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->loadFromFile("images/candles/base1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->baseTex->setMagFilter(GL_NEAREST);
 	candle->fire = Sprite::createSprite(glm::ivec2(16), glm::vec2(0.5f, 1.f), candle->fireTex, &shaderProgram);
 	candle->base = Sprite::createSprite(glm::ivec2(16), glm::vec2(1.f), candle->baseTex, &shaderProgram);
@@ -40,10 +40,10 @@ Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2&
 {
 	Candle* candle = new Candle(itemId);
 	candle->fireTex = new Texture();
-	candle->fireTex->loadFromFile("images/gui&items/torch_fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->fireTex->loadFromFile("images/candles/torch_fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->fireTex->setMagFilter(GL_NEAREST);
 	candle->baseTex = new Texture();
-	candle->baseTex->loadFromFile("images/gui&items/torch_base.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->loadFromFile("images/candles/torch_base.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->baseTex->setMagFilter(GL_NEAREST);
 	candle->fire = Sprite::createSprite(glm::ivec2(16), glm::vec2(0.125f, 1.f), candle->fireTex, &shaderProgram);
 	candle->base = Sprite::createSprite(glm::ivec2(32, 64), glm::vec2(0.5f, 1.f), candle->baseTex, &shaderProgram);
@@ -72,10 +72,10 @@ Candle* Candle::createPilarCandle(ShaderProgram& shaderProgram, const glm::vec2&
 {
 	Candle* candle = new Candle(itemId);
 	candle->fireTex = new Texture();
-	candle->fireTex->loadFromFile("images/gui&items/fire2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->fireTex->loadFromFile("images/candles/fire2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->fireTex->setMagFilter(GL_NEAREST);
 	candle->baseTex = new Texture();
-	candle->baseTex->loadFromFile("images/gui&items/base2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->loadFromFile("images/candles/base2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	candle->baseTex->setMagFilter(GL_NEAREST);
 	candle->fire = Sprite::createSprite(glm::ivec2(16), glm::vec2(0.25f, 1.f), candle->fireTex, &shaderProgram);
 	candle->base = Sprite::createSprite(glm::ivec2(16, 32), glm::vec2(1.f), candle->baseTex, &shaderProgram);

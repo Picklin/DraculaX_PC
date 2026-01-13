@@ -127,6 +127,9 @@
     <ClCompile Include="Candle.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
+    <ClCompile Include="Bag.cpp">
+      <Filter>Archivos de código fuente\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -225,6 +228,11 @@
     <ClInclude Include="Heart.h">
       <Filter>Archivos de encabezado\Items</Filter>
     </ClInclude>
-    <ClInclude Include="Candle.h" />
+    <ClInclude Include="Candle.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Bag.h">
+      <Filter>Archivos de encabezado\Items</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

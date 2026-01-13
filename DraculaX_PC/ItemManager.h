@@ -7,6 +7,7 @@
 #include "Trinket.h"
 #include "Food.h"
 #include "Heart.h"
+#include "Bag.h"
 #include <functional>
 #include <random>
 #include <chrono>
@@ -26,6 +27,10 @@ public:
 	Item* getSmallHeart(const glm::vec2& position);
 	Item* getHeart(const glm::vec2& position);
 	Item* getBigHeart(const glm::vec2& position);
+	Item* getOneHundredMoneyBag(const glm::vec2& position);
+	Item* getFourHundredMoneyBag(const glm::vec2& position);
+	Item* getSevenHundredMoneyBag(const glm::vec2& position);
+	Item* getThousandMoneyBag(const glm::vec2& position);
 
 private:
 	ItemManager();
@@ -35,7 +40,7 @@ private:
 public:
 	enum DropIds
 	{
-		HEART_SMALL, HEART, ONE_HUNDRED, FOUR_HUNDRED, SEVEN_HUNDRED, THOUSAND, 
+		HEART_SMALL, HEART, ONE_HUNDRED, FOUR_HUNDRED, SEVEN_HUNDRED, ONE_THOUSAND, 
 	};
 
 private:

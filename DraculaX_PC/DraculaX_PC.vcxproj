@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimKeyframes.h" />
+    <ClCompile Include="Bag.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectsManager.cpp" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Afterimage.h" />
     <ClInclude Include="Afterimages.h" />
+    <ClInclude Include="Bag.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectsManager.h" />

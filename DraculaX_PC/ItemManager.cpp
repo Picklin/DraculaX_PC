@@ -38,6 +38,10 @@ ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
     {
         [this](const glm::vec2& pos) { return this->getSmallHeart(pos); },
         [this](const glm::vec2& pos) { return this->getHeart(pos); },
+		[this](const glm::vec2& pos) { return this->getOneHundredMoneyBag(pos); },
+		[this](const glm::vec2& pos) { return this->getFourHundredMoneyBag(pos); },
+		[this](const glm::vec2& pos) { return this->getSevenHundredMoneyBag(pos); },
+		[this](const glm::vec2& pos) { return this->getThousandMoneyBag(pos); },
         //[this](const glm::vec2& pos) { return this->getBigHeart(pos); },
 	};
 
@@ -143,4 +147,35 @@ Item* ItemManager::getBigHeart(const glm::vec2& position)
     Heart* heart = new Heart(heartTone, 50);
     initItem(heart, position, glm::vec2(0.75f, 0.25f), glm::vec2(0.875f, 0.375f));
     return heart;
+}
+
+Item* ItemManager::getOneHundredMoneyBag(const glm::vec2& position)
+{
+    Bag* bag = new Bag(100);
+	initItem(bag, position, glm::vec2(0.75f, 0.125f), glm::vec2(0.8125f, 0.1875f));
+	return bag;
+}
+
+Item* ItemManager::getFourHundredMoneyBag(const glm::vec2& position)
+{
+	Bag* bag = new Bag(400);
+	initItem(bag, position, glm::vec2(0.8125f, 0.125f), glm::vec2(0.875f, 0.1875f));
+    return bag;
+}
+
+Item* ItemManager::getSevenHundredMoneyBag(const glm::vec2& position)
+{
+	Bag* bag = new Bag(700);
+	initItem(bag, position, glm::vec2(0.875f, 0.125f), glm::vec2(0.9375f, 0.1875f));
+    return bag;
+}
+
+Item* ItemManager::getThousandMoneyBag(const glm::vec2& position)
+{
+	Bag* bag = new Bag(1000);
+    bag->initOneThousandBag(tileMapDispl, *shader, *itemsTex);
+    bag->setTileMap(*map);
+    bag->setPlatformMap(platforms);
+    bag->setPosition(position);
+	return bag;
 }
