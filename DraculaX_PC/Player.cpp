@@ -211,7 +211,7 @@ bool Player::isAttacking() const
 bool Player::usingSubweapon() const
 {
 	int anim = sprite->animation();
-	bool throwSub = (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && hasTrinket;
+	bool throwSub = (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && sprite->getCurrentKeyframe() == 4 && hasTrinket;
 	return throwSub;
 }
 

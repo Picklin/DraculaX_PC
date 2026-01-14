@@ -25,7 +25,7 @@ void Axe::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, int
 void Axe::update(int deltaTime)
 {
 	//cout << position.x << ", " << position.y << endl;
-	position.x += 2 * lookingDirection;
+	position.x += 1.5f * lookingDirection;
 	position.y += velocityY;
 	velocityY += gravity;
 	timeElapsed += deltaTime;

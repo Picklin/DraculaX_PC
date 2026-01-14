@@ -120,8 +120,10 @@ void Scene::updateActors(int deltaTime)
 		else if (player->usingSubweapon() && int(axes.size()) < maxSubweaponInstances)
 		{
 			Axe* axe = new Axe();
-			axe->init(MAP_OFFSET, *spriteShader, player->getLookingDirection());
-			axe->setPosition(player->getPosition() + player->myCenter());
+			int dir = player->getLookingDirection();
+			axe->init(MAP_OFFSET, *spriteShader, dir);
+			glm::vec2 pos = player->getPosition() + player->myCenter();
+			axe->setPosition(glm::vec2(pos.x - 32 * (dir == -1), pos.y));
 			axes.push_back(axe);
 		}
 		//cout << axes.size() << endl;
