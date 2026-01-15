@@ -198,7 +198,7 @@ const Hitbox Player::getHitbox() const
 const Hitbox Player::getWhipHitbox() const
 {
 	Hitbox hb;
-	hb.min = whipPos + glm::vec2(55-30*lookingLeft, 31);
+	hb.min = whipPos + glm::vec2(55-30*lookingLeft, 31) - glm::vec2(tileMapDispl);
 	hb.max = hb.min + glm::vec2(48, 5);
 	return hb;
 }

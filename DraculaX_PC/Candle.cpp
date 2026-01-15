@@ -1,4 +1,5 @@
 #include "Candle.h"
+#define MAP_OFFSET glm::vec2(32, 16)
 
 Candle::~Candle()
 {
@@ -30,8 +31,8 @@ Candle* Candle::createCandle(ShaderProgram& shaderProgram, const glm::vec2& posi
 	candle->fire->setAnimationSpeed(0, 30);
 	candle->fire->animatorX(0, 2, 0.f, 0.5f, 0.f);
 	candle->fire->changeAnimation(0);
-	candle->fire->setPosition(position);
-	candle->base->setPosition(position);
+	candle->fire->setPosition(position + MAP_OFFSET);
+	candle->base->setPosition(position + MAP_OFFSET);
 	candle->setHitbox(candle, position);
 	return candle;
 }
@@ -60,8 +61,8 @@ Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2&
 	candle->base->addKeyframe(0, glm::vec2(0.f, 0.f));
 	candle->base->addKeyframe(0, glm::vec2(0.5f, 0.f));
 	candle->base->changeAnimation(0);
-	candle->fire->setPosition(position + glm::vec2(8, 16));
-	candle->base->setPosition(position);
+	candle->fire->setPosition(position + glm::vec2(8, 16) + MAP_OFFSET);
+	candle->base->setPosition(position + MAP_OFFSET);
 	glm::ivec2 quadSize = glm::ivec2(candle->baseTex->width(), candle->baseTex->height());
 	candle->hitbox.min = position + glm::vec2(5, 23);
 	candle->hitbox.max = candle->hitbox.min + glm::vec2(16, 40);
@@ -83,8 +84,8 @@ Candle* Candle::createPilarCandle(ShaderProgram& shaderProgram, const glm::vec2&
 	candle->fire->setAnimationSpeed(0, 30);
 	candle->fire->animatorX(0, 4, 0.f, 0.25f, 0.f);
 	candle->fire->changeAnimation(0);
-	candle->fire->setPosition(position - glm::vec2(0, 16));
-	candle->base->setPosition(position);
+	candle->fire->setPosition(position - glm::vec2(0, 16) + MAP_OFFSET);
+	candle->base->setPosition(position + MAP_OFFSET);
 	candle->setHitbox(candle, position);
 	return candle;
 }
@@ -162,14 +163,12 @@ Hitbox Candle::getHitbox() const
 glm::vec2 Candle::getDropPosition() const
 {
 	glm::vec2 pos = hitbox.min;
-	pos.x -= 32;
-	pos.y -= 16;
 	return pos;
 }
 
 void Candle::setHitbox(Candle* candle, const glm::vec2& position)
 {
 	glm::ivec2 quadSize = glm::ivec2(candle->baseTex->width(), candle->baseTex->height());
-	candle->hitbox.min = position - glm::vec2(32,16);
-	candle->hitbox.max = candle->hitbox.min + glm::vec2(quadSize - 1);
+	candle->hitbox.min = position;
+	candle->hitbox.max = position + glm::vec2(quadSize - 1);
 }
