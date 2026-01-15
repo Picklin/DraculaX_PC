@@ -51,6 +51,7 @@ private:
 	void updateSpawnPoints(int deltaTime);
 	void updateTriggerAreas();
 	void updateEffects(int deltaTime);
+	void destroyCandle(Candle& candle);
 	void initManagers();
 
 protected:
@@ -72,7 +73,7 @@ protected:
 
 	vector<Item*> items;
 	vector<Candle*> candles;
-	vector<Axe*> axes;
+	vector<Subweapon*> subweapons;
 	
 	vector<Enemy*> enemies;
 

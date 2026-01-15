@@ -79,7 +79,7 @@ void Level1Sc1::render()
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
-	for (auto axe : axes) axe->render();
+	for (auto axe : subweapons) axe->render();
 	player->render();
 	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
 	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
@@ -114,16 +114,16 @@ void Level1Sc1::initItems()
 	//items.push_back(ItemManager::instance().getBigHeart(glm::vec2(12 * map->getTileSize(), 0 * map->getTileSize())));
 	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(24 * map->getTileSize(), 17 * map->getTileSize()), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * map->getTileSize(), 8 * map->getTileSize()), ItemManager::ONE_HUNDRED);
+	/*candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * map->getTileSize(), 8 * map->getTileSize()), ItemManager::ONE_HUNDRED);
 	candles.push_back(candle1);
 	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(48 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
 	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(56 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART);
-	candles.push_back(candle1);
+	candles.push_back(candle1);*/
 	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(80 * map->getTileSize(), 19 * map->getTileSize()), GUI::CAT);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(89 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART_SMALL);
-	candles.push_back(candle1);
+	//candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(89 * map->getTileSize(), 19 * map->getTileSize()), ItemManager::HEART_SMALL);
+	//candles.push_back(candle1);
 }
 
 void Level1Sc1::initActors(Player* player) 

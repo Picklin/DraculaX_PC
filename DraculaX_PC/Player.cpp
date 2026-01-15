@@ -7,6 +7,7 @@
 
 #define FALL_SPEED 5
 #define DASH_KICK_HEIGHT 32
+#define SUBWEAPON_COOLDOWN 1.F //seconds
 
 enum PlayerStates
 {
@@ -208,10 +209,11 @@ bool Player::isAttacking() const
 	return keyframe >= 6 && keyframe <= 11;
 }
 
-bool Player::usingSubweapon() const
+bool Player::usingSubweapon()
 {
 	int anim = sprite->animation();
-	bool throwSub = (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && sprite->getCurrentKeyframe() == 4 && hasTrinket;
+	bool throwSub = throwSubweapon && (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && sprite->getCurrentKeyframe() == 4 && hasTrinket;
+	if (throwSub) throwSubweapon = false;
 	return throwSub;
 }
 
@@ -860,6 +862,12 @@ void Player::childUpdate(int deltaTime)
 						whipping = true;
 						SoundEngine::instance().playSFX(SoundEngine::WHIP);
 					}
+					else if (useSubweaponInStairs && !hasKey && hasTrinket)
+					{
+						sprite->changeAnimation(ATTACK_UPSTAIRS_SUBWEAPON + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2);
+						subweaponCooldown = SUBWEAPON_COOLDOWN;
+						throwSubweapon = true;
+					}
 					attackInStairs = useSubweaponInStairs = false;
 					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
 					position.y -= float(correction);
@@ -909,6 +917,7 @@ void Player::childUpdate(int deltaTime)
 		}
 	}
 	prevAnim = anim;
+	subweaponCooldown -= deltaTime / 1000.f;
 	setPosition(position);
 	//cout << position.x << ' ' << position.y << endl;
 }
@@ -1069,9 +1078,15 @@ void Player::climbToStair(int tile)
 
 void Player::attack()
 {
-	sprite->changeAnimation(ATTACK + Game::instance().getKey(GLFW_KEY_UP) * !hasKey * hasTrinket + bCrouching * 2);
-	whipping = (!hasKey && !hasTrinket) || !Game::instance().getKey(GLFW_KEY_UP);
+	sprite->changeAnimation(ATTACK + (Game::instance().getKey(GLFW_KEY_UP) && subweaponCooldown <= 0.f) * !hasKey * hasTrinket + bCrouching * 2);
+	whipping = (!hasKey && !hasTrinket) || (!Game::instance().getKey(GLFW_KEY_UP) || subweaponCooldown > 0.f);
+	int anim = sprite->animation();
 	if (whipping) SoundEngine::instance().playSFX(SoundEngine::WHIP);
+	else if ((anim == ATTACK_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON) && subweaponCooldown <= 0.f)
+	{
+		subweaponCooldown = SUBWEAPON_COOLDOWN;
+		throwSubweapon = true;
+	}
 }
 
 void Player::jump()

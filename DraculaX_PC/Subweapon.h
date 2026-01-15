@@ -14,7 +14,7 @@ public:
 	virtual void render() = 0;
 	void setPosition(const glm::vec2& pos);
 	virtual int getDamage() const = 0;
-	virtual Hitbox getHitbox() const = 0;
+	virtual const Hitbox getHitbox() const = 0;
 	virtual bool getsRemoved() const = 0;
 
 protected:

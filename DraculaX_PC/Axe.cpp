@@ -1,5 +1,4 @@
 #include "Axe.h"
-#include <iostream>
 
 namespace
 {
@@ -45,11 +44,11 @@ int Axe::getDamage() const
 	return 15;
 }
 
-Hitbox Axe::getHitbox() const
+const Hitbox Axe::getHitbox() const
 {
 	Hitbox hb;
 	hb.min = position;
-	hb.max = position + glm::vec2(quadSize);
+	hb.max = hb.min + glm::vec2(quadSize-1);
 	return hb;
 }
 

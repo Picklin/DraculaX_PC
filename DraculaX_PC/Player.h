@@ -27,7 +27,7 @@ public:
 	const Hitbox getWhipHitbox() const;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
 	bool isAttacking() const;
-	bool usingSubweapon() const;
+	bool usingSubweapon();
 
 protected:
 	const string getSpritesheet() const;
@@ -86,6 +86,7 @@ private:
 	float timeRecoveringFromJump = 0.f;
 	float dashDistance = 0.f;
 	float prevYpos = 0.f;
+	float subweaponCooldown = 0.f;
 
 	//state variables
 	bool bJumping = false;
@@ -110,6 +111,7 @@ private:
 	bool hasKey = false;
 	//trinket other than key
 	bool hasTrinket = false;
+	bool throwSubweapon = false;
 
 	//stairs booleans
 	bool bClimbing = false;

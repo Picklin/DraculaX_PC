@@ -103,34 +103,20 @@ void Scene::updateActors(int deltaTime)
 {
 	if (!player->isEnded())
 	{
-		if (player->isAttacking())
-		{
-			//cout << "Player attacking" << endl;
-			for (auto candle : candles)
-			{
-				if (!candle->isDestroyed() && collision(candle->getHitbox(), player->getWhipHitbox()))
-				{
-					int dropId = candle->getDropId();
-					if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(candle->getDropPosition(), dropId - !gui->isMaria()*6));
-					else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(candle->getDropPosition(), candle->getDropId()));
-					candle->destroy();
-				}
-			}
-		}
-		else if (player->usingSubweapon() && int(axes.size()) < maxSubweaponInstances)
+		if (player->usingSubweapon())
 		{
 			Axe* axe = new Axe();
 			int dir = player->getLookingDirection();
 			axe->init(MAP_OFFSET, *spriteShader, dir);
 			glm::vec2 pos = player->getPosition() + player->myCenter();
 			axe->setPosition(glm::vec2(pos.x - 32 * (dir == -1), pos.y));
-			axes.push_back(axe);
+			subweapons.push_back(axe);
 		}
 		//cout << axes.size() << endl;
 		//cout << items.size() << endl;
 		for (unsigned int i = 0; i < items.size(); i++)
 		{
-			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()))	//habrá que cambiar la hitbox a que no devuelva un vector
+			if (!items[i]->isEnded() && items[i]->isGrabable() && collision(items[i]->getHitbox(), player->getHitbox()))
 			{
 				Trinket* trinketItem = dynamic_cast<Trinket*>(items[i]);
 				if (trinketItem && gui->compatibleTrinket(trinketItem->getTrinketID()))
@@ -159,6 +145,10 @@ void Scene::updateActors(int deltaTime)
 		}
 		for (unsigned int i = 0; i < candles.size(); i++)
 		{
+			if (player->isAttacking() && !candles[i]->isDestroyed() && collision(candles[i]->getHitbox(), player->getWhipHitbox()))
+			{
+				destroyCandle(*candles[i]);
+			}
 			candles[i]->update(deltaTime);
 			if (candles[i]->getsRemoved())
 			{
@@ -166,15 +156,25 @@ void Scene::updateActors(int deltaTime)
 				candles.erase(candles.begin() + i);
 			}
 		}
-		for (unsigned int i = 0; i < axes.size(); i++)
+		for (unsigned int i = 0; i < subweapons.size(); i++)
 		{
-			axes[i]->update(deltaTime);
-			if (axes[i]->getsRemoved())
+			subweapons[i]->update(deltaTime);
+			for (auto candle : candles)
 			{
-				delete axes[i];
-				axes.erase(axes.begin() + i);
+				//Hitbox candleHb = candle->getHitbox();
+				//cout << "Candle Hitbox: Min(" << candleHb.min.x << ", " << candleHb.min.y << ") Max(" << candleHb.max.x << ", " << candleHb.max.y << ")\n";
+				if (!candle->isDestroyed() && collision(candle->getHitbox(), subweapons[i]->getHitbox()))
+				{
+					destroyCandle(*candle);
+				}
+			}
+			if (subweapons[i]->getsRemoved())
+			{
+				delete subweapons[i];
+				subweapons.erase(subweapons.begin() + i);
 			}
 		}
+		
 	}
 	player->update(deltaTime);
 
@@ -248,6 +248,14 @@ bool Scene::isInArea(const Hitbox& area, const glm::vec2& pos)
 void Scene::updateEffects(int deltaTime)
 {
 	EffectsManager::instance().update(deltaTime);
+}
+
+void Scene::destroyCandle(Candle& candle)
+{
+	int dropId = candle.getDropId();
+	if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(candle.getDropPosition(), dropId - !gui->isMaria() * 6));
+	else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(candle.getDropPosition(), candle.getDropId()));
+	candle.destroy();
 }
 
 void Scene::initManagers()

@@ -170,6 +170,6 @@ glm::vec2 Candle::getDropPosition() const
 void Candle::setHitbox(Candle* candle, const glm::vec2& position)
 {
 	glm::ivec2 quadSize = glm::ivec2(candle->baseTex->width(), candle->baseTex->height());
-	candle->hitbox.min = position;
-	candle->hitbox.max = position + glm::vec2(quadSize - 1);
+	candle->hitbox.min = position - glm::vec2(32,16);
+	candle->hitbox.max = candle->hitbox.min + glm::vec2(quadSize - 1);
 }

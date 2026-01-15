@@ -10,7 +10,7 @@ public:
 	void update(int deltaTime) override;
 	void render() override;
 	int getDamage() const override;
-	Hitbox getHitbox() const override;
+	const Hitbox getHitbox() const override;
 	bool getsRemoved() const override;
 
 private:
