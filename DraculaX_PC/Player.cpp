@@ -121,6 +121,7 @@ namespace
 		{ PlayerAnims::ATTACK_DOWNSTAIRS, PlayerStates::STATE_ATTACKING },
 		{ PlayerAnims::ATTACK_DOWNSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
 	};
+	const float moveSpeed = 1.25f;
 }
 
 void Player::render()
@@ -476,14 +477,14 @@ void Player::childUpdate(int deltaTime)
 
 		if (bJumping)
 		{
-			velocityX = float(rightPressed - leftPressed);
+			velocityX = (rightPressed - leftPressed) * moveSpeed;
 			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 			{
 				Hitbox cb = getTerrainCollisionBox();
 				if (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && ((rightPressed && !tileMap->tileRight(cb)) || leftPressed && !tileMap->tileLeft(cb)))
 				{
 					sprite->changeAnimation(DASH_COMBO);
-					velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+					velocityX = ((!lookingLeft - lookingLeft) * 10.f);
 					bDashing = true;
 					bJumping = false;
 					commandBuffer.clear();
@@ -651,8 +652,8 @@ void Player::childUpdate(int deltaTime)
 				else if (!loseMomentum)
 				{
 					loseMomentum = !(rightPressed || leftPressed) && backflipping;
-					velocityX = float(((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
-						+ ((!lookingLeft - lookingLeft) * loseMomentum))) * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+					velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
+						+ ((!lookingLeft - lookingLeft) * loseMomentum))) * moveSpeed * (state != STATE_ATTACKING && state != STATE_CROUCHING);
 				}
 				// Calculate animation based on input
 				int inputIndex = 0;
@@ -752,7 +753,7 @@ void Player::childUpdate(int deltaTime)
 					else if (anim == DASH1_FINAL)
 					{
 						sprite->changeAnimation(DASH1);
-						velocityX = ((!lookingLeft - lookingLeft) * 8.f);
+						velocityX = ((!lookingLeft - lookingLeft) * 10.f);
 						SoundEngine::instance().playSFX(SoundEngine::DASH);
 					}
 				}
