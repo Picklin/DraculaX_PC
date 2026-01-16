@@ -143,7 +143,7 @@
       <Filter>Archivos de código fuente\Subweapons</Filter>
     </ClCompile>
     <ClCompile Include="Level1Sc2.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +255,8 @@
     <ClInclude Include="Axe.h">
       <Filter>Archivos de encabezado\Subweapons</Filter>
     </ClInclude>
-    <ClInclude Include="Level1Sc2.h" />
+    <ClInclude Include="Level1Sc2.h">
+      <Filter>Archivos de encabezado\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

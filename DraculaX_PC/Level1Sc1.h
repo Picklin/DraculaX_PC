@@ -8,6 +8,10 @@
 class Level1Sc1 : public Scene
 {
 public:
+	~Level1Sc1() {
+		trunk->free();
+		delete trunk;
+	}
 	void init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader);
 	void update(int deltaTime);
 	void render();

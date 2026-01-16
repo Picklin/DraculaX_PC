@@ -6,6 +6,12 @@
 class Level1Sc2 : public Scene
 {
 public:
+	~Level1Sc2() {
+		bg1->free();
+		delete bg1;
+		bg2->free();
+		delete bg2;
+	}
 	void init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader) override;
 	void update(int deltaTime) override;
 	void render() override;
@@ -18,6 +24,11 @@ protected:
 	void initActors(Player* player) override;
 	void updateCamera() override;
 	const pair<int, int> setNewLevelAndScene() const override;
+
+private:
+	TexturedQuad* bg1;
+	TexturedQuad* bg2;
+	TexturedQuad* bg3;
 };
 
 #endif // !_LEVEL1SC2_INCLUDE
