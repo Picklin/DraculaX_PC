@@ -27,6 +27,8 @@ void Game::init()
 	twoPlayerMode = false;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
+	currentLevel = STAGE1;
+	currentScene = 1;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
@@ -313,6 +315,7 @@ Game::Game()
 	vector<SceneCreator> lvl1SC;
 	lvl1SC.reserve(2);
 	lvl1SC.emplace_back([this]() { return new Level1Sc1(); });
+	lvl1SC.emplace_back([this]() { return new Level1Sc2(); });
 	scenesFactory.emplace_back(lvl1SC);
 	scene = nullptr;
 }

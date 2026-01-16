@@ -5,17 +5,21 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 {
 	Scene::init(player, gui, spriteShader, basicShader);
 	const int tileSize = 8;
-	backgroundTexs.resize(3);
+	backgroundTexs.resize(4);
 	backgroundSprites.reserve(3);
 	backgroundTexs[0].loadFromFile("images/levels/lvl1/animbg1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[1].loadFromFile("images/levels/lvl1/animbg2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[2].loadFromFile("images/levels/lvl1/animbg3.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	backgroundTexs[3].loadFromFile("images/levels/lvl1/trunk.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[0].setMagFilter(GL_NEAREST);
 	backgroundTexs[1].setMagFilter(GL_NEAREST);
 	backgroundTexs[2].setMagFilter(GL_NEAREST);
+	backgroundTexs[3].setMagFilter(GL_NEAREST);
 	backgroundSprites.emplace_back(Sprite::createSprite(glm::ivec2(1024, 64), glm::vec2(32.f, 0.25f), &backgroundTexs[0], &basicShader));
 	backgroundSprites.emplace_back(Sprite::createSprite(glm::ivec2(1024, 40), glm::vec2(64.f, 0.125f), &backgroundTexs[1], &basicShader));
 	backgroundSprites.emplace_back(Sprite::createSprite(glm::ivec2(1024, 8), glm::vec2(64.f, 0.125f), &backgroundTexs[2], &basicShader));
+	trunk = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f, 1.f), backgroundTexs[3], basicShader);
+	trunk->setPosition(glm::vec2(SCREEN_X + 94 * tileSize, SCREEN_Y + 10 * tileSize));
 	backgroundSprites[0]->setPosition(MAP_OFFSET);
 	backgroundSprites[1]->setPosition(glm::vec2(SCREEN_X, SCREEN_Y + 18 * tileSize));
 	backgroundSprites[2]->setPosition(glm::vec2(SCREEN_X, SCREEN_Y + 23 * tileSize));
@@ -86,6 +90,7 @@ void Level1Sc1::render()
 	//text.render("La fe es lo que mueve a las personas\na unirse y seguir adelante.", player->getPosition()+glm::vec2(66,0));
 	//text.render("Solo pueden ser gobernados por quienes\nson valiosos, respetados y apreciados.", player->getPosition()+glm::vec2(66,0));
 	basicShader->use();
+	trunk->render();
 	for (auto item : items) item->render();
 	gui->render();
 }

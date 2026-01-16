@@ -6,6 +6,7 @@
 #include "SceneTesting.h"
 #include "TitleScreen.h"
 #include "Level1Sc1.h"
+#include "Level1Sc2.h"
 
 
 #define SCREEN_WIDTH 256

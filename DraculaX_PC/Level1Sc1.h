@@ -23,6 +23,9 @@ protected:
 	Text text;
 	Text text2;
 	Text text3;
+
+private:
+	TexturedQuad* trunk;
 };
 
 #endif // !_LEVEL1SC1_INCLUDE
