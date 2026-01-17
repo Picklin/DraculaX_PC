@@ -23,9 +23,9 @@ void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	backgroundTexs[0].setMagFilter(GL_NEAREST);
 	backgroundTexs[1].loadFromFile("images/levels/lvl1/staticbg2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[1].setMagFilter(GL_NEAREST);
-	backgroundTexs[2].loadFromFile("images/levels/lvl1/fire_bottom.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	backgroundTexs[2].loadFromFile("images/levels/lvl1/fire3_bottom.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[2].setMagFilter(GL_NEAREST);
-	backgroundTexs[3].loadFromFile("images/levels/lvl1/fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	backgroundTexs[3].loadFromFile("images/levels/lvl1/fire3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[3].setMagFilter(GL_NEAREST);
 	backgroundTexs[4].loadFromFile("images/levels/lvl1/fire1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[4].setMagFilter(GL_NEAREST);
@@ -63,6 +63,8 @@ void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	fireEffect->setColor(glm::vec4(109 / 255.f, 0.f, 0.f, 1.f));
 	backgroundSprites[1]->setColor(fire1Colors[fireColorIndex]);
 
+	layers.reserve(1);
+	layers.emplace_back(TileMap::createTileMap("levels/level1sc2/bg.txt", glm::vec2(CAMERA_X + SCREEN_WIDTH * 4, CAMERA_Y + SCREEN_HEIGHT), basicShader));
 	projections.resize(3);
 
 	//SoundEngine::instance().playStageSong(Game::STAGE1);
@@ -109,6 +111,7 @@ void Level1Sc2::render()
 	map->render();
 	platforms->render();
 	stairs->render();
+	layers[0]->render();
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
@@ -148,7 +151,7 @@ void Level1Sc2::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setPosition(glm::vec2(3 * map->getTileSize(), 20 * map->getTileSize()));
+	player->setPosition(glm::vec2(66 * map->getTileSize(), 20 * map->getTileSize()));
 }
 
 void Level1Sc2::updateCamera()
