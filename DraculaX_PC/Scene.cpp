@@ -66,6 +66,7 @@ void Scene::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderPr
 
 void Scene::update(int deltaTime)
 {
+	timeElapsed += deltaTime / 1000.f;
 	updateActors(deltaTime);
 	updateSpawnPoints(deltaTime);
 	updateTriggerAreas();

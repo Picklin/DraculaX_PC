@@ -67,7 +67,7 @@ protected:
 	GUI* gui;
 	ShaderProgram* spriteShader;
 	ShaderProgram* basicShader;
-	float currentTime;
+	float timeElapsed;				//seconds
 	glm::mat4 projection;
 	glm::vec2 cameraPos;
 
