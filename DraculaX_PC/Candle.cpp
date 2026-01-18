@@ -82,6 +82,7 @@ Candle* Candle::createStreetlightCandle(ShaderProgram& shaderProgram, const glm:
 	candle->base->changeAnimation(0);
 	candle->base->setPosition(position + MAP_OFFSET);
 	candle->setHitbox(candle, position);
+	candle->streetlight = true;
 	return candle;
 }
 
@@ -171,6 +172,11 @@ int Candle::getDropId() const
 	return dropId;
 }
 
+int Candle::getSFXId() const
+{
+	return 5 * streetlight + 18 * !streetlight;
+}
+
 Hitbox Candle::getHitbox() const
 {
 	return hitbox;
@@ -179,7 +185,7 @@ Hitbox Candle::getHitbox() const
 glm::vec2 Candle::getDropPosition() const
 {
 	float diffX = hitbox.max.x - hitbox.min.x;
-	glm::vec2 pos(hitbox.min.x + 8 * (diffX > 16), hitbox.min.y);
+	glm::vec2 pos(hitbox.min.x + 8 * streetlight, hitbox.min.y);
 	return pos;
 }
 

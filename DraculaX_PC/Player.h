@@ -110,7 +110,7 @@ private:
 	//bool hasCrouchedOrStandedDuringAttack = false;
 	bool hasKey = false;
 	//trinket other than key
-	bool hasTrinket = false;
+	bool canUseTrinket = false;
 	bool throwSubweapon = false;
 
 	//stairs booleans

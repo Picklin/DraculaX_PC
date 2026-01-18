@@ -22,6 +22,7 @@ public:
 	bool isDestroyed() const;
 	bool getsRemoved() const;
 	int getDropId() const;
+	int getSFXId() const;
 	Hitbox getHitbox() const;
 	glm::vec2 getDropPosition() const;
 
@@ -37,6 +38,7 @@ private:
 	int endTimer = 0;
 	int dropId;
 	bool destroyed = false;
+	bool streetlight = false;
 };
 
 #endif // !_CANDLE_ICLUDE

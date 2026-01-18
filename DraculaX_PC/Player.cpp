@@ -168,7 +168,7 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 
 void Player::setTrinket()
 {
-	hasTrinket = true;
+	canUseTrinket = true;
 }
 
 void Player::setKey()
@@ -183,7 +183,7 @@ void Player::unsetKey()
 
 void Player::unsetTrinket()
 {
-	hasTrinket = false;
+	canUseTrinket = false;
 }
 
 string Player::getName() const
@@ -213,7 +213,7 @@ bool Player::isAttacking() const
 bool Player::usingSubweapon()
 {
 	int anim = sprite->animation();
-	bool throwSub = throwSubweapon && (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && sprite->getCurrentKeyframe() == 4 && hasTrinket;
+	bool throwSub = throwSubweapon && (anim == ATTACK_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON) && sprite->getCurrentKeyframe() == 4 && canUseTrinket;
 	if (throwSub) throwSubweapon = false;
 	return throwSub;
 }
@@ -847,7 +847,7 @@ void Player::childUpdate(int deltaTime)
 				if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 				{
 					attackInStairs = true;
-					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP) && hasTrinket;
+					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP) && canUseTrinket;
 				}
 				bool goingUp = (prevYpos - position.y) > 0;
 				bool goingDown = (prevYpos - position.y) < 0;
@@ -863,7 +863,7 @@ void Player::childUpdate(int deltaTime)
 						whipping = true;
 						SoundEngine::instance().playSFX(SoundEngine::WHIP);
 					}
-					else if (useSubweaponInStairs && !hasKey && hasTrinket)
+					else if (useSubweaponInStairs && !hasKey && canUseTrinket)
 					{
 						sprite->changeAnimation(ATTACK_UPSTAIRS_SUBWEAPON + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2);
 						subweaponCooldown = SUBWEAPON_COOLDOWN;
@@ -1079,8 +1079,8 @@ void Player::climbToStair(int tile)
 
 void Player::attack()
 {
-	sprite->changeAnimation(ATTACK + (Game::instance().getKey(GLFW_KEY_UP) && subweaponCooldown <= 0.f) * !hasKey * hasTrinket + bCrouching * 2);
-	whipping = (!hasKey && !hasTrinket) || (!Game::instance().getKey(GLFW_KEY_UP) || subweaponCooldown > 0.f);
+	sprite->changeAnimation(ATTACK + (Game::instance().getKey(GLFW_KEY_UP) && subweaponCooldown <= 0.f) * !hasKey * canUseTrinket + bCrouching * 2);
+	whipping = (!hasKey && !canUseTrinket) || (!Game::instance().getKey(GLFW_KEY_UP) || subweaponCooldown > 0.f);
 	int anim = sprite->animation();
 	if (whipping) SoundEngine::instance().playSFX(SoundEngine::WHIP);
 	else if ((anim == ATTACK_SUBWEAPON || anim == ATTACK_DOWNSTAIRS_SUBWEAPON || anim == ATTACK_UPSTAIRS_SUBWEAPON) && subweaponCooldown <= 0.f)

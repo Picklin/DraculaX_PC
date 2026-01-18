@@ -119,6 +119,7 @@ void Scene::updateActors(int deltaTime)
 			axe->setPosition(glm::vec2(pos.x - 32 * (dir == -1), pos.y));
 			subweapons.push_back(axe);
 			gui->gainHearts(-1);
+			SoundEngine::instance().playSFX(SoundEngine::AXE);
 		}
 		//cout << axes.size() << endl;
 		//cout << items.size() << endl;
@@ -297,6 +298,7 @@ void Scene::destroyCandle(Candle& candle)
 	if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(candle.getDropPosition(), dropId - !gui->isMaria() * 6));
 	else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(candle.getDropPosition(), candle.getDropId()));
 	candle.destroy();
+	SoundEngine::instance().playSFX(candle.getSFXId());
 }
 
 void Scene::initManagers()
