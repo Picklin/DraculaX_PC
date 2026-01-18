@@ -73,6 +73,7 @@ protected:
 	vector<InfSpawnPoint> infSpawnPoints;
 	vector<SpawnPoint*> spawnPoints;
 	vector<TriggerArea*> triggerAreas;
+	vector<Effect*> effects;
 	vector<Texture> backgroundTexs;
 	vector<Sprite*> backgroundSprites;
 	//capas de background estático de más al fondo a menos (de 0 a n-1)

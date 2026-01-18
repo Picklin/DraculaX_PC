@@ -4,7 +4,8 @@
 
 #include <functional>
 #include <vector>
-#include "Effect.h"
+#include "Fueguito.h"
+#include "Fuegote.h"
 #include "ShaderProgram.h"
 
 class EffectsManager
@@ -16,11 +17,16 @@ public:
 	void render();
 	void free();
 	void freeTextures();
+	void createFueguito(const glm::vec2& pos, const glm::vec4& color, bool background);
+	void createFuegote(const glm::vec2& pos, const glm::vec4& color, bool background);
+	void createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color);
+	void createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color);
 	const vector<Effect*>& getBackgroundEffectsList() const { return backgroundEffects; }
 
 private:
 	EffectsManager();
 	void initEffect(Effect* e, const glm::vec2& pos, const glm::vec4& color);
+	void updateExplosions(int deltaTime);
 
 private:
 	vector<Effect*> effects;

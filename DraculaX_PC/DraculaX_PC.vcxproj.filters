@@ -38,6 +38,12 @@
     <Filter Include="Archivos de encabezado\Subweapons">
       <UniqueIdentifier>{f2485bcd-7c3b-4b2a-9a3e-ab15fd1671a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Effects">
+      <UniqueIdentifier>{b8769d1b-10f6-4c20-a9f8-940183e461e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Effects">
+      <UniqueIdentifier>{afd33a12-0338-405a-aef9-41a054d96233}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -78,9 +84,6 @@
     </ClCompile>
     <ClCompile Include="EffectsManager.cpp">
       <Filter>Archivos de código fuente\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Archivos de código fuente</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Archivos de código fuente</Filter>
@@ -145,6 +148,15 @@
     <ClCompile Include="Level1Sc2.cpp">
       <Filter>Archivos de código fuente\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Archivos de código fuente\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Fueguito.cpp">
+      <Filter>Archivos de código fuente\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Fuegote.cpp">
+      <Filter>Archivos de código fuente\Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -185,9 +197,6 @@
     </ClInclude>
     <ClInclude Include="EffectsManager.h">
       <Filter>Archivos de encabezado\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Effect.h">
-      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="EnemyManager.h">
       <Filter>Archivos de encabezado\Managers</Filter>
@@ -257,6 +266,15 @@
     </ClInclude>
     <ClInclude Include="Level1Sc2.h">
       <Filter>Archivos de encabezado\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>Archivos de encabezado\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Fuegote.h">
+      <Filter>Archivos de encabezado\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Fueguito.h">
+      <Filter>Archivos de encabezado\Effects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -92,6 +92,7 @@ void Level1Sc1::render()
 	basicShader->use();
 	trunk->render();
 	for (auto item : items) item->render();
+	EffectsManager::instance().render();
 	gui->render();
 	renderTransition();
 }

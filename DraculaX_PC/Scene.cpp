@@ -295,15 +295,17 @@ void Scene::updateEffects(int deltaTime)
 void Scene::destroyCandle(Candle& candle)
 {
 	int dropId = candle.getDropId();
-	if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(candle.getDropPosition(), dropId - !gui->isMaria() * 6));
-	else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(candle.getDropPosition(), candle.getDropId()));
+	glm::vec2 pos(candle.getDropPosition());
+	if (dropId >= GUI::BIRD) items.push_back(ItemManager::instance().getTrinket(pos, dropId - !gui->isMaria() * 6));
+	else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(pos, dropId));
 	candle.destroy();
 	SoundEngine::instance().playSFX(candle.getSFXId());
+	EffectsManager::instance().createFuegote(pos+glm::vec2(8), glm::vec4(1.f), false);
 }
 
 void Scene::initManagers()
 {
 	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms, *gui);
-	EffectsManager::instance().init(MAP_OFFSET, *spriteShader);
+	EffectsManager::instance().init(MAP_OFFSET, *basicShader);
 	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
 }

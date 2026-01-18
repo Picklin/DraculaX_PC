@@ -141,6 +141,8 @@
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Food.cpp" />
+    <ClCompile Include="Fuegote.cpp" />
+    <ClCompile Include="Fueguito.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Heart.cpp" />
@@ -179,6 +181,8 @@
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Food.h" />
+    <ClInclude Include="Fuegote.h" />
+    <ClInclude Include="Fueguito.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Heart.h" />

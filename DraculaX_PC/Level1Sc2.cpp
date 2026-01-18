@@ -139,6 +139,7 @@ void Level1Sc2::render()
 	//text.render("Solo pueden ser gobernados por quienes\nson valiosos, respetados y apreciados.", player->getPosition()+glm::vec2(66,0));
 	basicShader->use();
 	for (auto item : items) item->render();
+	EffectsManager::instance().render();
 	gui->render();
 	renderTransition();
 }
