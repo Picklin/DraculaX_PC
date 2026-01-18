@@ -109,6 +109,7 @@ void Scene::updateActors(int deltaTime)
 {
 	if (!player->isEnded())
 	{
+		player->update(deltaTime);
 		if (player->usingSubweapon())
 		{
 			Axe* axe = new Axe();
@@ -117,6 +118,7 @@ void Scene::updateActors(int deltaTime)
 			glm::vec2 pos = player->getPosition() + player->myCenter();
 			axe->setPosition(glm::vec2(pos.x - 32 * (dir == -1), pos.y));
 			subweapons.push_back(axe);
+			gui->gainHearts(-1);
 		}
 		//cout << axes.size() << endl;
 		//cout << items.size() << endl;
@@ -182,7 +184,6 @@ void Scene::updateActors(int deltaTime)
 		}
 		
 	}
-	player->update(deltaTime);
 
 }
 

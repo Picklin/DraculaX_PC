@@ -181,7 +181,7 @@ void Level1Sc2::initItems()
 	candles.push_back(candle1);
 	candle1 = Candle::createCandle(*basicShader, glm::vec2(42 * tileSize + 9, 7 * tileSize + 3), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-	candle1 = Candle::createCandle(*basicShader, glm::vec2(63 * tileSize + 1, 5 * tileSize - 4), ItemManager::FOUR_HUNDRED);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(63 * tileSize, 5 * tileSize - 4), ItemManager::FOUR_HUNDRED);
 	candles.push_back(candle1);
 	candle1 = Candle::createCandle(*basicShader, glm::vec2(57 * tileSize + 1, 16 * tileSize - 4), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);

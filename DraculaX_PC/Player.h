@@ -20,8 +20,9 @@ public:
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
 	void setTrinket();
 	void setKey();
-	void unsetKey();
 	void unsetTrinket();
+	void unsetKey();
+	void attack();
 	string getName() const;
 	const Hitbox getHitbox() const override;
 	const Hitbox getWhipHitbox() const;
@@ -40,7 +41,6 @@ protected:
 private:
 	void stairMovement();
 	void climbToStair(int tile);
-	void attack();
 	void jump();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 	void registerInput(int key);

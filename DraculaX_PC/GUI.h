@@ -23,15 +23,16 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
+	int getCurrentTrinketID() const;
 	bool isMaria() const;
 	bool compatibleTrinket(int trinketId) const;
 	bool compatibleFood(int foodId) const;
-	int getCurrentTrinketID() const;
 
 private:
 	void setNumberAnims(Sprite* num);
 	void setItem(Sprite* item);
 	void refreshNumber(Sprite* num[], int size, int& stat);
+	void checkHeartsForTrinket() const;
 
 public:
 	enum trinketIDs

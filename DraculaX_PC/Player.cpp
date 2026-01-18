@@ -847,7 +847,7 @@ void Player::childUpdate(int deltaTime)
 				if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 				{
 					attackInStairs = true;
-					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP);
+					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP) && hasTrinket;
 				}
 				bool goingUp = (prevYpos - position.y) > 0;
 				bool goingDown = (prevYpos - position.y) < 0;
@@ -858,7 +858,7 @@ void Player::childUpdate(int deltaTime)
 				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 				{
 					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
-					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey && !hasTrinket))
+					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey))
 					{
 						whipping = true;
 						SoundEngine::instance().playSFX(SoundEngine::WHIP);

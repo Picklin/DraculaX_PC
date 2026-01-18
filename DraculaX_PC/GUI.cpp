@@ -5,6 +5,13 @@
 #define X_OFFSET 8
 #define Y_OFFSET 16
 
+namespace
+{
+	const int heartCosts[14] = {
+		1,1,1,5,5,1,1,1,1,1,5,5,0,0
+	};
+}
+
 void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 {
 	Maria = false;
@@ -127,7 +134,7 @@ void GUI::changeItem(int itemId)
 	if (itemId == DRAGON)
 	{
 		renderDragon = true;
-		player->setTrinket();
+		checkHeartsForTrinket();
 	}
 	else
 	{
@@ -137,8 +144,7 @@ void GUI::changeItem(int itemId)
 		else
 		{
 			player->unsetKey();
-			if (itemId != NONE) player->setTrinket();
-			else player->unsetTrinket();
+			checkHeartsForTrinket();
 		}
 	}
 }
@@ -158,24 +164,33 @@ void GUI::heal(int heal)
 void GUI::gainHearts(int hearts)
 {
 	currentHearts += hearts;
+	if (currentHearts > 99) currentHearts = 99;
+	else if (currentHearts < 0) currentHearts = 0;
+	checkHeartsForTrinket();
 	refreshNumber(heartsNumbers, 2, currentHearts);
 }
 
 void GUI::gainScore(int score)
 {
 	currentScore += score;
+	if (currentScore > 9999999) currentScore = 9999999;
+	else if (currentScore < 0) currentScore = 0;
 	refreshNumber(scoreNumbers, 7, currentScore);
 }
 
 void GUI::gainCredits(int credits)
 {
 	currentCredits += credits;
+	if (currentCredits > 9999) currentCredits = 9999;
+	else if (currentCredits < 0) currentCredits = 0;
 	refreshNumber(creditNumbers, 4, currentCredits);
 }
 
 void GUI::oneUp()
 {
 	currentLifes++;
+	if (currentLifes > 99) currentLifes = 99;
+	else if (currentLifes < 0) currentLifes = 0;
 	refreshNumber(lifesNumbers, 2, currentLifes);
 }
 
@@ -212,7 +227,7 @@ int GUI::getCurrentTrinketID() const
 void GUI::reset()
 {
 	hp = MAX_HP;
-	currentHearts = 10;
+	currentHearts = 1;
 	currentScore = 0;
 	currentCredits = 0;
 	currentLifes = 3;
@@ -260,4 +275,11 @@ void GUI::refreshNumber(Sprite* num[], int size, int& stat)
 		num[i]->changeAnimation(temp % 10);
 		temp /= 10;
 	}
+}
+
+void GUI::checkHeartsForTrinket() const
+{
+	int currentTrinketID = getCurrentTrinketID();
+	if (currentTrinketID != NONE && currentTrinketID != KEY && currentHearts >= heartCosts[currentTrinketID]) player->setTrinket();
+	else player->unsetTrinket();
 }

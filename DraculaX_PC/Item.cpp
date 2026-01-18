@@ -46,7 +46,7 @@ void Item::setPosition(const glm::vec2& pos)
 
 const Hitbox Item::getHitbox() const
 {
-    return Hitbox{ position, position + glm::vec2(quadSize.x-1, quadSize.y-1) };
+    return Hitbox{ position, position + glm::vec2(quadSize - 1) };
 }
 
 void Item::setUngrabable()
