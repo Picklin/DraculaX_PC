@@ -22,10 +22,10 @@ public:
 
 	void setMusicMode(bool arranged);
 	void playStageSong(int stageNum);
-	void stopStageSong(int stageNum);
+	//void stopStageSong(int stageNum);
 	void playNonStageSong(int songId);
 	void playNonStageSong(int songId, bool loop);
-	void stopNonStageSong(int songId);
+	//void stopNonStageSong(int songId);
 	void playSFX(int sfxId);
 	void playOverture();
 	void fadeOutMusic();

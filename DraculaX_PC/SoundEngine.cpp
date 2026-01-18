@@ -139,10 +139,10 @@ void SoundEngine::playStageSong(int stageNum)
 	playMusic(songPaths[arrangeMode][stageNum], stageMusicSources[arrangeMode][stageNum], true);
 }
 
-void SoundEngine::stopStageSong(int stageNum)
+/*void SoundEngine::stopStageSong(int stageNum)
 {
 	stopMusic(songPaths[arrangeMode][stageNum]);
-}
+}*/
 
 void SoundEngine::playNonStageSong(int songId)
 {
@@ -154,10 +154,10 @@ void SoundEngine::playNonStageSong(int songId, bool loop)
 	playMusic(otherMusicPaths[arrangeMode][songId], otherMusicSources[arrangeMode][songId], loop);
 }
 
-void SoundEngine::stopNonStageSong(int songId)
+/*void SoundEngine::stopNonStageSong(int songId)
 {
 	stopMusic(otherMusicPaths[arrangeMode][songId]);
-}
+}*/
 
 void SoundEngine::playSFX(int sfxId)
 {
