@@ -50,7 +50,6 @@ void SoundEngine::fadeOutThreadFunc(ISound* sound, int durationMs)
 	}
 
 	sound->stop();
-	sound->drop();
 }
 
 void SoundEngine::fadeInThreadFunc(ISound* sound, int durationMs)
@@ -172,6 +171,11 @@ void SoundEngine::playOverture()
 	checkCurrentSound(musicSound);
 	musicSound = engine->play2D(overtureSource, false, false, true);
 	addActiveSound(musicSound);
+}
+
+void SoundEngine::fadeOutMusic()
+{
+	std::thread(&SoundEngine::fadeOutThreadFunc, this, musicSound, 2000).detach();
 }
 
 void SoundEngine::update()

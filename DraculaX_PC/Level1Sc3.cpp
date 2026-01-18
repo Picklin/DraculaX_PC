@@ -23,6 +23,8 @@ void Level1Sc3::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	muralla->setPosition(glm::vec2(CAMERA_X, CAMERA_Y+128));
 
 	projections.resize(4);
+
+	SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
 }
 
 void Level1Sc3::update(int deltaTime)

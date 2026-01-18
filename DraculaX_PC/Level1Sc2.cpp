@@ -26,6 +26,7 @@ namespace
 void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader)
 {
 	Scene::init(player, gui, spriteShader, basicShader);
+	blackScreenDuration = 2.f;
 	backgroundTexs.resize(7);
 	backgroundTexs[0].loadFromFile("images/levels/lvl1/staticbg1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[0].setMagFilter(GL_NEAREST);
@@ -205,7 +206,10 @@ void Level1Sc2::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setPosition(glm::vec2(0 * map->getTileSize(), 22 * map->getTileSize()));
+	int tileSize = map->getTileSize();
+	player->setPosition(glm::vec2(0 * tileSize, 22 * tileSize));
+
+	triggerAreas.push_back(new TriggerArea(glm::vec2(145 * tileSize, 0), glm::vec2(148 * tileSize, 26 * tileSize), Scene::NEXT_SCENE));
 }
 
 void Level1Sc2::updateCamera()
@@ -243,6 +247,15 @@ void Level1Sc2::updateCamera()
 		float maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
 		float maxY = cameraPos.y + SCREEN_HEIGHT;
 		projections[i] = glm::ortho(minX, maxX, maxY, minY);
+	}
+}
+
+void Level1Sc2::doAction(int eventId)
+{
+	if (eventId == NEXT_SCENE)
+	{
+		fadeIn = true;
+		SoundEngine::instance().fadeOutMusic();
 	}
 }
 

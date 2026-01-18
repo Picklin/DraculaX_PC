@@ -31,6 +31,7 @@ protected:
 	void initItems() override;
 	void initActors(Player* player) override;
 	void updateCamera() override;
+	void doAction(int eventId) override;
 	const pair<int, int> setNewLevelAndScene() const override;
 
 private:

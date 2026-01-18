@@ -28,6 +28,7 @@ public:
 	void stopNonStageSong(int songId);
 	void playSFX(int sfxId);
 	void playOverture();
+	void fadeOutMusic();
 
 private:
 	SoundEngine();

@@ -4,6 +4,7 @@
 void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader) 
 {
 	Scene::init(player, gui, spriteShader, basicShader);
+	blackScreenDuration = 1.f;
 	const int tileSize = 8;
 	backgroundTexs.resize(4);
 	backgroundSprites.reserve(3);
@@ -142,8 +143,9 @@ void Level1Sc1::initActors(Player* player)
 	int tileSize = map->getTileSize();
 	player->setPosition(glm::vec2(4 * tileSize, 17 * tileSize));
 
-	triggerAreas.push_back(new TriggerArea(glm::vec2(131 * tileSize, 0), glm::vec2(135 * tileSize, 25 * tileSize), Scene::NEXT_SCENE));
+	triggerAreas.push_back(new TriggerArea(glm::vec2(131 * tileSize, 0), glm::vec2(135 * tileSize, 30 * tileSize), Scene::NEXT_SCENE));
 }
+
 void Level1Sc1::updateCamera() 
 {
 	glm::vec2 playerPos = player->getPosition();
