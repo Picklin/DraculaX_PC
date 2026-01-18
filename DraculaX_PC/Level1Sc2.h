@@ -15,6 +15,10 @@ public:
 		delete bg3;
 		bg4->free();
 		delete bg4;
+		fireEffect->free();
+		delete fireEffect;
+		tree->free();
+		delete tree;
 	}
 	void init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader) override;
 	void update(int deltaTime) override;
@@ -35,6 +39,7 @@ private:
 	TexturedQuad* bg3;
 	TexturedQuad* bg4;
 	TexturedQuad* fireEffect;
+	TexturedQuad* tree;
 
 	int fireColorTimer = 0;
 	int fireColorIndex = 0;

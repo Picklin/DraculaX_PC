@@ -23,6 +23,7 @@ protected:
 	void initItems();
 	void initActors(Player* player);
 	void updateCamera();
+	void doAction(int eventId) override;
 	const pair<int, int> setNewLevelAndScene() const;
 	Text text;
 	Text text2;

@@ -4,6 +4,7 @@ Subweapon::~Subweapon()
 {
 	if (sprite != NULL)
 	{
+		tex.free();
 		sprite->free();
 		delete sprite;
 	}

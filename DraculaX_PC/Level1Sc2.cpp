@@ -13,12 +13,20 @@ namespace
 		glm::vec4(255 / 255.f, 0.f, 0.f, 1.f),
 		glm::vec4(218 / 255.f, 0.f, 0.f, 1.f),
 	};
+	const glm::vec2 treePos[6] = {
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16, CAMERA_Y + SCREEN_HEIGHT + 16),
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16*9, CAMERA_Y + SCREEN_HEIGHT),
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16*33, CAMERA_Y + SCREEN_HEIGHT),
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16*41, CAMERA_Y + SCREEN_HEIGHT+16),
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16*65, CAMERA_Y + SCREEN_HEIGHT),
+		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16*75, CAMERA_Y + SCREEN_HEIGHT),
+	};
 }
 
 void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderProgram& basicShader)
 {
 	Scene::init(player, gui, spriteShader, basicShader);
-	backgroundTexs.resize(6);
+	backgroundTexs.resize(7);
 	backgroundTexs[0].loadFromFile("images/levels/lvl1/staticbg1.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[0].setMagFilter(GL_NEAREST);
 	backgroundTexs[1].loadFromFile("images/levels/lvl1/staticbg2.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -31,11 +39,14 @@ void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	backgroundTexs[4].setMagFilter(GL_NEAREST);
 	backgroundTexs[5].loadFromFile("images/levels/lvl1/fire2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	backgroundTexs[5].setMagFilter(GL_NEAREST);
+	backgroundTexs[6].loadFromFile("images/levels/lvl1/arbol.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	backgroundTexs[6].setMagFilter(GL_NEAREST);
 	bg1 = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), backgroundTexs[0], basicShader);
 	bg2 = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), backgroundTexs[1], basicShader);
 	bg3 = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(64.f, 1.f), backgroundTexs[2], basicShader);
 	bg4 = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1024.f, 448.f), *TextureManager::instance().getTexture("pixel"), basicShader);
 	fireEffect = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.5f), glm::vec2(32.f, 1.f), backgroundTexs[4], basicShader);
+	tree = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), backgroundTexs[6], basicShader);
 	backgroundSprites.reserve(3);
 	backgroundSprites.emplace_back(Sprite::createSprite(glm::ivec2(768, 40), glm::vec2(48.f, .0625f), &backgroundTexs[3], &basicShader));
 	backgroundSprites[0]->setNumberAnimations(1);
@@ -60,7 +71,7 @@ void Level1Sc2::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	bg3->setPosition(glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 64, CAMERA_Y + SCREEN_HEIGHT + 184+8));
 	bg4->setPosition(glm::vec2(CAMERA_X, CAMERA_Y));
 	backgroundSprites[0]->setPosition(glm::vec2(CAMERA_X + SCREEN_WIDTH * 2.f, CAMERA_Y + SCREEN_HEIGHT + 144+8));
-	fireEffect->setColor(glm::vec4(109 / 255.f, 0.f, 0.f, 1.f));
+	fireEffect->setColor(glm::vec3(109 / 255.f, 0.f, 0.f));
 	backgroundSprites[1]->setColor(fire1Colors[fireColorIndex]);
 
 	layers.reserve(1);
@@ -74,7 +85,7 @@ void Level1Sc2::update(int deltaTime)
 {
 	Scene::update(deltaTime);
 	for (auto animbg : backgroundSprites) animbg->update(deltaTime);
-	glm::vec4 bgColor = glm::vec4((72 + (37 * (int(timeElapsed * 100) % 2 == 0))) / 255.f, 0.f, 0.f, 1.f);
+	glm::vec3 bgColor((72 + (37 * (int(timeElapsed * 100) % 2 == 0))) / 255.f, 0.f, 0.f);
 	bg4->setColor(bgColor);
 	fireColorTimer += deltaTime;
 	if (fireColorTimer >= 80)
@@ -112,6 +123,11 @@ void Level1Sc2::render()
 	platforms->render();
 	stairs->render();
 	layers[0]->render();
+	for (auto& pos : treePos)
+	{
+		tree->setPosition(pos);
+		tree->render();
+	}
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
@@ -124,6 +140,7 @@ void Level1Sc2::render()
 	basicShader->use();
 	for (auto item : items) item->render();
 	gui->render();
+	renderTransition();
 }
 
 TileMap* Level1Sc2::setTileMap()
@@ -143,6 +160,42 @@ TileMap* Level1Sc2::setStairsMap()
 
 void Level1Sc2::initItems()
 {
+	int tileSize = map->getTileSize();
+	Candle* candle1 = Candle::createCandle(*basicShader, glm::vec2(14 * tileSize - 7, 21 * tileSize - 4), ItemManager::HEART);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(2 * tileSize+1, 5 * tileSize+1), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createStreetlightCandle(*basicShader, glm::vec2(7 * tileSize, 6 * tileSize), ItemManager::FOUR_HUNDRED);
+	candles.push_back(candle1);
+	candle1 = Candle::createStreetlightCandle(*basicShader, glm::vec2(11 * tileSize, 6 * tileSize), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(21 * tileSize-1, 8 * tileSize + 7), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createStreetlightCandle(*basicShader, glm::vec2(25 * tileSize, 4 * tileSize), ItemManager::FOUR_HUNDRED);
+	candles.push_back(candle1);
+	candle1 = Candle::createStreetlightCandle(*basicShader, glm::vec2(33 * tileSize, 2 * tileSize), ItemManager::HEART);
+	candles.push_back(candle1);
+	candle1 = Candle::createStreetlightCandle(*basicShader, glm::vec2(45 * tileSize, 2 * tileSize), ItemManager::SEVEN_HUNDRED);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(41 * tileSize + 3, 7 * tileSize + 3), ItemManager::ONE_HUNDRED);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(42 * tileSize + 9, 7 * tileSize + 3), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(63 * tileSize + 1, 5 * tileSize - 4), ItemManager::FOUR_HUNDRED);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(57 * tileSize + 1, 16 * tileSize - 4), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(59 * tileSize + 8, 21 * tileSize-8), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	items.push_back(ItemManager::instance().getFood(glm::vec2(63 * tileSize, 16 * tileSize), GUI::PARFAIT, *gui));
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(73 * tileSize + 8, 25 * tileSize - 8), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(103 * tileSize + 8, 23 * tileSize - 8), ItemManager::HEART);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(106 * tileSize + 8, 24 * tileSize - 8), ItemManager::HEART_SMALL);
+	candles.push_back(candle1);
+	candle1 = Candle::createCandle(*basicShader, glm::vec2(138 * tileSize + 8, 23 * tileSize - 8), ItemManager::FOUR_HUNDRED);
+	candles.push_back(candle1);
 }
 
 void Level1Sc2::initActors(Player* player)
@@ -151,7 +204,7 @@ void Level1Sc2::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setPosition(glm::vec2(66 * map->getTileSize(), 20 * map->getTileSize()));
+	player->setPosition(glm::vec2(0 * map->getTileSize(), 22 * map->getTileSize()));
 }
 
 void Level1Sc2::updateCamera()
@@ -169,7 +222,7 @@ void Level1Sc2::updateCamera()
 			{
 				cameraPos.x = playerPos.x - SCREEN_WIDTH / 2;
 				if (cameraPos.x < SCREEN_WIDTH * 4) cameraPos.x = SCREEN_WIDTH * 4;
-				else if (cameraPos.x > (map->getMapSize().x * 16 - 16 - SCREEN_WIDTH)) cameraPos.x = (float)(map->getMapSize().x * 16 - 16 - SCREEN_WIDTH);
+				else if (cameraPos.x > (map->getMapSize().x * 16 - 80 - SCREEN_WIDTH)) cameraPos.x = (float)(map->getMapSize().x * 16 - 80 - SCREEN_WIDTH);
 			}
 		}
 		else if (playerPos.y > (SCREEN_HEIGHT * 2 - CAMERA_Y))
@@ -194,5 +247,5 @@ void Level1Sc2::updateCamera()
 
 const pair<int, int> Level1Sc2::setNewLevelAndScene() const
 {
-	return pair<int, int>(-1,-1);
+	return pair<int, int>(0, 2);
 }

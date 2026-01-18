@@ -93,6 +93,7 @@ void Level1Sc1::render()
 	trunk->render();
 	for (auto item : items) item->render();
 	gui->render();
+	renderTransition();
 }
 
 TileMap* Level1Sc1::setTileMap() 
@@ -114,7 +115,7 @@ void Level1Sc1::initItems()
 	//items.push_back(ItemManager::instance().getTrinket(glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), GUI::trinketIDs::KEY));
 	//items.push_back(ItemManager::instance().getFood(glm::vec2(52 * map->getTileSize(), 6 * map->getTileSize()), GUI::foodIds::BIRTHDAY_CAKE, *gui));
 	//items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
-	items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
+	//items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
 	//items.push_back(ItemManager::instance().getSmallHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize())));
 	//items.push_back(ItemManager::instance().getBigHeart(glm::vec2(12 * map->getTileSize(), 0 * map->getTileSize())));
 	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(20 * map->getTileSize(), 15 * map->getTileSize()), ItemManager::HEART_SMALL);
@@ -137,7 +138,10 @@ void Level1Sc1::initActors(Player* player)
 	player->setTileMap(map);
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
-	player->setPosition(glm::vec2(4 * map->getTileSize(), 17 * map->getTileSize()));
+	int tileSize = map->getTileSize();
+	player->setPosition(glm::vec2(4 * tileSize, 17 * tileSize));
+
+	triggerAreas.push_back(new TriggerArea(glm::vec2(131 * tileSize, 0), glm::vec2(135 * tileSize, 25 * tileSize), Scene::NEXT_SCENE));
 }
 void Level1Sc1::updateCamera() 
 {
@@ -156,8 +160,19 @@ void Level1Sc1::updateCamera()
 		float maxY = SCREEN_HEIGHT + SCREEN_Y;
 		projections[i] = glm::ortho(minX, maxX, maxY, minY);
 	}
+	//cout << playerPos.x + playerCenter.x << endl;
 }
+
+void Level1Sc1::doAction(int eventId)
+{
+	if (eventId == Scene::AUTO_ADVANCE)
+	{
+
+	}
+	else fadeIn = eventId == Scene::NEXT_SCENE;
+}
+
 const pair<int, int> Level1Sc1::setNewLevelAndScene() const 
 {
-	return pair<int, int>(-1, -1);
+	return pair<int, int>(0, 1);
 }

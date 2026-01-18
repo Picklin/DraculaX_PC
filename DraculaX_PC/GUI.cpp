@@ -65,8 +65,8 @@ void GUI::init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer)
 	boards[0]->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
 	boards[1]->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
 	boardFrame->setPosition(glm::vec2(xOffset + 32, yOffset + secondPlayerOffset));
-	boards[0]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
-	boards[1]->setColor(glm::vec4(0.f, 0.f, 104 / 255.f, 1.f));
+	boards[0]->setColor(glm::vec3(0.f, 0.f, 104 / 255.f));
+	boards[1]->setColor(glm::vec3(0.f, 0.f, 104 / 255.f));
 	item->setPosition(glm::vec2(xOffset + 13, yOffset + 12 + 177 * secondPlayer));
 	dragon->setPosition(glm::vec2(xOffset + 5, yOffset + 2 + 177 * secondPlayer));
 }

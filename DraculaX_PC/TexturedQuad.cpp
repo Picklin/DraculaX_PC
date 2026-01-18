@@ -40,9 +40,9 @@ void TexturedQuad::setPosition(const glm::vec2& pos)
 	this->position = pos;
 }
 
-void TexturedQuad::setColor(const glm::vec4& color)
+void TexturedQuad::setColor(const glm::vec3& color)
 {
-	this->color = color;
+	this->color = glm::vec4(color.x, color.y, color.z, this->color.a);
 }
 
 void TexturedQuad::setAlpha(float aplha)

@@ -69,6 +69,22 @@ Candle* Candle::createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2&
 	return candle;
 }
 
+Candle* Candle::createStreetlightCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId)
+{
+	Candle* candle = new Candle(itemId);
+	candle->baseTex = new Texture();
+	candle->baseTex->loadFromFile("images/candles/streetlight.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	candle->baseTex->setMagFilter(GL_NEAREST);
+	candle->base = Sprite::createSprite(glm::ivec2(32), glm::vec2(0.25f, 1.f), candle->baseTex, &shaderProgram);
+	candle->base->setNumberAnimations(1);
+	candle->base->setAnimationSpeed(0, 60);
+	candle->base->animatorX(0, 4, 0.f, 0.25f, 0.f);
+	candle->base->changeAnimation(0);
+	candle->base->setPosition(position + MAP_OFFSET);
+	candle->setHitbox(candle, position);
+	return candle;
+}
+
 Candle* Candle::createPilarCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId)
 {
 	Candle* candle = new Candle(itemId);
@@ -124,13 +140,13 @@ void Candle::update(int deltaTime)
 		endTimer -= deltaTime;
 		if (endTimer < 0) endTimer = 0;
 	}
-	fire->update(deltaTime);
+	if (fire) fire->update(deltaTime);
 	base->update(deltaTime);
 }
 
 void Candle::render()
 {
-	fire->render();
+	if (fire) fire->render();
 	base->render();
 }
 
@@ -162,7 +178,8 @@ Hitbox Candle::getHitbox() const
 
 glm::vec2 Candle::getDropPosition() const
 {
-	glm::vec2 pos = hitbox.min;
+	float diffX = hitbox.max.x - hitbox.min.x;
+	glm::vec2 pos(hitbox.min.x + 8 * (diffX > 16), hitbox.min.y);
 	return pos;
 }
 

@@ -32,7 +32,7 @@ void Heart::update(int deltaTime)
 	else
 	{
 		int colorIndex = int(sin(timeElapsed * 10.f) * 2 + 2);
-		tone->setColor(glm::vec4(redTones[colorIndex], 0.f, 0.f, 1.f));
+		tone->setColor(glm::vec3(redTones[colorIndex], 0.f, 0.f));
 		position.y += fallSpeed[heartAmmount > 1];
 		if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y - 1) && platforms != nullptr
 			&& !platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y - 1) && heartAmmount == 1)

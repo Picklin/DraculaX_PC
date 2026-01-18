@@ -43,6 +43,7 @@ protected:
 	virtual void updateCamera();
 	virtual const pair<int, int> setNewLevelAndScene() const = 0;
 	virtual void doAction(int eventId) {};
+	void renderTransition();
 
 private:
 	bool isInArea(const Hitbox& area, const glm::vec2& pos);
@@ -60,35 +61,42 @@ protected:
 	int maxSubweaponInstances = 1;
 
 protected:
+	enum Actions
+	{
+		AUTO_ADVANCE, NEXT_SCENE
+	};
+	glm::mat4 projection;
+	vector<Item*> items;
+	vector<Candle*> candles;
+	vector<Subweapon*> subweapons;
+	vector<Enemy*> enemies;
+	vector<InfSpawnPoint> infSpawnPoints;
+	vector<SpawnPoint*> spawnPoints;
+	vector<TriggerArea*> triggerAreas;
+	vector<Texture> backgroundTexs;
+	vector<Sprite*> backgroundSprites;
+	//capas de background estático de más al fondo a menos (de 0 a n-1)
+	vector<TileMap*> layers;
+
+	//para el parallax
+	vector<glm::mat4> projections;
+
+	glm::vec2 cameraPos;
 	TileMap* map;
 	TileMap* platforms;
 	TileMap* stairs;
 	Player* player;
 	GUI* gui;
 	ShaderProgram* spriteShader;
-	ShaderProgram* basicShader;
-	float timeElapsed;				//seconds
-	glm::mat4 projection;
-	glm::vec2 cameraPos;
+	ShaderProgram* basicShader;				//seconds
+	TexturedQuad* blackScreen;
 
-	vector<Item*> items;
-	vector<Candle*> candles;
-	vector<Subweapon*> subweapons;
-	
-	vector<Enemy*> enemies;
-
-	vector<InfSpawnPoint> infSpawnPoints;
-	vector<SpawnPoint*> spawnPoints;
-	vector<TriggerArea*> triggerAreas;
-
-	vector<Texture> backgroundTexs;
-	vector<Sprite*> backgroundSprites;
-
-	//capas de background estático de más al fondo a menos (de 0 a n-1)
-	vector<TileMap*> layers;
-
-	//para el parallax
-	vector<glm::mat4> projections;
+	float timeElapsed;
+	float blackScreenDuration;
+	float fadeDuration;
+	float fadeTime = 0.f;
+	bool fadeIn = false;
+	bool fadeOut = true;
 };
 
 

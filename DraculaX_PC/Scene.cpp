@@ -3,6 +3,7 @@
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Game.h"
+#include "TextureManager.h"
 
 Scene::~Scene()
 {
@@ -62,6 +63,10 @@ void Scene::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderPr
 	initItems();
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	screenWidth = SCREEN_WIDTH;
+	blackScreen = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), *TextureManager::instance().getTexture("pixel"), basicShader);
+	blackScreen->setColor(glm::vec3(0.f));
+	fadeDuration = 0.5f;
+	blackScreenDuration = 0.25f;
 }
 
 void Scene::update(int deltaTime)
@@ -192,6 +197,23 @@ void Scene::updateCamera()
 	projection = glm::ortho(minX, maxX, maxY, minY);
 }
 
+void Scene::renderTransition()
+{
+	//basicShader->use();
+	if (fadeOut)
+	{
+		float alpha = 1.f - (timeElapsed / fadeDuration);
+		blackScreen->setAlpha(alpha);
+		blackScreen->render();
+	}
+	else if (fadeIn)
+	{
+		float alpha = fadeTime / fadeDuration;
+		blackScreen->setAlpha(alpha);
+		blackScreen->render();
+	}
+}
+
 bool Scene::collision(const Hitbox& hitbox1, const Hitbox& hitbox2)
 {
 	return ((hitbox1.min.x < hitbox2.max.x) && (hitbox2.min.x < hitbox1.max.x) && (hitbox1.min.y < hitbox2.max.y) && (hitbox2.min.y < hitbox1.max.y));	
@@ -249,6 +271,23 @@ bool Scene::isInArea(const Hitbox& area, const glm::vec2& pos)
 void Scene::updateEffects(int deltaTime)
 {
 	EffectsManager::instance().update(deltaTime);
+	fadeOut = timeElapsed <= fadeDuration;
+	if (fadeIn)
+	{
+		fadeTime += deltaTime / 1000.f;
+		if (fadeTime >= fadeDuration + blackScreenDuration)
+		{
+			if (player->isEnded())
+			{
+				Game::instance().restartScene();
+			}
+			else
+			{
+				auto& lvlnsce = setNewLevelAndScene();
+				Game::instance().changeScene(lvlnsce.first, lvlnsce.second);
+			}
+		}
+	}
 }
 
 void Scene::destroyCandle(Candle& candle)

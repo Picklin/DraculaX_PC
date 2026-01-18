@@ -28,7 +28,7 @@ void Game::init()
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
 	currentLevel = STAGE1;
-	currentScene = 1;
+	currentScene = 0;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);

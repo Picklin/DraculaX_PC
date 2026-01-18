@@ -13,6 +13,7 @@ public:
 	~Candle();
 	static Candle* createCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId);
 	static Candle* createTorchCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId);
+	static Candle* createStreetlightCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId);
 	static Candle* createPilarCandle(ShaderProgram& shaderProgram, const glm::vec2& position, int itemId);
 	//void init(ShaderProgram& shaderProgram, const glm::vec2& position);
 	void update(int deltaTime);
