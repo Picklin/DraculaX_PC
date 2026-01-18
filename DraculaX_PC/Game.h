@@ -5,9 +5,6 @@
 #include "GUI.h"
 #include "SceneTesting.h"
 #include "TitleScreen.h"
-#include "Level1Sc1.h"
-#include "Level1Sc2.h"
-
 
 #define SCREEN_WIDTH 256
 #define SCREEN_HEIGHT 224
@@ -65,7 +62,6 @@ private:
 	void gameOver();
 
 private:
-	Level1Sc1 st;
 	Player player;
 	TitleScreen titScreen;
 	GUI gui;

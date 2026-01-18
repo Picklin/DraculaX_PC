@@ -1,6 +1,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Game.h"
+#include "Level1Sc1.h"
+#include "Level1Sc2.h"
+#include "Level1Sc3.h"
 
 enum VoiceLanguages
 {
@@ -28,7 +31,7 @@ void Game::init()
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
 	currentLevel = STAGE1;
-	currentScene = 0;
+	currentScene = 2;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	player.init(MAP_OFFSET, spriteShader);
@@ -172,13 +175,11 @@ void Game::mouseRelease(int button)
 
 void Game::setScreenWidth(int width)
 {
-	st.setScreenWidth(width);
 	//scene->setScreenWidth(width);
 }
 
 void Game::setViewportOffset(int offset)
 {
-	st.setViewportOffset(offset);
 	//scene->setviewportOffset(offset);
 }
 
@@ -313,9 +314,10 @@ Game::Game()
 {
 	scenesFactory.reserve(1);
 	vector<SceneCreator> lvl1SC;
-	lvl1SC.reserve(2);
+	lvl1SC.reserve(3);
 	lvl1SC.emplace_back([this]() { return new Level1Sc1(); });
 	lvl1SC.emplace_back([this]() { return new Level1Sc2(); });
+	lvl1SC.emplace_back([this]() { return new Level1Sc3(); });
 	scenesFactory.emplace_back(lvl1SC);
 	scene = nullptr;
 }

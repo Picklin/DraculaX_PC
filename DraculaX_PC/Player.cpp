@@ -519,7 +519,7 @@ void Player::childUpdate(int deltaTime)
 				glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
 				pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
 				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
-				if (Game::instance().getKey(GLFW_KEY_UP) && jumpAngle >= 90
+				if (Game::instance().getKey(GLFW_KEY_UP) && stairs != nullptr && jumpAngle >= 90
 					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
 						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
 				{
@@ -537,7 +537,7 @@ void Player::childUpdate(int deltaTime)
 				{
 					position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
 					bJumping = jumpAngle < 90 || (!tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
-						&& !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
+						&& (platforms == nullptr || !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)));
 					JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
 					JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
 					if (state != STATE_FALLING && jumpAngle >= 128 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
@@ -591,7 +591,7 @@ void Player::childUpdate(int deltaTime)
 		{
 			position.y += FALL_SPEED;
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
-				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+				|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
 			canJump = canJump || (grounded && !Game::instance().getKey(GLFW_KEY_Z));
 			if (!grounded)
 			{
@@ -681,7 +681,7 @@ void Player::childUpdate(int deltaTime)
 					commandBuffer.clear();
 					inputIndex = commandInputIndex;
 				}
-				else if (inputIndex == UP && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
+				else if (inputIndex == UP && stairs != nullptr && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true; 
 					linedUpStair = false;
@@ -690,7 +690,7 @@ void Player::childUpdate(int deltaTime)
 					stairPosX = (int)position.x - distance;
 					stairPosY = (int)position.y;
 				}
-				else if (inputIndex == DOWN && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
+				else if (inputIndex == DOWN && stairs != nullptr && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
 				{
 					bClimbing = true;
 					linedUpStair = false;
@@ -779,7 +779,7 @@ void Player::childUpdate(int deltaTime)
 					position.y = startY - DASH_KICK_HEIGHT * sin(glm::radians((float)jumpAngle));
 					Hitbox cb = getTerrainCollisionBox();
 					tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
-					platforms->collisionMoveDown(cb, &position.y, quadSize.y);
+					if (platforms != nullptr) platforms->collisionMoveDown(cb, &position.y, quadSize.y);
 					//cout << jumpAngle << endl;
 				}
 				bDashing = velocityX != 0;
@@ -803,7 +803,7 @@ void Player::childUpdate(int deltaTime)
 			Game::instance().keyReleased(GLFW_KEY_Z);
 			position.y += FALL_SPEED * (state != STATE_COMBO_DASHING);
 			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
-				|| platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y);
+				|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
 			if (!fallFromDash && sprite->animation() == DASH_KICK_FINAL && grounded)
 			{
 				SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
@@ -854,7 +854,7 @@ void Player::childUpdate(int deltaTime)
 				Hitbox cb = getStairsCollisionBox();
 				int kf = sprite->getCurrentKeyframe();
 				if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
-				else if (goingDown) bClimbing = !platforms->collisionMoveDown(cb, &position.y, quadSize.y) && !tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+				else if (goingDown) bClimbing = !tileMap->collisionMoveDown(cb, &position.y, quadSize.y) && (platforms == nullptr || !platforms->collisionMoveDown(cb, &position.y, quadSize.y));
 				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 				{
 					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);

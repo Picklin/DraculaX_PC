@@ -157,6 +157,9 @@
     <ClCompile Include="Fuegote.cpp">
       <Filter>Archivos de código fuente\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="Level1Sc3.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -276,5 +279,6 @@
     <ClInclude Include="Fueguito.h">
       <Filter>Archivos de encabezado\Effects</Filter>
     </ClInclude>
+    <ClInclude Include="Level1Sc3.h" />
   </ItemGroup>
 </Project>
