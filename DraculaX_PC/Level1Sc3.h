@@ -27,7 +27,9 @@ private:
 	TexturedQuad* castlevania;
 	TexturedQuad* muralla2;
 	TexturedQuad* muralla;
+	float bossAppearanceTimer;
 	bool bossAppeares = false;
+	bool bossDefeated = false;
 	
 };
 

@@ -25,6 +25,7 @@ void EffectsManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader)
 
 void EffectsManager::update(int deltaTime)
 {
+	updateExplosions(deltaTime);
 	for (unsigned int i = 0; i < effects.size(); i++)
 	{
 		effects[i]->update(deltaTime);

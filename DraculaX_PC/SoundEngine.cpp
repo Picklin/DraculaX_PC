@@ -175,7 +175,7 @@ void SoundEngine::playOverture()
 
 void SoundEngine::fadeOutMusic()
 {
-	std::thread(&SoundEngine::fadeOutThreadFunc, this, musicSound, 2000).detach();
+	std::thread(&SoundEngine::fadeOutThreadFunc, this, musicSound, 5000).detach();
 }
 
 void SoundEngine::update()

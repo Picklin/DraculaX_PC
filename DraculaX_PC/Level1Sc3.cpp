@@ -24,18 +24,37 @@ void Level1Sc3::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	projections.resize(4);
 
-	//SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
+	SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
+	bossAppearanceTimer = 2.f;
 }
 
 void Level1Sc3::update(int deltaTime)
 {
 	Scene::update(deltaTime);
-	if (bossAppeares && wyvern == nullptr)
+	if (!bossDefeated && bossAppeares && bossAppearanceTimer > 0.f)
+	{
+		bossAppearanceTimer -= deltaTime / 1000.f;
+	}
+	else if (!bossDefeated && bossAppearanceTimer <= 0.f && wyvern == nullptr)
 	{
 		wyvern = new Wyvern();
-		wyvern->init(MAP_OFFSET, *spriteShader);
-		wyvern->setPosition(glm::vec2(0.f, 40 * 16.f));
-		
+		wyvern->init(MAP_OFFSET, *spriteShader, glm::vec2(42 * 16, -48));
+		SoundEngine::instance().playSFX(SoundEngine::WYVERN_APPEAR);
+	}
+	else if (wyvern != nullptr)
+	{
+		wyvern->update(deltaTime);
+		if (!bossDefeated && wyvern->isDead())
+		{
+			EffectsManager::instance().createExplosions(wyvern->getPosition(), glm::vec2(64.f, 64.f), 200, 32, 64, glm::vec4(1.f));
+			SoundEngine::instance().playSFX(SoundEngine::EXPLOSION_HUGE_LONG);
+			bossDefeated = true;
+		}
+		else if (wyvern->isRemoved())
+		{
+			delete wyvern;
+			wyvern = nullptr;
+		}
 	}
 }
 
@@ -57,6 +76,7 @@ void Level1Sc3::render()
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[3]);
 	for (auto axe : subweapons) axe->render();
+	if (wyvern != nullptr) wyvern->render();
 	player->render();
 	basicShader->use();
 	for (auto item : items) item->render();
@@ -105,7 +125,7 @@ void Level1Sc3::initActors(Player* player)
 
 void Level1Sc3::updateCamera()
 {
-	if (!bossAppeares)
+	if (!bossAppeares && !bossDefeated)
 	{
 		glm::vec2 playerPos = player->getPosition();
 		glm::vec2 playerCenter = player->myCenter();
@@ -118,6 +138,7 @@ void Level1Sc3::updateCamera()
 			{
 				cameraPos.x = 768 - SCREEN_WIDTH;
 				bossAppeares = true;
+				SoundEngine::instance().fadeOutMusic();
 			}
 			cameraPos.x *= multipliers[i];
 			float minX = cameraPos.x + CAMERA_X;
