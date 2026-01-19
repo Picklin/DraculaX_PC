@@ -44,6 +44,12 @@
     <Filter Include="Archivos de encabezado\Effects">
       <UniqueIdentifier>{afd33a12-0338-405a-aef9-41a054d96233}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Bosses">
+      <UniqueIdentifier>{f2794349-d628-4d20-8e44-166a5e8f18c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Bosses">
+      <UniqueIdentifier>{fe5a1d1f-0017-45f7-8fab-8e962474e714}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -159,6 +165,9 @@
     </ClCompile>
     <ClCompile Include="Level1Sc3.cpp">
       <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+    <ClCompile Include="Wyvern.cpp">
+      <Filter>Archivos de código fuente\Bosses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,5 +289,8 @@
       <Filter>Archivos de encabezado\Effects</Filter>
     </ClInclude>
     <ClInclude Include="Level1Sc3.h" />
+    <ClInclude Include="Wyvern.h">
+      <Filter>Archivos de encabezado\Bosses</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

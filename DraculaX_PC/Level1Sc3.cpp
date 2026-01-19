@@ -24,12 +24,19 @@ void Level1Sc3::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	projections.resize(4);
 
-	SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
+	//SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
 }
 
 void Level1Sc3::update(int deltaTime)
 {
 	Scene::update(deltaTime);
+	if (bossAppeares && wyvern == nullptr)
+	{
+		wyvern = new Wyvern();
+		wyvern->init(MAP_OFFSET, *spriteShader);
+		wyvern->setPosition(glm::vec2(0.f, 40 * 16.f));
+		
+	}
 }
 
 void Level1Sc3::render()
@@ -92,24 +99,33 @@ void Level1Sc3::initActors(Player* player)
 	player->setPlatforms(platforms);
 	player->setStairsMap(stairs);
 	player->setPosition(glm::vec2(0 * map->getTileSize(), 9 * map->getTileSize()));
+
+	
 }
 
 void Level1Sc3::updateCamera()
 {
-	glm::vec2 playerPos = player->getPosition();
-	glm::vec2 playerCenter = player->myCenter();
-	const float multipliers[4] = { 0.125f, 0.25f, 0.5f, 1.f };
-	for (int i = 0; i < 4; i++)
+	if (!bossAppeares)
 	{
-		cameraPos.x = (playerPos + playerCenter).x - SCREEN_WIDTH / 2.f;
-		if (cameraPos.x < 0) cameraPos.x = 0;
-		else if (cameraPos.x > 768 - SCREEN_WIDTH) cameraPos.x = 768 - SCREEN_WIDTH;
-		cameraPos.x *= multipliers[i];
-		float minX = cameraPos.x + CAMERA_X;
-		float minY = CAMERA_Y;
-		float maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
-		float maxY = SCREEN_HEIGHT + CAMERA_Y;
-		projections[i] = glm::ortho(minX, maxX, maxY, minY);
+		glm::vec2 playerPos = player->getPosition();
+		glm::vec2 playerCenter = player->myCenter();
+		const float multipliers[4] = { 0.125f, 0.25f, 0.5f, 1.f };
+		for (int i = 0; i < 4; i++)
+		{
+			cameraPos.x = (playerPos + playerCenter).x - SCREEN_WIDTH / 2.f;
+			if (cameraPos.x < 0) cameraPos.x = 0;
+			else if (cameraPos.x > 768 - SCREEN_WIDTH)
+			{
+				cameraPos.x = 768 - SCREEN_WIDTH;
+				bossAppeares = true;
+			}
+			cameraPos.x *= multipliers[i];
+			float minX = cameraPos.x + CAMERA_X;
+			float minY = CAMERA_Y;
+			float maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
+			float maxY = SCREEN_HEIGHT + CAMERA_Y;
+			projections[i] = glm::ortho(minX, maxX, maxY, minY);
+		}
 	}
 }
 

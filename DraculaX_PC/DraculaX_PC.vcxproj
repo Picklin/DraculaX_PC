@@ -169,6 +169,7 @@
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="Trinket.cpp" />
+    <ClCompile Include="Wyvern.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Afterimage.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="TitleScreen.h" />
     <ClInclude Include="Trinket.h" />
+    <ClInclude Include="Wyvern.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

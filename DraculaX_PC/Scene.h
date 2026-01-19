@@ -63,7 +63,7 @@ protected:
 protected:
 	enum Actions
 	{
-		AUTO_ADVANCE, NEXT_SCENE
+		AUTO_ADVANCE, NEXT_SCENE, BOSS_APPEARS
 	};
 	glm::mat4 projection;
 	vector<Item*> items;

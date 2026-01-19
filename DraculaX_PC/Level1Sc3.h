@@ -3,6 +3,7 @@
 #define _LEVEL1SC3_INCLUDE
 
 #include "Scene.h"
+#include "Wyvern.h"
 
 class Level1Sc3 : public Scene
 {
@@ -21,10 +22,13 @@ protected:
 	const pair<int, int> setNewLevelAndScene() const override;
 
 private:
+	Wyvern* wyvern = nullptr;
 	TexturedQuad* cielo;
 	TexturedQuad* castlevania;
 	TexturedQuad* muralla2;
 	TexturedQuad* muralla;
+	bool bossAppeares = false;
+	
 };
 
 #endif // !_LEVEL1SC3_INCLUDE
