@@ -41,7 +41,7 @@ void Axe::render()
 
 int Axe::getDamage() const
 {
-	return 15;
+	return 7;
 }
 
 const Hitbox Axe::getHitbox() const

@@ -106,7 +106,7 @@ void Sprite::render()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	//glDisable(GL_TEXTURE_2D);
 	invert = false;
-	//shaderProgram->setUniform1i("invert", invert);
+	shaderProgram->setUniform1i("invert", invert);
 	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
 }
 

@@ -1,4 +1,5 @@
 #include "Wyvern.h"
+#include "SoundEngine.h"
 #include <iostream>
 
 #define MAX_HP 92
@@ -11,7 +12,7 @@ namespace
     {
         APPEAR, APPEAR_FINAL, IDLE, TURN, ATTACK, ATTACK_FINAL, FIRE, FIRE_FINAL, DIE
     };
-    const int leftBound = 34 * 16;
+    const int leftBound = 32 * 16;
     const int rightBound = 42 * 16;
 }
 
@@ -34,7 +35,7 @@ void Wyvern::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const g
     sprite->animatorX(APPEAR, 3, 0.f, 0.1f, 0.f);
     sprite->setAnimationSpeed(APPEAR_FINAL, 0);
     sprite->addKeyframe(APPEAR_FINAL, glm::vec2(0.3f, 0.f));
-    sprite->setAnimationSpeed(IDLE, 12);
+    sprite->setAnimationSpeed(IDLE, 11);
     sprite->animatorX(IDLE, 6, 0.4f, 0.1f, 0.f);
     sprite->setAnimationSpeed(TURN, 12);
     sprite->animatorX(TURN, 2, 0.3f, 0.1f, 0.5f);
@@ -89,6 +90,7 @@ void Wyvern::update(int deltaTime)
                 lungeAngle = 0;
                 lungeAngleStep = 2.f;
                 lungeDist = 80;
+                if (appeared) SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
             }
             else
             {
@@ -108,6 +110,8 @@ void Wyvern::update(int deltaTime)
             appeared = position.y <= -112.f;
             if (appeared)
             {
+                SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
+                SoundEngine::instance().playNonStageSong(SoundEngine::BOSS);
                 sprite->changeAnimation(IDLE);
                 moveSpeed = 1.f;
                 position.x = 49 * 16;
@@ -146,6 +150,8 @@ void Wyvern::update(int deltaTime)
                 attackCooldown = 0.f;
                 attacking = true;
                 moveSpeed = 3.f;
+                SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
+                SoundEngine::instance().playSFX(SoundEngine::WYVERN_ATTACK);
             }
             else if (attacking)
             {
@@ -193,13 +199,19 @@ void Wyvern::takeDmg(int dmg)
         sprite->setAnimationSpeed(IDLE, 2);
         sprite->changeAnimation(IDLE);
         ended = true;
+        SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
+        SoundEngine::instance().playSFX(SoundEngine::WYVERN_DEATH);
     }
+    else sprite->invertColor();
     woundedCooldown = 1.f;
 }
 
 const Hitbox Wyvern::getHitbox() const
 {
-    return Hitbox();
+    Hitbox hb;
+    hb.min = position + glm::vec2(48-32*flip, 48);
+    hb.max = hb.min + glm::vec2(64, 48);
+    return hb;
 }
 
 int Wyvern::getPoints() const
@@ -207,12 +219,12 @@ int Wyvern::getPoints() const
     return POINTS;
 }
 
-bool Wyvern::isEnded() const
+bool Wyvern::isWounded() const
 {
-    return ended;
+    return woundedCooldown > 0;
 }
 
-bool Wyvern::isDead() const
+bool Wyvern::isEnded() const
 {
     return sprite->animation() == DIE;
 }

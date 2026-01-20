@@ -6,6 +6,11 @@ TextureManager::TextureManager()
     pixel.loadFromFile("images/pixel.png", TEXTURE_PIXEL_FORMAT_RGBA);
     pixel.setMagFilter(GL_NEAREST);
     addTexture("pixel", &pixel);
+
+    orb = Texture();
+    orb.loadFromFile("images/gui&items/orb.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    orb.setMagFilter(GL_NEAREST);
+    addTexture("orb", &orb);
 }
 
 TextureManager& TextureManager::instance()

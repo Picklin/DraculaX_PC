@@ -15,16 +15,16 @@ public:
 	virtual void render();
 	void setUngrabable();
 	void setPlatformMap(TileMap* platforms) { this->platforms = platforms; }
-	virtual void setPosition(const glm::vec2& pos);
+	virtual void setPosition(const glm::vec2& pos);	
 	void eject(int xDir);
 	void end();
 	virtual void grab(GUI& gui) = 0;
 	const Hitbox getHitbox() const;
-	bool isGrabable() const;
+	virtual bool isGrabable() const;
 	bool isEnded() const;
 	bool getsRemoved() const;
 
-	static void setUngrabableTime(int timeMilisecs);
+	void setUngrabableTime(int timeMilisecs);
 
 protected:
 	virtual void makeEndSound() const = 0;

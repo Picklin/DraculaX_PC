@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "Wyvern.h"
+#include "Text.h"
 
 class Level1Sc3 : public Scene
 {
@@ -22,15 +23,18 @@ protected:
 	const pair<int, int> setNewLevelAndScene() const override;
 
 private:
+	Text stageClearText;
 	Wyvern* wyvern = nullptr;
 	TexturedQuad* cielo;
 	TexturedQuad* castlevania;
 	TexturedQuad* muralla2;
 	TexturedQuad* muralla;
 	float bossAppearanceTimer;
+	float orbSpawnTimer;
 	bool bossAppeares = false;
 	bool bossDefeated = false;
-	
+	bool stageCleared = false;
+	bool orbSpawned = false;
 };
 
 #endif // !_LEVEL1SC3_INCLUDE

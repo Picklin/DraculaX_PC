@@ -44,10 +44,10 @@ protected:
 	virtual const pair<int, int> setNewLevelAndScene() const = 0;
 	virtual void doAction(int eventId) {};
 	void renderTransition();
+	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 
 private:
 	bool isInArea(const Hitbox& area, const glm::vec2& pos);
-	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 	bool oobEnemy(const glm::vec2& pos) const;
 	void updateSpawnPoints(int deltaTime);
 	void updateTriggerAreas();

@@ -22,6 +22,7 @@ public:
 private:
 	unordered_map<string, Texture*> textures;
 	Texture pixel;
+	Texture orb;
 };
 
 #endif // !_TEXTUREMANAGER_INCLUDE

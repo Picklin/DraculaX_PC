@@ -46,6 +46,7 @@ ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
 	};
 
     itemsTex = TextureManager::instance().getTexture("gui&items");
+    orbTex = TextureManager::instance().getTexture("orb");
 }
 
 void ItemManager::initializeRandom()
@@ -178,4 +179,14 @@ Item* ItemManager::getThousandMoneyBag(const glm::vec2& position)
     bag->setPlatformMap(platforms);
     bag->setPosition(position);
 	return bag;
+}
+
+Orb* ItemManager::getOrb(const glm::vec2& position)
+{
+    Orb* orb = new Orb();
+    orb->init(tileMapDispl, *shader, *orbTex);
+    orb->setTileMap(*map);
+    orb->setPosition(position);
+    orb->setUngrabable();
+    return orb;
 }

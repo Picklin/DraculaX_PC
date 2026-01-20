@@ -204,6 +204,11 @@ void GUI::respawn()
 	changeItem(NONE);
 }
 
+void GUI::stageClear()
+{
+	bStageCleared = true;
+}
+
 bool GUI::isMaria() const
 {
 	return Maria;
@@ -217,6 +222,11 @@ bool GUI::compatibleTrinket(int trinketId) const
 bool GUI::compatibleFood(int foodId) const
 {
 	return (foodId <= BIG_ROAST && !Maria) || (foodId > BIG_ROAST && Maria);
+}
+
+bool GUI::stageCleared() const
+{
+	return bStageCleared;
 }
 
 int GUI::getCurrentTrinketID() const

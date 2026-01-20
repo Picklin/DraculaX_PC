@@ -126,7 +126,7 @@ namespace
 
 void Player::render()
 {
-	shader->use();
+	//shader->use();
 	shader->setUniform1i("flip", lookingLeft);
 	shader->setUniform1f("frameWidth", 0.1f);
 	int anim = sprite->animation();

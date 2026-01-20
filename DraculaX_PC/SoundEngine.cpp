@@ -166,6 +166,22 @@ void SoundEngine::playSFX(int sfxId)
 	addActiveSound(sfx[sfxId].second);
 }
 
+void SoundEngine::playLoopedSFX(int sfxId)
+{
+	checkCurrentSound(sfx[sfxId].second);
+	sfx[sfxId].second = engine->play2D(sfx[sfxId].first, true, false, true);
+	addActiveSound(sfx[sfxId].second);
+}
+
+void SoundEngine::stopLoopedSFX(int sfxId)
+{
+	if (sfx[sfxId].second)
+	{
+		sfx[sfxId].second->stop();
+		sfx[sfxId].second = nullptr;
+	}
+}
+
 void SoundEngine::playOverture()
 {
 	checkCurrentSound(musicSound);
@@ -173,9 +189,9 @@ void SoundEngine::playOverture()
 	addActiveSound(musicSound);
 }
 
-void SoundEngine::fadeOutMusic()
+void SoundEngine::fadeOutMusic(int fadeDurationMillisecs)
 {
-	std::thread(&SoundEngine::fadeOutThreadFunc, this, musicSound, 5000).detach();
+	std::thread(&SoundEngine::fadeOutThreadFunc, this, musicSound, fadeDurationMillisecs).detach();
 }
 
 void SoundEngine::update()

@@ -26,11 +26,11 @@ void Level1Sc3::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, true);
 	bossAppearanceTimer = 2.f;
+	orbSpawnTimer = 2.f;
 }
 
 void Level1Sc3::update(int deltaTime)
 {
-	Scene::update(deltaTime);
 	if (!bossDefeated && bossAppeares && bossAppearanceTimer > 0.f)
 	{
 		bossAppearanceTimer -= deltaTime / 1000.f;
@@ -44,7 +44,8 @@ void Level1Sc3::update(int deltaTime)
 	else if (wyvern != nullptr)
 	{
 		wyvern->update(deltaTime);
-		if (!bossDefeated && wyvern->isDead())
+		if (player->isAttacking() && !wyvern->isWounded() && collision(wyvern->getHitbox(), player->getWhipHitbox())) wyvern->takeDmg(7);
+		else if (!bossDefeated && wyvern->isEnded())
 		{
 			EffectsManager::instance().createExplosions(wyvern->getPosition(), glm::vec2(64.f, 64.f), 200, 32, 64, glm::vec4(1.f));
 			SoundEngine::instance().playSFX(SoundEngine::EXPLOSION_HUGE_LONG);
@@ -56,6 +57,26 @@ void Level1Sc3::update(int deltaTime)
 			wyvern = nullptr;
 		}
 	}
+	else if (bossDefeated)
+	{
+		orbSpawnTimer -= deltaTime / 1000.f;
+		if (!orbSpawned && orbSpawnTimer <= 0.f)
+		{
+			items.push_back(ItemManager::instance().getOrb(glm::vec2(41 * 16 - 7, 32 + 8)));
+			orbSpawned = true;
+			SoundEngine::instance().playLoopedSFX(SoundEngine::ORB);
+			SoundEngine::instance().fadeOutMusic(3000);
+		}
+		else if (!stageCleared && gui->stageCleared())
+		{
+			stageCleared = true;
+			stageClearText.init(*basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
+			stageClearText.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+			SoundEngine::instance().stopLoopedSFX(SoundEngine::ORB);
+			SoundEngine::instance().playNonStageSong(SoundEngine::STAGE_CLEAR, false);
+		}
+	}
+	Scene::update(deltaTime);	
 }
 
 void Level1Sc3::render()
@@ -73,14 +94,14 @@ void Level1Sc3::render()
 	basicShader->setUniformMatrix4f("projection", projections[3]);
 	map->render();
 	for (auto candle : candles) candle->render();
+	for (auto item : items) item->render();
+	EffectsManager::instance().render();
+	if (stageCleared) stageClearText.render("NIVEL\nSUPERADO", glm::vec2(43*16, 72));
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[3]);
 	for (auto axe : subweapons) axe->render();
 	if (wyvern != nullptr) wyvern->render();
 	player->render();
-	basicShader->use();
-	for (auto item : items) item->render();
-	EffectsManager::instance().render();
 	gui->render();
 	renderTransition();
 }
@@ -138,7 +159,7 @@ void Level1Sc3::updateCamera()
 			{
 				cameraPos.x = 768 - SCREEN_WIDTH;
 				bossAppeares = true;
-				SoundEngine::instance().fadeOutMusic();
+				SoundEngine::instance().fadeOutMusic(5000);
 			}
 			cameraPos.x *= multipliers[i];
 			float minX = cameraPos.x + CAMERA_X;

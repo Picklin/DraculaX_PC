@@ -174,7 +174,7 @@ int Candle::getDropId() const
 
 int Candle::getSFXId() const
 {
-	return 5 * streetlight + 19 * !streetlight;
+	return 9 * streetlight + 23 * !streetlight;
 }
 
 Hitbox Candle::getHitbox() const

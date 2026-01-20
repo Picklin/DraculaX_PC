@@ -47,11 +47,11 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	projections.resize(3);
 
-	text.init(basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
-	text2.init(basicShader, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 40);
-	text2.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
-	text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
-	text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+	//text.init(basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
+	//text2.init(basicShader, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 40);
+	//text2.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
+	//text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
+	//text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
 
 	SoundEngine::instance().playStageSong(Game::STAGE1);
 	//SoundEngine::instance().playNonStageSong(SoundEngine::FORMER_ROOM, false);
@@ -86,11 +86,6 @@ void Level1Sc1::render()
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
 	for (auto axe : subweapons) axe->render();
 	player->render();
-	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
-	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
-	//text.render("La fe es lo que mueve a las personas\na unirse y seguir adelante.", player->getPosition()+glm::vec2(66,0));
-	//text.render("Solo pueden ser gobernados por quienes\nson valiosos, respetados y apreciados.", player->getPosition()+glm::vec2(66,0));
-	basicShader->use();
 	trunk->render();
 	for (auto item : items) item->render();
 	EffectsManager::instance().render();

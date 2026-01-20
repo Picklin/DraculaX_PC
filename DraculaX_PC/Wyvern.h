@@ -16,8 +16,8 @@ public:
 	void takeDmg(int dmg);
 	const Hitbox getHitbox() const;
 	int getPoints() const;
+	bool isWounded() const;
 	bool isEnded() const;
-	bool isDead() const;
 	bool isRemoved() const;
 	glm::vec2* getPosition() { return &position; }
 

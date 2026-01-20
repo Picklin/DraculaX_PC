@@ -8,6 +8,7 @@
 #include "Food.h"
 #include "Heart.h"
 #include "Bag.h"
+#include "Orb.h"
 #include <functional>
 #include <random>
 #include <chrono>
@@ -31,6 +32,7 @@ public:
 	Item* getFourHundredMoneyBag(const glm::vec2& position);
 	Item* getSevenHundredMoneyBag(const glm::vec2& position);
 	Item* getThousandMoneyBag(const glm::vec2& position);
+	Orb* getOrb(const glm::vec2& position);
 
 private:
 	ItemManager();
@@ -60,6 +62,7 @@ private:
 	std::discrete_distribution<int> commonItemsDist;
 
 	Texture* itemsTex;
+	Texture* orbTex;
 };
 
 #endif // !_ITEMMANAGER_INCLUDE

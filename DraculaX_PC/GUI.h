@@ -23,10 +23,12 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
+	void stageClear();
 	int getCurrentTrinketID() const;
 	bool isMaria() const;
 	bool compatibleTrinket(int trinketId) const;
 	bool compatibleFood(int foodId) const;
+	bool stageCleared() const;
 
 private:
 	void setNumberAnims(Sprite* num);
@@ -58,6 +60,7 @@ private:
 	bool paused = false;
 	bool renderDragon = false;
 	bool Maria = false;
+	bool bStageCleared = false;
 };
 
  #endif	// !_GUI_INCLUDE

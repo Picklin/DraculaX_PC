@@ -255,7 +255,7 @@ void Level1Sc2::doAction(int eventId)
 	if (eventId == NEXT_SCENE)
 	{
 		fadeIn = true;
-		SoundEngine::instance().fadeOutMusic();
+		SoundEngine::instance().fadeOutMusic(2000);
 	}
 }
 

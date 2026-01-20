@@ -163,11 +163,14 @@
     <ClCompile Include="Fuegote.cpp">
       <Filter>Archivos de código fuente\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="Level1Sc3.cpp">
-      <Filter>Archivos de código fuente</Filter>
-    </ClCompile>
     <ClCompile Include="Wyvern.cpp">
       <Filter>Archivos de código fuente\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="Orb.cpp">
+      <Filter>Archivos de código fuente\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1Sc3.cpp">
+      <Filter>Archivos de código fuente\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,9 +291,14 @@
     <ClInclude Include="Fueguito.h">
       <Filter>Archivos de encabezado\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Level1Sc3.h" />
     <ClInclude Include="Wyvern.h">
       <Filter>Archivos de encabezado\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="Orb.h">
+      <Filter>Archivos de encabezado\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Level1Sc3.h">
+      <Filter>Archivos de encabezado\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

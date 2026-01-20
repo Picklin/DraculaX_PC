@@ -53,8 +53,9 @@ void Text::render(const std::string& text, glm::vec2 position)
     if (text.empty()) return;
 
     fontTexture.use();
-	shader->use();
-	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
+	//shader->use();
+	//shader->setUniform2f("texCoordDispl", 0.f, 0.f);
+    shader->setUniformMatrix4f("modelview", glm::mat4(1.f));
     shader->setUniform4f("color", currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 
     std::vector<TextVertex> vertices;
@@ -71,9 +72,12 @@ void Text::render(const std::string& text, glm::vec2 position)
 
     int columnsInTexture = fontTexture.width() / CHAR_WIDTH;
 
+    int numLines = 1 + std::count(text.begin(), text.end(), '\n');
+    int totalBlockHeight = numLines * CHAR_HEIGHT;
+    int currentY = (int)position.y - (totalBlockHeight / 2);
+
 	std::stringstream ss(text);
     std::string line;
-	int currentY = (int)position.y;
     while (getline(ss, line, '\n'))
     {
 		int lineWidth = line.length() * CHAR_WIDTH;
