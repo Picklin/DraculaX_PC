@@ -44,7 +44,9 @@ void Level1Sc3::update(int deltaTime)
 	else if (wyvern != nullptr)
 	{
 		wyvern->update(deltaTime);
-		if (player->isAttacking() && !wyvern->isWounded() && collision(wyvern->getHitbox(), player->getWhipHitbox())) wyvern->takeDmg(7);
+		Hitbox wyvBox = wyvern->getHitbox(); 
+		if (player->isAttacking() && !wyvern->isWounded() && collision(wyvBox, player->getWhipHitbox())) wyvern->takeDmg(7);
+		else if (!player->wounded() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
 		else if (!bossDefeated && wyvern->isEnded())
 		{
 			EffectsManager::instance().createExplosions(wyvern->getPosition(), glm::vec2(64.f, 64.f), 200, 32, 64, glm::vec4(1.f));

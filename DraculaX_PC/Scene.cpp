@@ -55,6 +55,7 @@ void Scene::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderPr
 	this->spriteShader = &spriteShader;
 	this->basicShader = &basicShader;
 	this->gui = &gui;
+	gui.newLevel();
 	map = setTileMap();
 	platforms = setPlatformMap();
 	stairs = setStairsMap();

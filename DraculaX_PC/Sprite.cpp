@@ -245,6 +245,11 @@ float Sprite::getAngleDegrees() const
 	return angleDegrees;
 }
 
+float Sprite::getTimeAnimation() const
+{
+	return timeAnimation;
+}
+
 const vector<AnimKeyframes>& Sprite::getAnimations() const
 {
 	return animations;

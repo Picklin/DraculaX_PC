@@ -23,6 +23,7 @@ public:
 	void oneUp();
 	void reset();
 	void respawn();
+	void newLevel();
 	void stageClear();
 	int getCurrentTrinketID() const;
 	bool isMaria() const;

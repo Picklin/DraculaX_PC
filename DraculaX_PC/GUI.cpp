@@ -152,7 +152,11 @@ void GUI::changeItem(int itemId)
 void GUI::takeDmg(int dmg)
 {
 	hp -= dmg;
-	if (hp < 0) hp = 0;
+	if (hp <= 0)
+	{
+		hp = 0;
+	}
+	player->takeDmg();
 }
 
 void GUI::heal(int heal)
@@ -202,6 +206,12 @@ void GUI::respawn()
 	refreshNumber(heartsNumbers, 2, currentHearts);
 	refreshNumber(lifesNumbers, 2, currentLifes);
 	changeItem(NONE);
+}
+
+void GUI::newLevel()
+{
+	hp = MAX_HP;
+	bStageCleared = false;
 }
 
 void GUI::stageClear()

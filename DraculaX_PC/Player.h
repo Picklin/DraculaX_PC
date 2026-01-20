@@ -23,12 +23,14 @@ public:
 	void unsetTrinket();
 	void unsetKey();
 	void attack();
+	void takeDmg();
 	string getName() const;
 	const Hitbox getHitbox() const override;
 	const Hitbox getWhipHitbox() const;
 	int getLookingDirection() const { return (!lookingLeft - lookingLeft); }
 	bool isAttacking() const;
 	bool usingSubweapon();
+	bool wounded() const;
 
 protected:
 	const string getSpritesheet() const;

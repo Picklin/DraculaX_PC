@@ -51,6 +51,7 @@ public:
 	const int getNumAnimations() const;
 	const int getNumFrames(int animId) const;
 	float getAngleDegrees() const;
+	float getTimeAnimation() const;
 	const vector<AnimKeyframes>& getAnimations() const;
 
 	void animatorX(int animId, int numFrames, float beginOffset, float inc, float yOffset);

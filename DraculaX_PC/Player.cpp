@@ -11,13 +11,14 @@
 
 enum PlayerStates
 {
-	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_ULTING, STATE_CLIMBING
+	STATE_IDLE, STATE_WALKING, STATE_JUMPING, STATE_FALLING, STATE_CROUCHING, STATE_PREP_ATK, STATE_ATTACKING, STATE_DASHING, STATE_DASHKICKING, STATE_COMBO_DASHING, STATE_ULTING, STATE_CLIMBING, STATE_WOUNDED
 };
 
 enum PlayerAnims
 {
 	IDLE, WALK, JUMP, JUMP_FW, JUMP_FINAL, FALL, BACKFLIP_FINAL, FALL_FINAL, CROUCH, CROUCH_FINAL, GETUP, PREP_ATK, ATTACK, ATTACK_SUBWEAPON, ATTACK_CROUCH, ATTACK_UPSTAIRS, ATTACK_UPSTAIRS_SUBWEAPON, ATTACK_DOWNSTAIRS, ATTACK_DOWNSTAIRS_SUBWEAPON,
-	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS
+	SKID, BACKFLIP_SKID, DASH1, DASH1_FINAL, DASH1_GETUP, DASH_KICK, DASH_KICK_FINAL, DASH_COMBO, DASH_COMBO_FINAL, UPPERCUT, BACKFLIP, ULT, ULT_FINAL, CLIMB_IDLE_UP, CLIMB_IDLE_DOWN, UPSTAIRS, DOWNSTAIRS, 
+	WOUNDED, WOUNDED_CROUCH, WOUNDED_UPSTAIRS, WOUNDED_DOWNSTAIRS
 };
 
 struct Command
@@ -120,6 +121,10 @@ namespace
 		{ PlayerAnims::ATTACK_UPSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
 		{ PlayerAnims::ATTACK_DOWNSTAIRS, PlayerStates::STATE_ATTACKING },
 		{ PlayerAnims::ATTACK_DOWNSTAIRS_SUBWEAPON, PlayerStates::STATE_ATTACKING },
+		{ PlayerAnims::WOUNDED, PlayerStates::STATE_WOUNDED },
+		{ PlayerAnims::WOUNDED_CROUCH, PlayerStates::STATE_WOUNDED },
+		{ PlayerAnims::WOUNDED_UPSTAIRS, PlayerStates::STATE_WOUNDED },
+		{ PlayerAnims::WOUNDED_DOWNSTAIRS, PlayerStates::STATE_WOUNDED },
 	};
 	const float moveSpeed = 1.25f;
 }
@@ -218,6 +223,11 @@ bool Player::usingSubweapon()
 	return throwSub;
 }
 
+bool Player::wounded() const
+{
+	return animToStateMap.at(sprite->animation()) == STATE_WOUNDED;
+}
+
 const string Player::getSpritesheet() const
 {
 	return "images/Richter/Richter_v4.png";
@@ -238,7 +248,7 @@ void Player::setAnimations()
 	int crouchSpeed = 20;
 	int attackSpeed = 32;
 
-	sprite->setNumberAnimations(37);
+	sprite->setNumberAnimations(41);
 
 	sprite->setAnimationSpeed(IDLE, 8);
 	sprite->animatorX(IDLE, 4, 0.f, 0.1f, 0.f);
@@ -394,6 +404,15 @@ void Player::setAnimations()
 	sprite->setAnimationSpeed(DOWNSTAIRS, 24);
 	sprite->animatorX(DOWNSTAIRS, 10, 0.f, 0.1f, 0.8f);
 
+	sprite->setAnimationSpeed(WOUNDED, 1);
+	sprite->addKeyframe(WOUNDED, glm::vec2(0.4f, 0.f));
+	sprite->setAnimationSpeed(WOUNDED_CROUCH, 1);
+	sprite->addKeyframe(WOUNDED_CROUCH, glm::vec2(0.5f, 0.f));
+	sprite->setAnimationSpeed(WOUNDED_UPSTAIRS, 1);
+	sprite->addKeyframe(WOUNDED_UPSTAIRS, glm::vec2(0.6f, 0.f));
+	sprite->setAnimationSpeed(WOUNDED_DOWNSTAIRS, 1);
+	sprite->addKeyframe(WOUNDED_DOWNSTAIRS, glm::vec2(0.7f, 0.f));
+
 	sprite->setTransition(JUMP, JUMP_FINAL);
 	sprite->setTransition(JUMP_FW, JUMP_FINAL);
 	sprite->setTransition(FALL, FALL_FINAL);
@@ -414,6 +433,10 @@ void Player::setAnimations()
 	sprite->setTransition(BACKFLIP, BACKFLIP_FINAL);
 	sprite->setTransition(BACKFLIP_SKID, IDLE);
 	sprite->setTransition(ULT, ULT_FINAL);
+	sprite->setTransition(WOUNDED, IDLE);
+	sprite->setTransition(WOUNDED_CROUCH, CROUCH_FINAL);
+	sprite->setTransition(WOUNDED_UPSTAIRS, CLIMB_IDLE_UP);
+	sprite->setTransition(WOUNDED_DOWNSTAIRS, CLIMB_IDLE_DOWN);
 
 	sprite->changeAnimation(IDLE);
 }
@@ -439,7 +462,7 @@ void Player::childUpdate(int deltaTime)
 		startY = position.y;
 		Game::instance().keyReleased(GLFW_KEY_TAB);
 	}
-	else */if (!bUlting && !bClimbing)
+	else */if (!bUlting && !bClimbing && state != STATE_WOUNDED)
 	{
 		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) && !bDashing && !backflipping && anim != BACKFLIP_SKID;
 		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) && !rightPressed && !bDashing && !backflipping && anim != BACKFLIP_SKID;
@@ -899,7 +922,7 @@ void Player::childUpdate(int deltaTime)
 			bCrouching = false;
 		}
 	}
-	else
+	else if (bUlting)
 	{
 		if (startY - position.y < 64 && ultTimeElapsed == 0)
 		{
@@ -916,6 +939,15 @@ void Player::childUpdate(int deltaTime)
 			bUlting = ultTimeElapsed < 1500;
 			startY += (ultTimeElapsed > 1250);
 		}
+	}
+	else
+	{
+		int timeAnimation = (int) sprite->getTimeAnimation();
+		if ((timeAnimation / (deltaTime * 2)) % 4 == 0)
+		{
+			sprite->setColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
+		}
+		else sprite->setColor(glm::vec4(1.f));
 	}
 	prevAnim = anim;
 	subweaponCooldown -= deltaTime / 1000.f;
@@ -1088,6 +1120,13 @@ void Player::attack()
 		subweaponCooldown = SUBWEAPON_COOLDOWN;
 		throwSubweapon = true;
 	}
+}
+
+void Player::takeDmg()
+{
+	int anim = sprite->animation();
+	sprite->changeAnimation(WOUNDED + (anim == CROUCH_FINAL) + (anim == UPSTAIRS || anim == CLIMB_IDLE_UP) + (anim == DOWNSTAIRS || anim == CLIMB_IDLE_DOWN));
+	whipping = false;
 }
 
 void Player::jump()

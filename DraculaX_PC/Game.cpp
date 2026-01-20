@@ -58,7 +58,6 @@ bool Game::update(int deltaTime)
 			currentLevel = nextLevel;
 			currentScene = nextScene;
 			next = false;
-			gui.heal(MAX_HP);
 		}
 		else if (restart)
 		{
@@ -66,7 +65,6 @@ bool Game::update(int deltaTime)
 			scene = scenesFactory[currentLevel][currentScene]();
 			scene->init(player, gui, spriteShader, basicShader);
 			restart = false;
-			gui.heal(MAX_HP);
 		}
 
 		bool startPressed = getKey(GLFW_KEY_ENTER);

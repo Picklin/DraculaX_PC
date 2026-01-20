@@ -187,6 +187,5 @@ Orb* ItemManager::getOrb(const glm::vec2& position)
     orb->init(tileMapDispl, *shader, *orbTex);
     orb->setTileMap(*map);
     orb->setPosition(position);
-    orb->setUngrabable();
     return orb;
 }
