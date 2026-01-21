@@ -82,6 +82,7 @@ private:
 	int prevKeyframe = 0;
 	int prevAnim = 0;
 	int fallDistance = 0;
+	int timeWounded = -1;
 
 	float velocityX = 0.f;
 	float startY = 0.f;

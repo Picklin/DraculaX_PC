@@ -3,7 +3,8 @@
 #define _ENEMY_INCLUDE
 
 #include "EffectsManager.h"
-#include "ItemManager.h"
+#include "Hitbox.h"
+#include "Entity.h"
 
 class Enemy : public Entity
 {
@@ -20,10 +21,7 @@ public:
 	virtual int getDamageFromAttack() const { return 10; }
 	int getContactDamage() const { return contactDamage; }
 	virtual int getScore() const { return 50; }
-	virtual Item* getDrop() const { return ItemManager::instance().getCommonRandomItem(position + myCenter()); }
 	bool isAttacking() const { return attacking; }
-	//cuando ha sido eliminado de la memoria
-	virtual Effect* makeDeathEffect() const = 0;
 	virtual void makeProjectileSound() const {};
 
 protected:

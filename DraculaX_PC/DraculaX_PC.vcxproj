@@ -144,6 +144,8 @@
     <ClCompile Include="Fuegote.cpp" />
     <ClCompile Include="Fueguito.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Golem.cpp" />
+    <ClCompile Include="GolemProjectile.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Heart.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -154,11 +156,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Orb.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectileManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneTesting.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Skeleton1.cpp" />
     <ClCompile Include="SoundEngine.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
@@ -187,6 +192,8 @@
     <ClInclude Include="Fuegote.h" />
     <ClInclude Include="Fueguito.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Golem.h" />
+    <ClInclude Include="GolemProjectile.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Heart.h" />
     <ClInclude Include="Hitbox.h" />
@@ -197,11 +204,14 @@
     <ClInclude Include="Level1Sc3.h" />
     <ClInclude Include="Orb.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="ProjectileManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneTesting.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Skeleton1.h" />
     <ClInclude Include="SoundEngine.h" />
     <ClInclude Include="SpawnPoint.h" />
     <ClInclude Include="Sprite.h" />

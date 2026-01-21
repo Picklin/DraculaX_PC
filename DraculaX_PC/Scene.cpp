@@ -153,6 +153,51 @@ void Scene::updateActors(int deltaTime)
 				items.erase(items.begin() + i);
 			}
 		}
+		for (unsigned int i = 0; i < enemies.size(); i++)
+		{
+			if (oobEnemy(enemies[i]->getPosition() + enemies[i]->myCenter()))
+			{
+				delete enemies[i];
+				enemies.erase(enemies.begin() + i);
+			}
+			else
+			{
+				enemies[i]->update(deltaTime);
+				if (!player->wounded() && !enemies[i]->isEnded() && collision(enemies[i]->getHitbox(), player->getHitbox()))
+				{
+					if (enemies[i]->isAttacking())
+					{
+						gui->takeDmg(enemies[i]->getDamageFromAttack());
+					}
+					else
+					{
+						gui->takeDmg(enemies[i]->getContactDamage());
+					}
+				}
+				if (enemies[i]->getsRemoved())
+				{
+					gui->gainScore(enemies[i]->getScore());
+					delete enemies[i];
+					enemies.erase(enemies.begin() + i);
+				}
+			}
+		}
+		for (unsigned int i = 0; i < projectiles.size(); i++)
+		{
+			projectiles[i]->update(deltaTime);
+
+			if (!player->wounded() && collision(projectiles[i]->getHitbox(), player->getHitbox()))
+			{
+					gui->takeDmg(projectiles[i]->getDamage());
+					projectiles[i]->end();
+			}
+			if (oobProjectile(projectiles[i]->getPosition()) || projectiles[i]->getsRemoved())
+			{
+				delete projectiles[i];
+				projectiles.erase(projectiles.begin() + i);
+			}
+			
+		}
 		for (unsigned int i = 0; i < candles.size(); i++)
 		{
 			if (player->isAttacking() && !candles[i]->isDestroyed() && collision(candles[i]->getHitbox(), player->getWhipHitbox()))
@@ -220,6 +265,11 @@ void Scene::renderTransition()
 bool Scene::collision(const Hitbox& hitbox1, const Hitbox& hitbox2)
 {
 	return ((hitbox1.min.x < hitbox2.max.x) && (hitbox2.min.x < hitbox1.max.x) && (hitbox1.min.y < hitbox2.max.y) && (hitbox2.min.y < hitbox1.max.y));	
+}
+
+bool Scene::oobProjectile(const glm::vec2& pos) const
+{
+	return pos.x < minX - CAMERA_X || pos.y < minY - CAMERA_Y || pos.x > maxX || pos.y > maxY;
 }
 
 bool Scene::oobEnemy(const glm::vec2& pos) const
@@ -309,4 +359,5 @@ void Scene::initManagers()
 	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms, *gui);
 	EffectsManager::instance().init(MAP_OFFSET, *basicShader);
 	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
+	ProjectileManager::instance().init(MAP_OFFSET, *spriteShader, map, &projectiles);
 }

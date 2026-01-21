@@ -2,7 +2,8 @@
 
 EnemyManager::EnemyManager() : shader(nullptr), map(nullptr), platforms(nullptr), playerPos(nullptr)
 {
-    
+    enemyCreator.push_back([this](const glm::vec2& pos) {return this->createSkeleton1(pos); });
+    enemyCreator.push_back([this](const glm::vec2& pos) {return this->createGolem(pos); });
 }
 
 EnemyManager& EnemyManager::instance()
@@ -28,6 +29,21 @@ void EnemyManager::setPlayer(glm::vec2* playerPos, const glm::vec2& playerCenter
 Enemy* EnemyManager::getEnemy(const glm::vec2& pos, int id)
 {
     return enemyCreator[id](pos);
+}
+
+Enemy* EnemyManager::createSkeleton1(const glm::vec2& pos)
+{
+    Skeleton1* t800 = new Skeleton1();
+    initEnemy(*t800, pos);
+    t800->setTileMap(map);
+    return t800;
+}
+
+Enemy* EnemyManager::createGolem(const glm::vec2& pos)
+{
+    Golem* g = new Golem();
+    initEnemy(*g, pos);
+    return g;
 }
 
 void EnemyManager::initEnemy(Enemy& e, const glm::vec2& pos)

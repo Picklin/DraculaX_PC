@@ -8,6 +8,7 @@
 #define FALL_SPEED 5
 #define DASH_KICK_HEIGHT 32
 #define SUBWEAPON_COOLDOWN 1.F //seconds
+#define WOUNDED_COOLDOWN 2000 //milisecs
 
 enum PlayerStates
 {
@@ -225,7 +226,7 @@ bool Player::usingSubweapon()
 
 bool Player::wounded() const
 {
-	return animToStateMap.at(sprite->animation()) == STATE_WOUNDED;
+	return timeWounded >= 0;
 }
 
 const string Player::getSpritesheet() const
@@ -940,14 +941,14 @@ void Player::childUpdate(int deltaTime)
 			startY += (ultTimeElapsed > 1250);
 		}
 	}
-	else
+	if (wounded())
 	{
-		int timeAnimation = (int) sprite->getTimeAnimation();
-		if ((timeAnimation / (deltaTime * 2)) % 4 == 0)
-		{
+		if ((timeWounded / (deltaTime * 2)) % 4 == 0)
 			sprite->setColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
-		}
-		else sprite->setColor(glm::vec4(1.f));
+		else
+			sprite->setColor(glm::vec4(1.f));
+		timeWounded -= deltaTime;
+		if (timeWounded < 0) sprite->setColor(glm::vec4(1.f));
 	}
 	prevAnim = anim;
 	subweaponCooldown -= deltaTime / 1000.f;
@@ -1127,6 +1128,7 @@ void Player::takeDmg()
 	int anim = sprite->animation();
 	sprite->changeAnimation(WOUNDED + (anim == CROUCH_FINAL) + (anim == UPSTAIRS || anim == CLIMB_IDLE_UP) + (anim == DOWNSTAIRS || anim == CLIMB_IDLE_DOWN));
 	whipping = false;
+	timeWounded = WOUNDED_COOLDOWN;
 }
 
 void Player::jump()

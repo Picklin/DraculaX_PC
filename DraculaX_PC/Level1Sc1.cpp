@@ -84,8 +84,10 @@ void Level1Sc1::render()
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
+	for (auto enemy : enemies) enemy->render();
 	for (auto axe : subweapons) axe->render();
 	player->render();
+	basicShader->use();
 	trunk->render();
 	for (auto item : items) item->render();
 	EffectsManager::instance().render();
@@ -115,17 +117,18 @@ void Level1Sc1::initItems()
 	//items.push_back(ItemManager::instance().getHeart(glm::vec2(20 * map->getTileSize(), 0 * map->getTileSize())));
 	//items.push_back(ItemManager::instance().getSmallHeart(glm::vec2(16 * map->getTileSize(), 0 * map->getTileSize())));
 	//items.push_back(ItemManager::instance().getBigHeart(glm::vec2(12 * map->getTileSize(), 0 * map->getTileSize())));
-	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(20 * map->getTileSize(), 15 * map->getTileSize()), ItemManager::HEART_SMALL);
+	int tileSize = map->getTileSize();
+	Candle* candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(20 * tileSize, 15 * tileSize), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(48 * map->getTileSize(), 6 * map->getTileSize()), ItemManager::ONE_HUNDRED);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(48 * tileSize, 6 * tileSize), ItemManager::ONE_HUNDRED);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(44 * map->getTileSize(), 17 * map->getTileSize()), ItemManager::HEART_SMALL);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(44 * tileSize, 17 * tileSize), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * map->getTileSize(), 17 * map->getTileSize()), ItemManager::HEART);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(52 * tileSize, 17 * tileSize), ItemManager::HEART);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(76 * map->getTileSize(), 17 * map->getTileSize()), GUI::CAT);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(76 * tileSize, 17 * tileSize), GUI::CAT);
 	candles.push_back(candle1);
-	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(85 * map->getTileSize(), 17 * map->getTileSize()), ItemManager::HEART_SMALL);
+	candle1 = Candle::createTorchCandle(*basicShader, glm::vec2(85 * tileSize, 17 * tileSize), ItemManager::HEART_SMALL);
 	candles.push_back(candle1);
 }
 
@@ -137,6 +140,8 @@ void Level1Sc1::initActors(Player* player)
 	player->setStairsMap(stairs);
 	int tileSize = map->getTileSize();
 	player->setPosition(glm::vec2(4 * tileSize, 17 * tileSize));
+
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(30 * tileSize, 16 * tileSize), EnemyManager::SKELETON1));
 
 	triggerAreas.push_back(new TriggerArea(glm::vec2(131 * tileSize, 0), glm::vec2(135 * tileSize, 30 * tileSize), Scene::NEXT_SCENE));
 }
@@ -152,10 +157,10 @@ void Level1Sc1::updateCamera()
 		if (cameraPos.x < 0) cameraPos.x = 0;
 		else if (cameraPos.x > 1024 - SCREEN_WIDTH) cameraPos.x = 1024 - SCREEN_WIDTH;
 		cameraPos.x *= multipliers[i];
-		float minX = cameraPos.x + SCREEN_X;
-		float minY = SCREEN_Y;
-		float maxX = cameraPos.x + SCREEN_WIDTH + SCREEN_X;
-		float maxY = SCREEN_HEIGHT + SCREEN_Y;
+		minX = cameraPos.x + SCREEN_X;
+		minY = SCREEN_Y;
+		maxX = cameraPos.x + SCREEN_WIDTH + SCREEN_X;
+		maxY = SCREEN_HEIGHT + SCREEN_Y;
 		projections[i] = glm::ortho(minX, maxX, maxY, minY);
 	}
 	//cout << playerPos.x + playerCenter.x << endl;

@@ -242,10 +242,10 @@ void Level1Sc2::updateCamera()
 			else if (cameraPos.x > 768) cameraPos.x = 768.f;
 		}
 		cameraPos.x *= multipliers[i];
-		float minX = cameraPos.x + CAMERA_X;
-		float minY = cameraPos.y;
-		float maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
-		float maxY = cameraPos.y + SCREEN_HEIGHT;
+		minX = cameraPos.x + CAMERA_X;
+		minY = cameraPos.y;
+		maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
+		maxY = cameraPos.y + SCREEN_HEIGHT;
 		projections[i] = glm::ortho(minX, maxX, maxY, minY);
 	}
 }

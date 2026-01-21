@@ -1,4 +1,5 @@
 #include "Candle.h"
+#include "SoundEngine.h"
 #define MAP_OFFSET glm::vec2(32, 16)
 
 Candle::~Candle()
@@ -174,7 +175,7 @@ int Candle::getDropId() const
 
 int Candle::getSFXId() const
 {
-	return 9 * streetlight + 23 * !streetlight;
+	return (SoundEngine::DESTROY_GLASS * streetlight) + (SoundEngine::FUEGUITO * !streetlight);
 }
 
 Hitbox Candle::getHitbox() const

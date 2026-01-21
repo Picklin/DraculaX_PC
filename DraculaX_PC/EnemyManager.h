@@ -2,13 +2,9 @@
 #ifndef _ENEMYMANAGER_INCLUDE
 #define _ENEMYMANAGER_INCLUDE
 
-#include "Enemy.h"
+#include "Skeleton1.h"
+#include "Golem.h"
 #include <functional>
-
-enum EnemyId
-{
-	ENDOSKELETON, GOLEM, GUNNER, SNIPER, SNIPER2
-};
 
 class EnemyManager
 {
@@ -21,6 +17,14 @@ public:
 private:
 	EnemyManager();
 	void initEnemy(Enemy& e, const glm::vec2& pos);
+	Enemy* createSkeleton1(const glm::vec2& pos);
+	Enemy* createGolem(const glm::vec2& pos);
+
+public:
+	enum EnemyId
+	{
+		SKELETON1, GOLEM,
+	};
 
 private:
 	glm::ivec2 tileMapDispl;

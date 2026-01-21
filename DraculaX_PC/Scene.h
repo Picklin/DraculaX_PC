@@ -10,6 +10,8 @@
 #include "SpawnPoint.h"
 #include "EffectsManager.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
+#include "ProjectileManager.h"
 #include "Candle.h"
 #include "Axe.h"
 
@@ -48,6 +50,7 @@ protected:
 
 private:
 	bool isInArea(const Hitbox& area, const glm::vec2& pos);
+	bool oobProjectile(const glm::vec2& pos) const;
 	bool oobEnemy(const glm::vec2& pos) const;
 	void updateSpawnPoints(int deltaTime);
 	void updateTriggerAreas();
@@ -69,6 +72,7 @@ protected:
 	vector<Item*> items;
 	vector<Candle*> candles;
 	vector<Subweapon*> subweapons;
+	vector<Projectile*> projectiles;
 	vector<Enemy*> enemies;
 	vector<InfSpawnPoint> infSpawnPoints;
 	vector<SpawnPoint*> spawnPoints;
@@ -91,6 +95,11 @@ protected:
 	ShaderProgram* spriteShader;
 	ShaderProgram* basicShader;				//seconds
 	TexturedQuad* blackScreen;
+
+	float minX;
+	float minY;
+	float maxX;
+	float maxY;
 
 	float timeElapsed;
 	float blackScreenDuration;

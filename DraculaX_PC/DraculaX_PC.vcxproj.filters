@@ -50,6 +50,18 @@
     <Filter Include="Archivos de encabezado\Bosses">
       <UniqueIdentifier>{fe5a1d1f-0017-45f7-8fab-8e962474e714}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Enemies">
+      <UniqueIdentifier>{41769174-2a86-4b91-acae-f1006c1d4fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Enemies">
+      <UniqueIdentifier>{c741935c-011a-4334-8d9f-7f7231d17f93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de código fuente\Projectiles">
+      <UniqueIdentifier>{68281c8c-ce72-4a0d-b1d4-7f1dcb8f5c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Projectiles">
+      <UniqueIdentifier>{c3ce617c-4633-4bbe-adcd-cf26b60c5140}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,9 +102,6 @@
     </ClCompile>
     <ClCompile Include="EffectsManager.cpp">
       <Filter>Archivos de código fuente\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Archivos de código fuente</Filter>
     </ClCompile>
     <ClCompile Include="SoundEngine.cpp">
       <Filter>Archivos de código fuente</Filter>
@@ -172,6 +181,24 @@
     <ClCompile Include="Level1Sc3.cpp">
       <Filter>Archivos de código fuente\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Archivos de código fuente\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton1.cpp">
+      <Filter>Archivos de código fuente\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Golem.cpp">
+      <Filter>Archivos de código fuente\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Archivos de código fuente\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileManager.cpp">
+      <Filter>Archivos de código fuente\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GolemProjectile.cpp">
+      <Filter>Archivos de código fuente\Projectiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -218,9 +245,6 @@
     </ClInclude>
     <ClInclude Include="ItemManager.h">
       <Filter>Archivos de encabezado\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="SoundEngine.h">
       <Filter>Archivos de encabezado</Filter>
@@ -299,6 +323,24 @@
     </ClInclude>
     <ClInclude Include="Level1Sc3.h">
       <Filter>Archivos de encabezado\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Archivos de encabezado\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton1.h">
+      <Filter>Archivos de encabezado\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Golem.h">
+      <Filter>Archivos de encabezado\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Archivos de encabezado\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileManager.h">
+      <Filter>Archivos de encabezado\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GolemProjectile.h">
+      <Filter>Archivos de encabezado\Projectiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
