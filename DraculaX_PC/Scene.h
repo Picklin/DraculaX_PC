@@ -69,6 +69,7 @@ protected:
 		AUTO_ADVANCE, NEXT_SCENE, BOSS_APPEARS
 	};
 	glm::mat4 projection;
+	const string stageClearStr[2] = { "STAGE CLEAR", "NIVEL\nSUPERADO" };
 	vector<Item*> items;
 	vector<Candle*> candles;
 	vector<Subweapon*> subweapons;

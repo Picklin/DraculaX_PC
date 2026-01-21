@@ -45,6 +45,17 @@ void Enemy::takeDmg(int dmg)
 		end();
 	}
 	sprite->invertColor();
+	timeWounded = setWoundedCooldown();
+}
+
+bool Enemy::wounded() const
+{
+	return timeWounded >= 0;
+}
+
+int Enemy::setWoundedCooldown()
+{
+	return 1000;
 }
 
 const glm::vec2 Enemy::getDistEnemyToPlayer() const

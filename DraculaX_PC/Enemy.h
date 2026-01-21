@@ -22,26 +22,28 @@ public:
 	int getContactDamage() const { return contactDamage; }
 	virtual int getScore() const { return 50; }
 	bool isAttacking() const { return attacking; }
+	bool wounded() const;
 	virtual void makeProjectileSound() const {};
 
 protected:
 	virtual int setMaxHealth() = 0;
 	virtual int setContactDamage() { return 10; }
+	virtual int setWoundedCooldown();
 	virtual void makeHurtSound() const {}
 	//enemyPos - playerPos
 	const glm::vec2 getDistEnemyToPlayer() const;
 
 protected:
+	glm::vec2 playerCenter;
+	glm::vec2* playerPos = nullptr;
 	int MAXHEALTH;
 	int contactDamage;
 	int currentHealth;
-	glm::vec2* playerPos = nullptr;
-	glm::vec2 playerCenter;
+	int timeWounded = -1;
+	float shootCooldown = 0.f;
 	bool attacking = false;
 	bool renderAltern = true;
 	bool flicker = false;
-	float shootCooldown;
-	enum typeProj { GOLEM };
 };
 
 #endif // !_ENEMY_INCLUDE

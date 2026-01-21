@@ -6,8 +6,6 @@
 
 class Skeleton1 : public Enemy
 {
-public:
-	const glm::vec2 myCenter() const override;
 
 protected:
 	string getName() const override;
@@ -16,11 +14,11 @@ protected:
 	const glm::ivec2 getQuadSize() const override;
 	void setAnimations() override;
 	int setEndAnimation() override;
-	int setEndTime() { return 1000; } //en milisegundos
+	int setEndTime() override; //en milisegundos
 	void makeEndSound() const override;
 	void makeEndEffect() const override;
 	void childUpdate(int deltaTime) override;
-	int setMaxHealth() { return 5; }
+	int setMaxHealth() { return 7; }
 	const Hitbox getHitbox() const override;
 
 private:

@@ -141,7 +141,11 @@ void Level1Sc1::initActors(Player* player)
 	int tileSize = map->getTileSize();
 	player->setPosition(glm::vec2(4 * tileSize, 17 * tileSize));
 
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(30 * tileSize, 16 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(38 * tileSize, 18 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(64 * tileSize, 18 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(96 * tileSize, 18 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(128 * tileSize, 18 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(160 * tileSize, 18 * tileSize), EnemyManager::SKELETON1));
 
 	triggerAreas.push_back(new TriggerArea(glm::vec2(131 * tileSize, 0), glm::vec2(135 * tileSize, 30 * tileSize), Scene::NEXT_SCENE));
 }

@@ -174,6 +174,17 @@ void Scene::updateActors(int deltaTime)
 						gui->takeDmg(enemies[i]->getContactDamage());
 					}
 				}
+				if (!enemies[i]->isEnded())
+				{
+					if (player->isAttacking() && !enemies[i]->wounded() && collision(enemies[i]->getHitbox(), player->getWhipHitbox()))
+					{
+						enemies[i]->takeDmg(7);
+					}
+					for (auto subwpn : subweapons)
+					{
+						if (collision(enemies[i]->getHitbox(), subwpn->getHitbox())) enemies[i]->takeDmg(subwpn->getDamage());
+					}
+				}
 				if (enemies[i]->getsRemoved())
 				{
 					gui->gainScore(enemies[i]->getScore());

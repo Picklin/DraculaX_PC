@@ -451,7 +451,7 @@ void Player::childUpdate(int deltaTime)
 	sprite->update(deltaTime);
 	//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
 	int anim = sprite->animation();
-	//cout << "Anim: " << anim << " State: " << animToStateMap[anim] << endl;
+	//cout << "Anim: " << anim  << endl;
     int state = animToStateMap.at(anim);
 	/*if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
 	{
@@ -1128,6 +1128,9 @@ void Player::takeDmg()
 	int anim = sprite->animation();
 	sprite->changeAnimation(WOUNDED + (anim == CROUCH_FINAL) + (anim == UPSTAIRS || anim == CLIMB_IDLE_UP) + (anim == DOWNSTAIRS || anim == CLIMB_IDLE_DOWN));
 	whipping = false;
+	bDashing = false;
+	bJumping = false;
+	backflipping = false;
 	timeWounded = WOUNDED_COOLDOWN;
 }
 

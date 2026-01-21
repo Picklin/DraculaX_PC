@@ -36,13 +36,17 @@ Enemy* EnemyManager::createSkeleton1(const glm::vec2& pos)
     Skeleton1* t800 = new Skeleton1();
     initEnemy(*t800, pos);
     t800->setTileMap(map);
+    t800->setPlatforms(platforms);
     return t800;
 }
 
 Enemy* EnemyManager::createGolem(const glm::vec2& pos)
 {
     Golem* g = new Golem();
-    initEnemy(*g, pos);
+    g->init(tileMapDispl, *shader);
+    g->setPosition(pos);
+    g->setPlayerPos(playerPos);
+    g->setPlayerCenter(playerCenter);
     return g;
 }
 

@@ -1,25 +1,21 @@
 #include "Skeleton1.h"
 #include "SoundEngine.h"
 #define SPEED 0.25f
+#define FALL_SPEED 4.F
 
 enum anims
 {
-	WALK, JUMP, ATTACK, L_DIE, HEADSHOT
+	WALK, JUMP, ATTACK, DIE
 };
-
-const glm::vec2 Skeleton1::myCenter() const
-{
-	return glm::vec2(38.f, 25.f);
-}
 
 string Skeleton1::getName() const
 {
-	return "Endoskeleton";
+	return "Skeleton1";
 }
 
 const string Skeleton1::getSpritesheet() const
 {
-	return "images/enemies/endoskeleton/endoskeleton_green.png";
+	return "images/enemies/skeleton1.png";
 }
 
 const glm::vec2 Skeleton1::getSizeInSpritesheet() const
@@ -29,12 +25,12 @@ const glm::vec2 Skeleton1::getSizeInSpritesheet() const
 
 const glm::ivec2 Skeleton1::getQuadSize() const
 {
-	return glm::ivec2(64, 50);
+	return glm::ivec2(56, 50);
 }
 
 void Skeleton1::setAnimations()
 {
-	sprite->setNumberAnimations(5);
+	sprite->setNumberAnimations(4);
 
 	sprite->setAnimationSpeed(WALK, 6);
 	sprite->animatorX(WALK, 10, 0.f, 0.1f, 0.f);
@@ -52,11 +48,8 @@ void Skeleton1::setAnimations()
 	sprite->addKeyframe(ATTACK, glm::vec2(0.6f, 0.5f));
 	sprite->addKeyframe(ATTACK, glm::vec2(0.7f, 0.5f));
 
-	sprite->setAnimationSpeed(L_DIE, 8);
-	for (int i = 0; i < 5; i++) sprite->animatorX(L_DIE, 2, 0.f, 0.1f, 0.75f);
-
-	sprite->setAnimationSpeed(HEADSHOT, 0);
-	sprite->addKeyframe(HEADSHOT, glm::vec2(0.2f, 0.75f));
+	sprite->setAnimationSpeed(DIE, 8);
+	for (int i = 0; i < 5; i++) sprite->animatorX(DIE, 2, 0.f, 0.1f, 0.75f);
 
 	sprite->setTransition(ATTACK, WALK);
 	sprite->setTransition(JUMP, WALK);
@@ -66,12 +59,18 @@ void Skeleton1::setAnimations()
 
 int Skeleton1::setEndAnimation()
 {
-	return L_DIE;
+	return DIE;
+}
+
+int Skeleton1::setEndTime()
+{
+	return 1000;
 }
 
 void Skeleton1::makeEndSound() const
 {
 	SoundEngine::instance().playSFX(SoundEngine::EXPLOSION_MINI);
+	SoundEngine::instance().playSFX(SoundEngine::SKEL_DEATH1);
 }
 
 void Skeleton1::makeEndEffect() const
@@ -87,7 +86,12 @@ void Skeleton1::childUpdate(int deltaTime)
 	{
 		attacking = false;
 		jumping = false;
-		if (tileMap->collisionMoveLeft({ position + glm::vec2(8.f, 0.f), position + glm::vec2(quadSize) }, &position.x))
+		position.y += FALL_SPEED;
+		if (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y))
+		{
+			platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y);
+		}
+		if (tileMap->collisionMoveLeft({ position + glm::vec2(8.f, 0.f), position + glm::vec2(quadSize-1) }, &position.x))
 		{
 			sprite->changeAnimation(JUMP);
 		}
@@ -118,7 +122,7 @@ void Skeleton1::childUpdate(int deltaTime)
 		position.x -= velocityX;
 		position.y -= velocityY;
 
-		jumping = velocityY > 0 || !tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y);
+		jumping = velocityY > 0 || (!tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y) && !platforms->collisionMoveDown(getHitbox(), &position.y, quadSize.y));
 
 		setPosition(position);
 	}
@@ -134,7 +138,7 @@ void Skeleton1::childUpdate(int deltaTime)
 const Hitbox Skeleton1::getHitbox() const
 {
 	Hitbox hb;
-	hb.min = position;
-	hb.max = hb.min + glm::vec2(quadSize);
+	hb.min = position + glm::vec2(18-18*attacking,6);
+	hb.max = hb.min + glm::vec2(20, 44);
 	return hb;
 }

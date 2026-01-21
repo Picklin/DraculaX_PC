@@ -132,8 +132,10 @@ void Level1Sc2::render()
 	for (auto candle : candles) candle->render();
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[2]);
+	for (auto enemy : enemies) enemy->render();
 	for (auto axe : subweapons) axe->render();
 	player->render();
+	for (auto proj : projectiles) proj->render();
 	//text3.render("STAGE CLEAR", player->getPosition() + glm::vec2(60, 0));
 	//text2.render("9", player->getPosition() + glm::vec2(60, 0));
 	//text.render("La fe es lo que mueve a las personas\na unirse y seguir adelante.", player->getPosition()+glm::vec2(66,0));
@@ -208,6 +210,12 @@ void Level1Sc2::initActors(Player* player)
 	player->setStairsMap(stairs);
 	int tileSize = map->getTileSize();
 	player->setPosition(glm::vec2(0 * tileSize, 22 * tileSize));
+
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(14 * tileSize, 14 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(32 * tileSize, 5 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(48 * tileSize, 5 * tileSize), EnemyManager::SKELETON1));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(86 * tileSize, 18 * tileSize + 8), EnemyManager::GOLEM));
+	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(120 * tileSize, 18 * tileSize + 8), EnemyManager::GOLEM));
 
 	triggerAreas.push_back(new TriggerArea(glm::vec2(145 * tileSize, 0), glm::vec2(148 * tileSize, 26 * tileSize), Scene::NEXT_SCENE));
 }

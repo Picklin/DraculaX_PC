@@ -16,7 +16,7 @@ class Player : public Entity
 public:
 	void render();
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram);
-	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
+	//void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	void setStairsMap(TileMap* stairs) { this->stairs = stairs; }
 	void setTrinket();
 	void setKey();
@@ -70,7 +70,7 @@ private:
 
 	glm::vec2 whipPos;
 
-	TileMap* platforms;
+	//TileMap* platforms;
 	TileMap* stairs;
 
 	int jumpAngle = 0;

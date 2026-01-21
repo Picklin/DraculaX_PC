@@ -45,7 +45,17 @@ void Level1Sc3::update(int deltaTime)
 	{
 		wyvern->update(deltaTime);
 		Hitbox wyvBox = wyvern->getHitbox(); 
-		if (player->isAttacking() && !wyvern->isWounded() && collision(wyvBox, player->getWhipHitbox())) wyvern->takeDmg(7);
+		if (!wyvern->isWounded())
+		{
+			if (player->isAttacking() && collision(wyvBox, player->getWhipHitbox())) wyvern->takeDmg(7);
+			else
+			{
+				for (auto subwpn : subweapons)
+				{
+					if (collision(wyvBox, subwpn->getHitbox())) wyvern->takeDmg(subwpn->getDamage());
+				}
+			}
+		}
 		else if (!player->wounded() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
 		else if (!bossDefeated && wyvern->isEnded())
 		{
@@ -98,7 +108,7 @@ void Level1Sc3::render()
 	for (auto candle : candles) candle->render();
 	for (auto item : items) item->render();
 	EffectsManager::instance().render();
-	if (stageCleared) stageClearText.render("NIVEL\nSUPERADO", glm::vec2(43*16, 72));
+	if (stageCleared) stageClearText.render(stageClearStr[Game::instance().getCurrentTxtLang()], glm::vec2(43 * 16, 72));
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[3]);
 	for (auto axe : subweapons) axe->render();

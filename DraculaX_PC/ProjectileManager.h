@@ -13,6 +13,8 @@ public:
 	void createGolemProjectile(const glm::vec2& pos, const glm::vec2& dir);
 	Projectile* getEnemyProjectile(const glm::vec2& pos, const glm::vec2& dir, int projNum);
 
+public:
+	enum typeProj { GOLEM };
 
 private:
 	ProjectileManager();

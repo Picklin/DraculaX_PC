@@ -15,34 +15,8 @@ void Golem::init(glm::ivec2& tileMapDispl, ShaderProgram& program)
 	legsTex.loadFromFile("images/enemies/golem/golem_legs.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	legsTex.setMagFilter(GL_NEAREST);
 	legs = Sprite::createSprite(glm::ivec2(208, 80), glm::vec2(0.2f, 0.25f), &legsTex, &program);
+	shootCooldown = 2.f;
 	Enemy::init(tileMapDispl, program);
-	int numfrag = 12;
-	fragPositions.reserve(numfrag);
-	fragCoordPositions.reserve(numfrag);
-	fragPositions.emplace_back(glm::vec2(72.f, 104.f));
-	fragPositions.emplace_back(glm::vec2(143.f, 104.f));
-	fragPositions.emplace_back(glm::vec2(84.f, 70.f));
-	fragPositions.emplace_back(glm::vec2(73.f, 87.f));
-	fragPositions.emplace_back(glm::vec2(136.f, 87.f));
-	fragPositions.emplace_back(glm::vec2(92.f, 10.f));
-	fragPositions.emplace_back(glm::vec2(124.f, 10.f));
-	fragPositions.emplace_back(glm::vec2(92.f, 42.f));
-	fragPositions.emplace_back(glm::vec2(124.f, 42.f));
-	fragPositions.emplace_back(glm::vec2(99.f, 6.f));
-	fragPositions.emplace_back(glm::vec2(129.f, 54.f));
-	fragPositions.emplace_back(glm::vec2(134.f, 20.f));
-	fragCoordPositions.emplace_back(glm::vec2(0.250f, 0.250f), glm::vec2(0.375f, 0.375f));	//11
-	fragCoordPositions.emplace_back(glm::vec2(0.375f, 0.250f), glm::vec2(0.500f, 0.375f));	//12
-	fragCoordPositions.emplace_back(glm::vec2(0.000f, 0.250f), glm::vec2(0.125f, 0.375f));	//9
-	fragCoordPositions.emplace_back(glm::vec2(0.250f, 0.125f), glm::vec2(0.375f, 0.250f));	//7
-	fragCoordPositions.emplace_back(glm::vec2(0.375f, 0.125f), glm::vec2(0.5f, 0.250f));	//8
-	fragCoordPositions.emplace_back(glm::vec2(0.000f, 0.000f), glm::vec2(0.125f, 0.125f));	//1
-	fragCoordPositions.emplace_back(glm::vec2(0.125f, 0.000f), glm::vec2(0.250f, 0.125f));	//2
-	fragCoordPositions.emplace_back(glm::vec2(0.000f, 0.125f), glm::vec2(0.125f, 0.250f));	//5
-	fragCoordPositions.emplace_back(glm::vec2(0.125f, 0.125f), glm::vec2(0.250f, 0.250f));	//6
-	fragCoordPositions.emplace_back(glm::vec2(0.375f, 0.000f), glm::vec2(0.500f, 0.125f));	//4
-	fragCoordPositions.emplace_back(glm::vec2(0.125f, 0.250f), glm::vec2(0.250f, 0.375f));	//10
-	fragCoordPositions.emplace_back(glm::vec2(0.250f, 0.000f), glm::vec2(0.375f, 0.125f));	//3
 }
 
 void Golem::render()
@@ -70,15 +44,16 @@ const glm::vec2 Golem::myCenter() const
 const Hitbox Golem::getHitbox() const
 {
 	Hitbox hb;
-	hb.min = position;
-	hb.max = hb.min + glm::vec2(quadSize);
+	hb.min = position + glm::vec2(92, 16);
+	hb.max = hb.min + glm::vec2(64, 96);
 	return hb;
 }
 
 const Hitbox Golem::getVulnerableArea() const
 {
 	Hitbox hb;
-
+	hb.min = position + glm::vec2(92, 16);
+	hb.max = hb.min + glm::vec2(50, 58);
 	return hb;
 }
 
@@ -216,12 +191,13 @@ void Golem::makeEndEffect() const
 void Golem::childUpdate(int deltaTime)
 {
 	int anim = sprite->animation();
-	if (anim == IDLE)
+	float xDist = position.x + myCenter().x - playerPos->x;
+	if (anim == IDLE && xDist < 256)
 	{
 		attacking = false;
-		float xDist = position.x + myCenter().x - playerPos->x;
-		if (xDist < 112.f) position.x += SPEED;
-		else if (xDist > 144.f) position.x -= SPEED;
+		
+		//if (xDist < 112.f) position.x += SPEED;
+		//else if (xDist > 112.f && xDist < 144.f) position.x -= SPEED;
 		float yDist = playerPos->y - position.y;
 		if (xDist < 128.f && yDist <= 32.f && punchCooldown >= 4.f)
 		{
@@ -231,13 +207,13 @@ void Golem::childUpdate(int deltaTime)
 			soundmade = false;
 			SoundEngine::instance().playSFX(SoundEngine::ENEMY_ATTACK);
 		}
-		else if (shootCooldown <= 0)
+		else if (shootCooldown >= 4.f)
 		{
 			sprite->changeAnimation(SHOOT);
-			shootCooldown = 4.f;
+			shootCooldown = 0.f;
 			soundmade = false;
 		}
-		shootCooldown -= deltaTime / 1000.f;
+		shootCooldown += deltaTime / 1000.f;
 		punchCooldown += deltaTime / 1000.f;
 	}
 	else if (anim == PUNCH && sprite->getCurrentKeyframe() == 8 && !soundmade)
@@ -252,7 +228,7 @@ void Golem::childUpdate(int deltaTime)
 		glm::vec2 projDir = getPointDirection();
 		for (int i = 0; i < 3; i++)
 		{
-			ProjectileManager::instance().createGolemProjectile(projPos, getRotatedDirection(projDir, 20.f - 20.f * i));
+			ProjectileManager::instance().createGolemProjectile(projPos, getRotatedDirection(projDir, 30.f - 30.f * i));
 		}
 		if (!soundmade)
 		{
@@ -260,9 +236,13 @@ void Golem::childUpdate(int deltaTime)
 			soundmade = true;
 		}
 	}
+	if (wounded())
+	{
+		timeWounded -= deltaTime;
+	}
 	setPosition(position);
-	sprite->setColor(glm::vec4(1.f, 1.f * bodyTemp, 1.f * bodyTemp, 1.f));
-	legs->setColor(glm::vec4(1.f, 1.f * bodyTemp, 1.f * bodyTemp, 1.f));
+	//sprite->setColor(glm::vec4(1.f, 1.f * bodyTemp, 1.f * bodyTemp, 1.f));
+	//legs->setColor(glm::vec4(1.f, 1.f * bodyTemp, 1.f * bodyTemp, 1.f));
 	sprite->update(deltaTime);
 	legs->update(deltaTime);
 }

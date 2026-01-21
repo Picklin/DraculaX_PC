@@ -187,6 +187,7 @@ void Wyvern::update(int deltaTime)
 void Wyvern::render()
 {
     shader->setUniform1i("flip", flip);
+    shader->setUniform1f("frameWidth", 0.1f);
     sprite->render();
 }
 
@@ -202,7 +203,11 @@ void Wyvern::takeDmg(int dmg)
         SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
         SoundEngine::instance().playSFX(SoundEngine::WYVERN_DEATH);
     }
-    else sprite->invertColor();
+    else
+    {
+        sprite->invertColor();
+        SoundEngine::instance().playSFX(SoundEngine::ENEMY_HURT);
+    }
     woundedCooldown = 1.f;
 }
 

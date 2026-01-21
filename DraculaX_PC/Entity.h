@@ -16,6 +16,7 @@ public:
 	void update(int deltaTime);
 	virtual void render();
 	void setTileMap(TileMap* tilemap);
+	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	virtual void setPosition(const glm::vec2& pos);
 	void setPivotPoint(const glm::vec2& pivotPoint);
 	virtual const glm::vec2 myCenter() const;
@@ -54,6 +55,7 @@ protected:
 	bool ended = false;
 	int endTimer = 1;
 	TileMap* tileMap;
+	TileMap* platforms;
 	vector<vector<Hitbox>> hitboxes; //hitboxes de cada frame de cada animacion
 	ShaderProgram* shader;
 };
