@@ -11,12 +11,12 @@ struct Afterimages
 	Sprite* sprite;
 	glm::vec4 color = glm::vec4(1.f);
 
-	void updateAfterimage(int deltaTime, glm::vec2& position, int anim, int frame)
+	void updateAfterimage(int deltaTime, const glm::vec2& position, int anim, int frame)
 	{
 		timeSinceLastImage += deltaTime / 1000.f;
 		if (timeSinceLastImage >= timeImageInterval)
 		{
-			if (lastImages.size() == MAX_IMAGES) lastImages.erase(lastImages.begin());
+			if ((int)lastImages.size() == MAX_IMAGES) lastImages.erase(lastImages.begin());
 			Afterimage image = { position, anim, frame };
 			lastImages.emplace_back(image);
 			timeSinceLastImage = 0;
@@ -24,7 +24,7 @@ struct Afterimages
 	}
 	void render()
 	{
-		int size = lastImages.size();
+		int size = (int) lastImages.size();
 		for (int i = 0; i < size; i++)
 		{
 			float alpha = 1.f/size + ((float)i / size);

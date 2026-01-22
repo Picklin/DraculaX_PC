@@ -11,7 +11,7 @@ ProjectileManager::ProjectileManager() : map(nullptr), program(nullptr), project
     enemyProjectiles.push_back([this](const glm::vec2& pos, const glm::vec2& dir) {return getGolemProjectile(pos, dir); });
 }
 
-void ProjectileManager::init(glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, vector<Projectile*>* projectiles)
+void ProjectileManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, vector<Projectile*>* projectiles)
 {
     this->tileMapDispl = tileMapDispl;
     this->program = &program;

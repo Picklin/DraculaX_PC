@@ -17,7 +17,7 @@ EffectsManager& EffectsManager::instance()
 	return em;
 }
 
-void EffectsManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader)
+void EffectsManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader)
 {
 	this->tileMapDispl = tileMapDispl;
 	this->shader = &shader;

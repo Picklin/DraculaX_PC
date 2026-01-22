@@ -9,7 +9,7 @@ class ProjectileManager
 {
 public:
 	static ProjectileManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, vector<Projectile*>* projectiles);
+	void init(const glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, vector<Projectile*>* projectiles);
 	void createGolemProjectile(const glm::vec2& pos, const glm::vec2& dir);
 	Projectile* getEnemyProjectile(const glm::vec2& pos, const glm::vec2& dir, int projNum);
 

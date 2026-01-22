@@ -12,7 +12,7 @@ class EffectsManager
 {
 public:
 	static EffectsManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader);
+	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader);
 	void update(int deltaTime);
 	void render();
 	void free();

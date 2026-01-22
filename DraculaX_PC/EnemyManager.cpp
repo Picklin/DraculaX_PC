@@ -12,7 +12,7 @@ EnemyManager& EnemyManager::instance()
     return em;
 }
 
-void EnemyManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms)
+void EnemyManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms)
 {
     this->tileMapDispl = tileMapDispl;
     this->shader = &shader;

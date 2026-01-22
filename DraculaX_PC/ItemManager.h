@@ -18,7 +18,7 @@ class ItemManager
 {
 public:
 	static ItemManager& instance();
-	void init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui);
+	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui);
 	
 	Item* getRandomItem(const glm::vec2& position);
 	Item* getCommonRandomItem(const glm::vec2& position);

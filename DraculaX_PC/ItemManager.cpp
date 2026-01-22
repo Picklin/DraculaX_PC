@@ -68,7 +68,7 @@ ItemManager& ItemManager::instance()
     return im;
 }
 
-void ItemManager::init(glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui)
+void ItemManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms, GUI& gui)
 {
     this->tileMapDispl = tileMapDispl;
     this->shader = &shader;
