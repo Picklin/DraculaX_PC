@@ -269,5 +269,5 @@ void Level1Sc2::doAction(int eventId)
 
 const pair<int, int> Level1Sc2::setNewLevelAndScene() const
 {
-	return pair<int, int>(0, 2);
+	return pair<int, int>(1, 2);
 }

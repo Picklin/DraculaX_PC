@@ -42,6 +42,7 @@ protected:
 	virtual TileMap* setStairsMap() = 0;
 	virtual void initItems() = 0;
 	virtual void initActors(Player* player) = 0;
+	void initStageTitle();
 	void updateActors(int deltaTime);
 	virtual void updateCamera();
 	virtual const pair<int, int> setNewLevelAndScene() const = 0;
@@ -75,9 +76,14 @@ protected:
 	{
 		AUTO_ADVANCE, NEXT_SCENE, BOSS_APPEARS
 	};
+	enum StageSongs
+	{
+		BLOODLINES, VAMPIRE_KILLER, CROSS_FEAR, CROSS_HEART, BLOODY_TEARS, CEMETERY, BEGINNING, SLASH, GHOST_SHIP, OP_13, DEN
+	};
 	glm::mat4 projection;
 	static const string stageClearStr[2];
-	static const string stageTitles[52];
+	static const string stageTitles[56];
+	static const glm::vec2 stageNumCoords[14];
 	vector<Item*> items;
 	vector<Candle*> candles;
 	vector<Subweapon*> subweapons;

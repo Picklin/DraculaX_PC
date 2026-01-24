@@ -46,8 +46,7 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/wall.txt", MAP_OFFSET, basicShader));
 	layers.emplace_back(TileMap::createTileMap("levels/level1sc1/casas.txt", MAP_OFFSET, basicShader));
 
-	lvlnum = TexturedQuad::createTexturedQuad(glm::vec2(0.1f, 0.6f), glm::vec2(0.2f, 0.7f), *TextureManager::instance().getTexture("lvltitle"), basicShader);
-	lvlnum->setPosition(glm::vec2(SCREEN_WIDTH / 2 + 59, 0));
+	initStageTitle();
 
 	projections.resize(3);
 
@@ -56,8 +55,9 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 	//text3.init(basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
 	//text3.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
 
-	SoundEngine::instance().playStageSong(Game::STAGE1);
+	SoundEngine::instance().playStageSong(BLOODLINES);
 	player.lockInput();
+	gui.newLevel();
 }
 void Level1Sc1::update(int deltaTime) 
 {
@@ -185,5 +185,5 @@ void Level1Sc1::doAction(int eventId)
 
 const pair<int, int> Level1Sc1::setNewLevelAndScene() const 
 {
-	return pair<int, int>(0, 1);
+	return pair<int, int>(1, 1);
 }

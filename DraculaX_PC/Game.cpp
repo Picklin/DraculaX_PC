@@ -26,7 +26,7 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	gameStarted = true;
+	gameStarted = false;
 	twoPlayerMode = false;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
@@ -40,7 +40,7 @@ void Game::init()
 	basicShader.use();
 	titScreen.init(basicShader);
 	SoundEngine::instance().setMusicMode(false);	//cargamos sfx y paths para la música y establecemos si es arranged
-	start();		//comentar cuando se deje de testear
+	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 
@@ -315,13 +315,13 @@ bool Game::getKey(int key) const
 
 Game::Game()
 {
-	scenesFactory.reserve(1);
+	scenesFactory.resize(2);
 	vector<SceneCreator> lvl1SC;
 	lvl1SC.reserve(3);
 	lvl1SC.emplace_back([this]() { return new Level1Sc1(); });
 	lvl1SC.emplace_back([this]() { return new Level1Sc2(); });
 	lvl1SC.emplace_back([this]() { return new Level1Sc3(); });
-	scenesFactory.emplace_back(lvl1SC);
+	scenesFactory[1] = lvl1SC;
 	scene = nullptr;
 }
 
