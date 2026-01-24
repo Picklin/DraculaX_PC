@@ -21,7 +21,7 @@ protected:
 	glm::ivec2 quadSize;
 	glm::ivec2 tileMapDispl;
 	glm::vec2 position;
-	Texture tex;
+	Texture* tex;
 	Sprite* sprite;
 	ShaderProgram* shader;
 	int lookingDirection;

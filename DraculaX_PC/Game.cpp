@@ -26,7 +26,7 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	gameStarted = false;
+	gameStarted = true;
 	twoPlayerMode = false;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
@@ -40,7 +40,7 @@ void Game::init()
 	basicShader.use();
 	titScreen.init(basicShader);
 	SoundEngine::instance().setMusicMode(false);	//cargamos sfx y paths para la música y establecemos si es arranged
-	//start();		//comentar cuando se deje de testear
+	start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 

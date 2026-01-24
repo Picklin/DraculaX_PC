@@ -16,6 +16,24 @@ TextureManager::TextureManager()
     lvlTitle->loadFromFile("images/levels/leveltitle.png", TEXTURE_PIXEL_FORMAT_RGBA);
     lvlTitle->setMagFilter(GL_NEAREST);
     addTexture("lvltitle", lvlTitle);
+
+    Texture* dialogueFont = new Texture();
+    dialogueFont->loadFromFile("images/fonts/font_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    dialogueFont->setMagFilter(GL_NEAREST);
+    addTexture("dialogue", dialogueFont);
+    Texture* stageClearFont = new Texture();
+    stageClearFont->loadFromFile("images/fonts/BigLetters.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    stageClearFont->setMagFilter(GL_NEAREST);
+    addTexture("BigLetters", stageClearFont);
+    Texture* lettersAndNumsFont = new Texture();
+    lettersAndNumsFont->loadFromFile("images/fonts/Letters&Nums.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    lettersAndNumsFont->setMagFilter(GL_NEAREST);
+    addTexture("Letters&Nums", lettersAndNumsFont);
+
+    Texture* subweapons = new Texture();
+    subweapons->loadFromFile("images/subweapons/axe.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    subweapons->setMagFilter(GL_NEAREST);
+    addTexture("subweapons", subweapons);
 }
 
 TextureManager& TextureManager::instance()

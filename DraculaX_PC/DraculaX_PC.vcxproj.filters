@@ -62,6 +62,12 @@
     <Filter Include="Archivos de encabezado\Projectiles">
       <UniqueIdentifier>{c3ce617c-4633-4bbe-adcd-cf26b60c5140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Cinematics">
+      <UniqueIdentifier>{a275700e-fe6b-44d7-a4e7-2f07d8761197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Cinematics">
+      <UniqueIdentifier>{5a2ec1fa-4ba9-4853-b02f-5724cfabb2de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -198,6 +204,12 @@
     </ClCompile>
     <ClCompile Include="GolemProjectile.cpp">
       <Filter>Archivos de código fuente\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Cinematic.cpp">
+      <Filter>Archivos de código fuente\Cinematics</Filter>
+    </ClCompile>
+    <ClCompile Include="Intro.cpp">
+      <Filter>Archivos de código fuente</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -342,5 +354,9 @@
     <ClInclude Include="GolemProjectile.h">
       <Filter>Archivos de encabezado\Projectiles</Filter>
     </ClInclude>
+    <ClInclude Include="Cinematic.h">
+      <Filter>Archivos de encabezado\Cinematics</Filter>
+    </ClInclude>
+    <ClInclude Include="Intro.h" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include <sstream>
 #include "Text.h"
 #include "Game.h"
+#include "TextureManager.h"
 
 struct TextVertex {
     glm::vec2 pos;
@@ -26,21 +27,43 @@ const map<char, int> specialCharMap = {
     {'Ñ', 26},
 };
 
-void Text::init(ShaderProgram& shader, const string& file, const glm::ivec2 & size, int maxChars)
+Text Text::CreateDialogueText(ShaderProgram& shader)
 {
-	this->shader = &shader;
-    this->file = file;
-	this->CHAR_WIDTH = size.x;
-	this->CHAR_HEIGHT = size.y;
-	this->MAX_CHARS = maxChars;
-    fontTexture.loadFromFile(file, TEXTURE_PIXEL_FORMAT_RGBA);
-	fontTexture.setMagFilter(GL_NEAREST);
+    Text t;
+    t.init(shader, "dialogue", glm::ivec2(6, 12), 64);
+    return t;
+}
+
+Text Text::CreateStageClearText(ShaderProgram& shader)
+{
+    Text t;
+    t.init(shader, "BigLetters", glm::ivec2(16, 16), 26);
+    t.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+    return t;
+}
+
+Text Text::CreateLettersAndNumsText(ShaderProgram& shader)
+{
+    Text t;
+    t.init(shader, "Letters&Nums", glm::ivec2(8, 8), 40);
+    t.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
+    return t;
+}
+
+void Text::init(ShaderProgram& shader, const string& fontName, const glm::ivec2& size, int maxChars)
+{
+    this->shader = &shader;
+    this->fontName = fontName;
+    this->CHAR_WIDTH = size.x;
+    this->CHAR_HEIGHT = size.y;
+    this->MAX_CHARS = maxChars;
+    fontTex = TextureManager::instance().getTexture(fontName);
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	this->shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
+    this->shader->bindVertexAttribute("position", 2, sizeof(TextVertex), (void*)0);
     this->shader->bindVertexAttribute("texCoord", 2, sizeof(TextVertex), (void*)(sizeof(glm::vec2)));
     glBindVertexArray(0);
 
@@ -52,7 +75,7 @@ void Text::render(const std::string& text, glm::vec2 position)
 {
     if (text.empty()) return;
 
-    fontTexture.use();
+    fontTex->use();
 	//shader->use();
 	//shader->setUniform2f("texCoordDispl", 0.f, 0.f);
     shader->setUniformMatrix4f("modelview", glm::mat4(1.f));
@@ -64,13 +87,13 @@ void Text::render(const std::string& text, glm::vec2 position)
     //float currentX = position.x;
     //float currentY = position.y;
 
-    int texWidth = fontTexture.width();
-    int texHeight = fontTexture.height();
+    int texWidth = fontTex->width();
+    int texHeight = fontTex->height();
 
     float stepU = (float)CHAR_WIDTH / texWidth;
     float stepV = (float)CHAR_HEIGHT / texHeight;
 
-    int columnsInTexture = fontTexture.width() / CHAR_WIDTH;
+    int columnsInTexture = fontTex->width() / CHAR_WIDTH;
 
     int numLines = 1 + std::count(text.begin(), text.end(), '\n');
     int totalBlockHeight = numLines * CHAR_HEIGHT;
@@ -96,7 +119,7 @@ void Text::render(const std::string& text, glm::vec2 position)
                 continue;
             }
             else if (c < 65 || c > 126) {
-                if ((c >= 48 && c <= 57) && file == "images/fonts/Letters&Nums.png")
+                if ((c >= 48 && c <= 57) && fontName == "Letters&Nums")
                 {
 					charIndex = (int(c) - 48 + 30);
                 }

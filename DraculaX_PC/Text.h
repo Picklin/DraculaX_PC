@@ -9,7 +9,9 @@
 class Text
 {
 public:
-    void init(ShaderProgram& shader, const string& file, const glm::ivec2 & size, int maxChars);
+    static Text CreateDialogueText(ShaderProgram& shader);
+    static Text CreateStageClearText(ShaderProgram& shader);
+    static Text CreateLettersAndNumsText(ShaderProgram& shader);
     void render(const string& text, glm::vec2 position);
     void setAlpha(float alpha) {
 	    currentAlpha = alpha;
@@ -19,9 +21,12 @@ public:
 	}
 
 private:
-    Texture fontTexture;
+    void init(ShaderProgram& shader, const string & fontName, const glm::ivec2 & size, int maxChars);
+
+private:
+    Texture* fontTex;
 	glm::vec4 currentColor;
-    string file;
+    string fontName;
     ShaderProgram* shader;
     GLuint vao, vbo;
     int CHAR_WIDTH, CHAR_HEIGHT, MAX_CHARS;

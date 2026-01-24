@@ -1,4 +1,5 @@
 #include "Axe.h"
+#include "TextureManager.h"
 
 namespace
 {
@@ -8,9 +9,8 @@ namespace
 void Axe::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, int lookingDirection)
 {
 	quadSize = glm::ivec2(32, 32);
-	tex.loadFromFile("images/subweapons/axe.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	tex.setMagFilter(GL_NEAREST);
-	sprite = Sprite::createSprite(quadSize, glm::vec2(0.125f, 1.f), &tex, &shaderProgram);
+	tex = TextureManager::instance().getTexture("subweapons");
+	sprite = Sprite::createSprite(quadSize, glm::vec2(0.125f, 1.f), tex, &shaderProgram);
 	sprite->setNumberAnimations(1);
 	sprite->setAnimationSpeed(0, 30);
 	sprite->animatorX(0, 8, 0.f, 0.125f, 0.f);

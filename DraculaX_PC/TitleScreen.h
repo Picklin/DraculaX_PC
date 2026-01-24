@@ -17,7 +17,8 @@ private:
 
 private:
 	Text pushRunButton;
-	const string msg[2]{
+	const string msg[2]
+	{
 		" PUSH  RUN  BUTTON!",
 		"¡PULSA EL BOTON RUN!"
 	};

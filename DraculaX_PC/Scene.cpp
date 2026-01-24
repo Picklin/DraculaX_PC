@@ -151,7 +151,7 @@ void Scene::initStageTitle()
 	lvlnum->setPosition(glm::vec2(SCREEN_WIDTH / 2 + 59, 0));
 	triangle->setPosition(glm::vec2(SCREEN_WIDTH / 2, 0));
 	titleSpeed = 4.f;
-	stageTitle.init(*basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
+	stageTitle = Text::CreateDialogueText(*basicShader);
 	stageTitleStr = stageTitles[currentStage * 4 + textLanguage + gui->isMaria() * 2];
 }
 

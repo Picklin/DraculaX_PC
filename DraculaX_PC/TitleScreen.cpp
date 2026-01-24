@@ -48,7 +48,7 @@ void TitleScreen::init(ShaderProgram& program)
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	texProgram->setUniformMatrix4f("projection", projection);
 
-	pushRunButton.init(*texProgram, "images/fonts/Letters&Nums.png", glm::ivec2(8, 8), 40);
+	pushRunButton = Text::CreateLettersAndNumsText(program);
 	pushRunButton.setColor(glm::vec4(252 / 255.f, 0.f, 0.f, 1.f));
 
 	boltTimer = BOLT_FREQ;

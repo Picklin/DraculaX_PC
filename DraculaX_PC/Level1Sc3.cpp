@@ -82,7 +82,7 @@ void Level1Sc3::update(int deltaTime)
 		else if (!stageCleared && gui->stageCleared())
 		{
 			stageCleared = true;
-			stageClearText.init(*basicShader, "images/fonts/BigLetters.png", glm::ivec2(16, 16), 26);
+			stageClearText.CreateStageClearText(*basicShader);
 			stageClearText.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
 			SoundEngine::instance().stopLoopedSFX(SoundEngine::ORB);
 			SoundEngine::instance().playNonStageSong(SoundEngine::STAGE_CLEAR, false);
