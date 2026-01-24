@@ -14,6 +14,7 @@
 #include "ProjectileManager.h"
 #include "Candle.h"
 #include "Axe.h"
+#include "Text.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -46,6 +47,10 @@ protected:
 	virtual const pair<int, int> setNewLevelAndScene() const = 0;
 	virtual void doAction(int eventId) {};
 	void renderTransition();
+	void renderTitle();
+	void calcIncrement(float& valToInc, float targetVal, float factor);
+	void calcEaseIn(float& valToInc, float startVal, float targetVal, float factor);
+	void updateStageTitle(int deltaTime);
 	bool collision(const Hitbox& hitbox1, const Hitbox& hitbox2);
 
 private:
@@ -62,6 +67,8 @@ protected:
 	int screenWidth;
 	int viewportOffset;
 	int maxSubweaponInstances = 1;
+	int textLanguage;
+	int currentStage;
 
 protected:
 	enum Actions
@@ -69,7 +76,8 @@ protected:
 		AUTO_ADVANCE, NEXT_SCENE, BOSS_APPEARS
 	};
 	glm::mat4 projection;
-	const string stageClearStr[2] = { "STAGE CLEAR", "NIVEL\nSUPERADO" };
+	static const string stageClearStr[2];
+	static const string stageTitles[52];
 	vector<Item*> items;
 	vector<Candle*> candles;
 	vector<Subweapon*> subweapons;
@@ -96,6 +104,16 @@ protected:
 	ShaderProgram* spriteShader;
 	ShaderProgram* basicShader;				//seconds
 	TexturedQuad* blackScreen;
+
+	//para el título de cada nivel
+	TexturedQuad* stage;
+	TexturedQuad* lvlnum;
+	TexturedQuad* triangle;
+	float titleSpeed;
+	Text stageTitle;
+	string stageTitleStr;
+	bool titleAppeared = false;
+	bool start = false;
 
 	float minX;
 	float minY;

@@ -24,6 +24,8 @@ public:
 	void unsetKey();
 	void attack();
 	void takeDmg();
+	void lockInput();
+	void unlockInput();
 	string getName() const;
 	const Hitbox getHitbox() const override;
 	const Hitbox getWhipHitbox() const;
@@ -92,6 +94,7 @@ private:
 	float subweaponCooldown = 0.f;
 
 	//state variables
+	bool inputLocked = false;
 	bool bJumping = false;
 	bool bCrouching = false;
 	bool bDashing = false;

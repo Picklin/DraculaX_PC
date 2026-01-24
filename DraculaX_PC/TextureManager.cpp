@@ -2,15 +2,20 @@
 
 TextureManager::TextureManager()
 {
-    pixel = Texture();
-    pixel.loadFromFile("images/pixel.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    pixel.setMagFilter(GL_NEAREST);
-    addTexture("pixel", &pixel);
+    Texture* pixel = new Texture();
+    pixel->loadFromFile("images/pixel.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    pixel->setMagFilter(GL_NEAREST);
+    addTexture("pixel", pixel);
 
-    orb = Texture();
-    orb.loadFromFile("images/gui&items/orb.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    orb.setMagFilter(GL_NEAREST);
-    addTexture("orb", &orb);
+    Texture* orb = new Texture();
+    orb->loadFromFile("images/gui&items/orb.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    orb->setMagFilter(GL_NEAREST);
+    addTexture("orb", orb);
+
+    Texture* lvlTitle = new Texture();
+    lvlTitle->loadFromFile("images/levels/leveltitle.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    lvlTitle->setMagFilter(GL_NEAREST);
+    addTexture("lvltitle", lvlTitle);
 }
 
 TextureManager& TextureManager::instance()

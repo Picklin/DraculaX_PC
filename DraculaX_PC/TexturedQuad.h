@@ -21,6 +21,7 @@ public:
 	void setAlpha(float alpha);
 	void render() const;
 	void free();
+	const glm::vec2& getPosition() { return position; }
 
 private:
 	glm::vec4 color;

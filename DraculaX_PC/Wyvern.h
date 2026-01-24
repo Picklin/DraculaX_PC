@@ -16,6 +16,7 @@ public:
 	void takeDmg(int dmg);
 	const Hitbox getHitbox() const;
 	int getPoints() const;
+	bool battleStarted() const;
 	bool isWounded() const;
 	bool isEnded() const;
 	bool isRemoved() const;

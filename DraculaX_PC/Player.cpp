@@ -449,497 +449,500 @@ void Player::setHitboxes()
 void Player::childUpdate(int deltaTime)
 {
 	sprite->update(deltaTime);
-	//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
-	int anim = sprite->animation();
-	//cout << "Anim: " << anim  << endl;
-    int state = animToStateMap.at(anim);
-	/*if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
-	{
-		sprite->changeAnimation(ULT);
-		bJumping = false;
-		bUlting = true;
-		backflipping = false;
-		jumpAngle = 0;
-		startY = position.y;
-		Game::instance().keyReleased(GLFW_KEY_TAB);
-	}
-	else */if (!bUlting && !bClimbing && state != STATE_WOUNDED)
-	{
-		bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) && !bDashing && !backflipping && anim != BACKFLIP_SKID;
-		bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) && !rightPressed && !bDashing && !backflipping && anim != BACKFLIP_SKID;
-		lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING && state != STATE_CROUCHING) + lookingLeftAtk * (state == STATE_ATTACKING || state == STATE_CROUCHING);
-		if (loseMomentum)
+	if (!inputLocked)
+	{//cout << Game::instance().getKey(GLFW_KEY_Z) << endl;
+		int anim = sprite->animation();
+		//cout << "Anim: " << anim  << endl;
+		int state = animToStateMap.at(anim);
+		/*if (Game::instance().getKey(GLFW_KEY_TAB) && state != STATE_ATTACKING && !bDashing && !bUlting)
 		{
-			if (abs(velocityX) == (1 + backflipping) && anim != (SKID + backflipping))
+			sprite->changeAnimation(ULT);
+			bJumping = false;
+			bUlting = true;
+			backflipping = false;
+			jumpAngle = 0;
+			startY = position.y;
+			Game::instance().keyReleased(GLFW_KEY_TAB);
+		}
+		else */if (!bUlting && !bClimbing && state != STATE_WOUNDED)
+		{
+			bool rightPressed = Game::instance().getKey(GLFW_KEY_RIGHT) && !bDashing && !backflipping && anim != BACKFLIP_SKID;
+			bool leftPressed = Game::instance().getKey(GLFW_KEY_LEFT) && !rightPressed && !bDashing && !backflipping && anim != BACKFLIP_SKID;
+			lookingLeft = (leftPressed || (lookingLeft && !rightPressed)) * (state != STATE_ATTACKING && state != STATE_CROUCHING) + lookingLeftAtk * (state == STATE_ATTACKING || state == STATE_CROUCHING);
+			if (loseMomentum)
 			{
-				if (anim != ATTACK)
+				if (abs(velocityX) == (1 + backflipping) && anim != (SKID + backflipping))
 				{
-					if (backflipping) SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
-					sprite->changeAnimation(SKID + backflipping);
-					anim = SKID + backflipping;
-					state = STATE_IDLE;
+					if (anim != ATTACK)
+					{
+						if (backflipping) SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
+						sprite->changeAnimation(SKID + backflipping);
+						anim = SKID + backflipping;
+						state = STATE_IDLE;
+					}
+					else
+					{
+						loseMomentum = false;
+						backflipping = false;
+						velocityX = 0.f;
+					}
+					backflipping = false;
 				}
-				else
+				velocityX *= 0.9f;
+				if (abs(velocityX) < 0.1f)
 				{
+					velocityX = 0.f;
 					loseMomentum = false;
 					backflipping = false;
-					velocityX = 0.f;
-				}
-				backflipping = false;
-			}
-			velocityX *= 0.9f;
-			if (abs(velocityX) < 0.1f)
-			{
-				velocityX = 0.f;
-				loseMomentum = false;
-				backflipping = false;
-			}
-		}
-	
-		bool getup = (prevDownPressed && grounded && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
-			|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN)) || (timeRecoveringFromJump >= 0.5 && recoverFromJump);
-
-		if (bJumping)
-		{
-			velocityX = (rightPressed - leftPressed) * moveSpeed;
-			if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
-			{
-				Hitbox cb = getTerrainCollisionBox();
-				if (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && ((rightPressed && !tileMap->tileRight(cb)) || leftPressed && !tileMap->tileLeft(cb)))
-				{
-					sprite->changeAnimation(DASH_COMBO);
-					velocityX = ((!lookingLeft - lookingLeft) * 10.f);
-					bDashing = true;
-					bJumping = false;
-					commandBuffer.clear();
-					SoundEngine::instance().playSFX(SoundEngine::DASH);
-				}
-				else
-				{
-					attack();
-					lookingLeftAtk = lookingLeft;
 				}
 			}
-			else
+
+			bool getup = (prevDownPressed && grounded && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN) && anim != GETUP && (state != STATE_DASHING && state != STATE_DASHKICKING))
+				|| ((state == STATE_DASHING || state == STATE_DASHKICKING) && !bDashing && !Game::instance().getKey(GLFW_KEY_DOWN)) || (timeRecoveringFromJump >= 0.5 && recoverFromJump);
+
+			if (bJumping)
 			{
-				int inputToRegister =
-					+GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
-					+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
-				if (inputToRegister != 0) registerInput(inputToRegister);
-
-				jumpAngle += JUMP_ANGLE_STEP;
-				if (jumpAngle < 45 && !backflipping && Game::instance().getKey(GLFW_KEY_Z))
+				velocityX = (rightPressed - leftPressed) * moveSpeed;
+				if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
 				{
-					backflipping = true;
-					sprite->changeAnimation(BACKFLIP);
-				}
-				else if (backflipping)
-				{
-					velocityX = (lookingLeft - !lookingLeft) * 2.f;
-				}
-
-				int tile = 0;
-				Hitbox pixBoxR, pixBoxL;
-				glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
-				pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
-				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
-				if (Game::instance().getKey(GLFW_KEY_UP) && stairs != nullptr && jumpAngle >= 90
-					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
-						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
-				{
-					climbToStair(tile);
-				}
-				else if (jumpAngle >= 180)
-				{
-					bJumping = false;
-					//loseMomentum = backflipping && !whipping;
-					position.y = startY;
-					JUMP_HEIGHT = 64;
-					jumpAngle = 0;
-				}
-				else
-				{
-					position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
-					bJumping = jumpAngle < 90 || (!tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
-						&& (platforms == nullptr || !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)));
-					JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
-					JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
-					if (state != STATE_FALLING && jumpAngle >= 128 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
-					else if (!bJumping && backflipping)
+					Hitbox cb = getTerrainCollisionBox();
+					if (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && ((rightPressed && !tileMap->tileRight(cb)) || leftPressed && !tileMap->tileLeft(cb)))
 					{
-						loseMomentum = !whipping;
+						sprite->changeAnimation(DASH_COMBO);
+						velocityX = ((!lookingLeft - lookingLeft) * 10.f);
+						bDashing = true;
+						bJumping = false;
+						commandBuffer.clear();
+						SoundEngine::instance().playSFX(SoundEngine::DASH);
+					}
+					else
+					{
+						attack();
+						lookingLeftAtk = lookingLeft;
+					}
+				}
+				else
+				{
+					int inputToRegister =
+						+GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
+						+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
+					if (inputToRegister != 0) registerInput(inputToRegister);
+
+					jumpAngle += JUMP_ANGLE_STEP;
+					if (jumpAngle < 45 && !backflipping && Game::instance().getKey(GLFW_KEY_Z))
+					{
+						backflipping = true;
+						sprite->changeAnimation(BACKFLIP);
+					}
+					else if (backflipping)
+					{
+						velocityX = (lookingLeft - !lookingLeft) * 2.f;
+					}
+
+					int tile = 0;
+					Hitbox pixBoxR, pixBoxL;
+					glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
+					pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
+					pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
+					if (Game::instance().getKey(GLFW_KEY_UP) && stairs != nullptr && jumpAngle >= 90
+						&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
+							|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
+					{
+						climbToStair(tile);
+					}
+					else if (jumpAngle >= 180)
+					{
+						bJumping = false;
+						//loseMomentum = backflipping && !whipping;
+						position.y = startY;
+						JUMP_HEIGHT = 64;
+						jumpAngle = 0;
+					}
+					else
+					{
+						position.y = startY - JUMP_HEIGHT * sin(glm::radians((float)jumpAngle));
+						bJumping = jumpAngle < 90 || (!tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
+							&& (platforms == nullptr || !platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)));
+						JUMP_HEIGHT = JUMP_HEIGHT * bJumping + 64 * (!bJumping);
+						JUMP_ANGLE_STEP = 2 + 2 * (jumpAngle < 90 || JUMP_HEIGHT == 64);
+						if (state != STATE_FALLING && jumpAngle >= 128 && state != STATE_ATTACKING && !backflipping) sprite->changeAnimation(FALL);
+						else if (!bJumping && backflipping)
+						{
+							loseMomentum = !whipping;
+						}
 					}
 				}
 			}
-		}
-		else if (getup)
-		{
-			if (anim == ATTACK_CROUCH && !Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
+			else if (getup)
 			{
-				int keyframe = sprite->getCurrentKeyframe();
-				sprite->changeAnimation(ATTACK);
-				sprite->setKeyframe(keyframe);
-			}
-			else
-			{
-				sprite->changeAnimation(GETUP);
-				recoverFromJump = false;
-				timeRecoveringFromJump = 0;
-				lookingLeftAtk = lookingLeft;
-			}
-		}
-		else if (recoverFromJump && grounded)
-		{
-			if (state != STATE_CROUCHING && anim != ATTACK_CROUCH)
-			{
-				if (whipping)
+				if (anim == ATTACK_CROUCH && !Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
 				{
 					int keyframe = sprite->getCurrentKeyframe();
-					sprite->changeAnimation(ATTACK_CROUCH);
+					sprite->changeAnimation(ATTACK);
 					sprite->setKeyframe(keyframe);
-					bCrouching = true;
 				}
-				else sprite->changeAnimation(CROUCH);
-				timeRecoveringFromJump = 0;
-				bDashing = false;
-				velocityX = 0;
-				fallDistance = 0;
-				SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
-			}
-			else
-			{
-				timeRecoveringFromJump += deltaTime / 1000.f;
-			}
-		}
-		else if (!bDashing)
-		{
-			position.y += FALL_SPEED;
-			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y) 
-				|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
-			canJump = canJump || (grounded && !Game::instance().getKey(GLFW_KEY_Z));
-			if (!grounded)
-			{
-				canJump = false;
-				fallDistance += FALL_SPEED;
-				recoverFromJump = fallDistance >= JUMP_HEIGHT;
-				int tile = 0;
-				Hitbox pixBoxR, pixBoxL;
-				glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
-				pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
-				pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
-				if (Game::instance().getKey(GLFW_KEY_X) && !whipping)
+				else
 				{
-					attack();
-				}
-				else if (Game::instance().getKey(GLFW_KEY_UP)
-					&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
-						|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
-				{
-					climbToStair(tile);
+					sprite->changeAnimation(GETUP);
+					recoverFromJump = false;
+					timeRecoveringFromJump = 0;
+					lookingLeftAtk = lookingLeft;
 				}
 			}
-			else if (anim == BACKFLIP_FINAL)
+			else if (recoverFromJump && grounded)
 			{
-				fallDistance = 0;
-				loseMomentum = true;
+				if (state != STATE_CROUCHING && anim != ATTACK_CROUCH)
+				{
+					if (whipping)
+					{
+						int keyframe = sprite->getCurrentKeyframe();
+						sprite->changeAnimation(ATTACK_CROUCH);
+						sprite->setKeyframe(keyframe);
+						bCrouching = true;
+					}
+					else sprite->changeAnimation(CROUCH);
+					timeRecoveringFromJump = 0;
+					bDashing = false;
+					velocityX = 0;
+					fallDistance = 0;
+					SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
+				}
+				else
+				{
+					timeRecoveringFromJump += deltaTime / 1000.f;
+				}
 			}
-			else if (whipping)
+			else if (!bDashing)
 			{
-				fallDistance = 0;
-				backflipping = false;
-				loseMomentum = false;
-			}
-			else fallDistance = 0;
-			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && canJump && grounded && anim != BACKFLIP_SKID && state != STATE_ATTACKING)
-			{
-				if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
+				position.y += FALL_SPEED;
+				grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
+					|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
+				canJump = canJump || (grounded && !Game::instance().getKey(GLFW_KEY_Z));
+				if (!grounded)
 				{
-					JUMP_HEIGHT = 128;
-					sprite->changeAnimation(UPPERCUT);
-				}
-				else sprite->changeAnimation(JUMP + (rightPressed || leftPressed));
-				bJumping = true;
-				grounded = false;
-				backflipping = false;
-				canJump = false;
-				jumpAngle = 0;
-				startY = position.y;
-				Game::instance().keyReleased(GLFW_KEY_Z);
-			}
-			else
-			{
-				if (dashOffLedge)
-				{
-					calcIncrement(velocityX, 0.f, 0.075f);
-					dashOffLedge = velocityX != 0;
-				}
-				else if (!loseMomentum)
-				{
-					loseMomentum = !(rightPressed || leftPressed) && backflipping;
-					velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft)*backflipping*2 
-						+ ((!lookingLeft - lookingLeft) * loseMomentum))) * moveSpeed * (state != STATE_ATTACKING && state != STATE_CROUCHING);
-				}
-				// Calculate animation based on input
-				int inputIndex = 0;
-				if (anim != BACKFLIP_SKID && anim != BACKFLIP_FINAL)
-				{
-					inputIndex += RIGHT * rightPressed
-						+ LEFT * leftPressed
-						+ UP * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
-						+ DOWN * Game::instance().getKey(GLFW_KEY_DOWN)
-						+ A * (Game::instance().getKey(GLFW_KEY_Z) && canJump)
-						+ X * Game::instance().getKey(GLFW_KEY_X);
-					//Register inputs for command detection
-					int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
-						+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
-						+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
-						+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
-					if (inputToRegister != 0) registerInput(inputToRegister);
-				}
-				int tile = 0;
-				int distance = 0;
-				int commandInputIndex = 0;
-				if (Game::instance().getKey(GLFW_KEY_X) && (rightPressed || leftPressed)
-					&& (commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed))) > 0)
-				{
-					commandBuffer.clear();
-					inputIndex = commandInputIndex;
-				}
-				else if (inputIndex == UP && stairs != nullptr && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
-				{
-					bClimbing = true; 
-					linedUpStair = false;
-					goDown = false;
-					rightUpStair = tile == 1;
-					stairPosX = (int)position.x - distance;
-					stairPosY = (int)position.y;
-				}
-				else if (inputIndex == DOWN && stairs != nullptr && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
-				{
-					bClimbing = true;
-					linedUpStair = false;
-					goDown = true;
-					rightUpStair = tile == 1;
-					stairPosX = (int)position.x - distance;
-					stairPosY = (int)position.y + 8;
-				}
-				loseMomentum = loseMomentum && (inputIndex == 0);
-				//cout << "Input Index: " << inputIndex << endl;
-				// Low dash or dash combo
-				Hitbox cb = getTerrainCollisionBox();
-				if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING && state != STATE_FALLING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
-				{
-					bDashing = true;
-					velocityX = (!lookingLeft - lookingLeft) * 10.f;
-					Game::instance().keyReleased(GLFW_KEY_Z);
-					SoundEngine::instance().playSFX(SoundEngine::DASH);
-				}
-				auto it = animMap.find(inputIndex);
-				if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded)
-				{
-					sprite->changeAnimation(it->second);
-					if (animToStateMap.at(it->second) == STATE_ATTACKING)
+					canJump = false;
+					fallDistance += FALL_SPEED;
+					recoverFromJump = fallDistance >= JUMP_HEIGHT;
+					int tile = 0;
+					Hitbox pixBoxR, pixBoxL;
+					glm::vec2 pixelR(42, 63); glm::vec2 pixelL(24, 63);
+					pixBoxR.min = position + pixelR; pixBoxL.min = position + pixelL;
+					pixBoxR.max = pixBoxR.min; pixBoxL.max = pixBoxL.min;
+					if (Game::instance().getKey(GLFW_KEY_X) && !whipping)
 					{
 						attack();
 					}
-					lookingLeftAtk = lookingLeft;
-				}
-				else if (!grounded && state != STATE_FALLING && !whipping)
-				{
-					sprite->changeAnimation(FALL + backflipping);
-				}
-				else if (anim == ATTACK && Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
-				{
-					int keyframe = sprite->getCurrentKeyframe();
-					sprite->changeAnimation(ATTACK_CROUCH);
-					sprite->setKeyframe(keyframe);
-				}
-				int crouchanim = sprite->animation();
-				bCrouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
-			}
-		}
-		else
-		{
-			//cout << anim << endl;
-			if (state == STATE_DASHING)
-			{
-				calcIncrement(velocityX, 0.f, 0.065f);
-				bDashing = velocityX != 0;
-				if (bDashing && Game::instance().getKey(GLFW_KEY_Z))
-				{
-					if (anim == DASH1)
+					else if (Game::instance().getKey(GLFW_KEY_UP)
+						&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
+							|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
 					{
-						sprite->changeAnimation(DASH_KICK);
-						velocityX = ((!lookingLeft - lookingLeft) * 10.f);
-						jumpAngle = 0;
-						startY = position.y;
+						climbToStair(tile);
 					}
-					else if (anim == DASH1_FINAL)
+				}
+				else if (anim == BACKFLIP_FINAL)
+				{
+					fallDistance = 0;
+					loseMomentum = true;
+				}
+				else if (whipping)
+				{
+					fallDistance = 0;
+					backflipping = false;
+					loseMomentum = false;
+				}
+				else fallDistance = 0;
+				if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN) && canJump && grounded && anim != BACKFLIP_SKID && state != STATE_ATTACKING)
+				{
+					if (checkCommand(UPPERCUT_COMMAND.sequence, UPPERCUT_COMMAND.timeWindow))
 					{
-						sprite->changeAnimation(DASH1);
-						velocityX = ((!lookingLeft - lookingLeft) * 10.f);
+						JUMP_HEIGHT = 128;
+						sprite->changeAnimation(UPPERCUT);
+					}
+					else sprite->changeAnimation(JUMP + (rightPressed || leftPressed));
+					bJumping = true;
+					grounded = false;
+					backflipping = false;
+					canJump = false;
+					jumpAngle = 0;
+					startY = position.y;
+					Game::instance().keyReleased(GLFW_KEY_Z);
+				}
+				else
+				{
+					if (dashOffLedge)
+					{
+						calcIncrement(velocityX, 0.f, 0.075f);
+						dashOffLedge = velocityX != 0;
+					}
+					else if (!loseMomentum)
+					{
+						loseMomentum = !(rightPressed || leftPressed) && backflipping;
+						velocityX = (((rightPressed - leftPressed) + (lookingLeft - !lookingLeft) * backflipping * 2
+							+ ((!lookingLeft - lookingLeft) * loseMomentum))) * moveSpeed * (state != STATE_ATTACKING && state != STATE_CROUCHING);
+					}
+					// Calculate animation based on input
+					int inputIndex = 0;
+					if (anim != BACKFLIP_SKID && anim != BACKFLIP_FINAL)
+					{
+						inputIndex += RIGHT * rightPressed
+							+ LEFT * leftPressed
+							+ UP * (Game::instance().getKey(GLFW_KEY_UP) * (anim != GETUP))
+							+ DOWN * Game::instance().getKey(GLFW_KEY_DOWN)
+							+ A * (Game::instance().getKey(GLFW_KEY_Z) && canJump)
+							+ X * Game::instance().getKey(GLFW_KEY_X);
+						//Register inputs for command detection
+						int inputToRegister = GLFW_KEY_RIGHT * (!prevRightPressed && rightPressed)
+							+ GLFW_KEY_LEFT * (!prevLeftPressed && leftPressed)
+							+ GLFW_KEY_UP * Game::instance().getKey(GLFW_KEY_UP)
+							+ GLFW_KEY_DOWN * Game::instance().getKey(GLFW_KEY_DOWN);
+						if (inputToRegister != 0) registerInput(inputToRegister);
+					}
+					int tile = 0;
+					int distance = 0;
+					int commandInputIndex = 0;
+					if (Game::instance().getKey(GLFW_KEY_X) && (rightPressed || leftPressed)
+						&& (commandInputIndex = DASH_COMMAND.index * (checkCommand(DASH_COMMAND.sequence, DASH_COMMAND.timeWindow) && (rightPressed || leftPressed))) > 0)
+					{
+						commandBuffer.clear();
+						inputIndex = commandInputIndex;
+					}
+					else if (inputIndex == UP && stairs != nullptr && grounded && ((tile = stairs->distanceFromStairTile(getStairsDetectionCollisionBox(), distance)) != -1))
+					{
+						bClimbing = true;
+						linedUpStair = false;
+						goDown = false;
+						rightUpStair = tile == 1;
+						stairPosX = (int)position.x - distance;
+						stairPosY = (int)position.y;
+					}
+					else if (inputIndex == DOWN && stairs != nullptr && grounded && ((tile = stairs->distanceFromBelowStairTile(getBelowStairsDetectionCollisionBox(), distance)) != -1))
+					{
+						bClimbing = true;
+						linedUpStair = false;
+						goDown = true;
+						rightUpStair = tile == 1;
+						stairPosX = (int)position.x - distance;
+						stairPosY = (int)position.y + 8;
+					}
+					loseMomentum = loseMomentum && (inputIndex == 0);
+					//cout << "Input Index: " << inputIndex << endl;
+					// Low dash or dash combo
+					Hitbox cb = getTerrainCollisionBox();
+					if (state != STATE_ATTACKING && ((inputIndex == 6 && state != STATE_DASHING && state != STATE_FALLING) || inputIndex == DASH_COMMAND.index) && ((!lookingLeft && !tileMap->tileRight(cb)) || (lookingLeft && !tileMap->tileLeft(cb))))
+					{
+						bDashing = true;
+						velocityX = (!lookingLeft - lookingLeft) * 10.f;
+						Game::instance().keyReleased(GLFW_KEY_Z);
 						SoundEngine::instance().playSFX(SoundEngine::DASH);
 					}
+					auto it = animMap.find(inputIndex);
+					if (it != animMap.end() && state != animToStateMap.at(it->second) && state != STATE_ATTACKING && grounded)
+					{
+						sprite->changeAnimation(it->second);
+						if (animToStateMap.at(it->second) == STATE_ATTACKING)
+						{
+							attack();
+						}
+						lookingLeftAtk = lookingLeft;
+					}
+					else if (!grounded && state != STATE_FALLING && !whipping)
+					{
+						sprite->changeAnimation(FALL + backflipping);
+					}
+					else if (anim == ATTACK && Game::instance().getKey(GLFW_KEY_DOWN) && whip->getCurrentKeyframe() < 6)
+					{
+						int keyframe = sprite->getCurrentKeyframe();
+						sprite->changeAnimation(ATTACK_CROUCH);
+						sprite->setKeyframe(keyframe);
+					}
+					int crouchanim = sprite->animation();
+					bCrouching = (crouchanim == CROUCH) || (crouchanim == CROUCH_FINAL) || (crouchanim == ATTACK_CROUCH);
 				}
-				else if (anim != DASH1_GETUP && abs(velocityX) <= 1.f)
-				{
-					sprite->changeAnimation(DASH1_GETUP);
-					fallFromDash = false;
-				}
-			}
-			else if (state == STATE_DASHKICKING)
-			{
-				calcIncrement(velocityX, 0.f, 0.05f);
-				jumpAngle += 3;
-				if (jumpAngle >= 180)
-				{
-					//cout << jumpAngle << endl;
-					jumpAngle = 0;
-					bDashing = false;
-					sprite->changeAnimation(DASH_KICK_FINAL);
-				}
-				else if (anim != DASH_KICK_FINAL)
-				{
-					position.y = startY - DASH_KICK_HEIGHT * sin(glm::radians((float)jumpAngle));
-					Hitbox cb = getTerrainCollisionBox();
-					tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
-					if (platforms != nullptr) platforms->collisionMoveDown(cb, &position.y, quadSize.y);
-					//cout << jumpAngle << endl;
-				}
-				bDashing = velocityX != 0;
-				if (!bDashing)
-				{
-					sprite->changeAnimation(CROUCH_FINAL);
-					fallFromDash = false;
-				}
-			}
-			else if (state == STATE_COMBO_DASHING)
-			{
-				calcIncrement(velocityX, 0.f, 0.05f);
-				if (abs(velocityX) <= 1.f)
-				{
-					velocityX = (!lookingLeft - lookingLeft) * 1.f;
-					bDashing = false;
-					loseMomentum = true;
-					fallFromDash = false;
-				}
-			}
-			Game::instance().keyReleased(GLFW_KEY_Z);
-			position.y += FALL_SPEED * (state != STATE_COMBO_DASHING);
-			grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
-				|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
-			if (!fallFromDash && sprite->animation() == DASH_KICK_FINAL && grounded)
-			{
-				SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
-				fallFromDash = true;
-			}
-			else if (!grounded && !bDashing)
-			{
-				sprite->changeAnimation(FALL);
-				dashOffLedge = true;
-			}
-		}
-		afterimages.updateAfterimage(deltaTime, glm::vec2(tileMapDispl) + position, anim, sprite->getCurrentKeyframe());
-		position.x += velocityX;
-		Hitbox cb = getTerrainCollisionBox();
-		if (velocityX > 0)
-		{
-			tileMap->collisionMoveRight(cb, &position.x);
-		}
-		else if (velocityX < 0)
-		{
-			tileMap->collisionMoveLeft(cb, &position.x);
-		}
-		ultTimeElapsed = 0;
-		prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
-		prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
-		prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
-		whipUpdate(deltaTime);
-	}
-	else if (bClimbing)
-	{
-		if (linedUpStair)
-		{
-			if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN))
-			{
-				jump();
 			}
 			else
 			{
-				prevYpos = position.y;
-				if (state != STATE_ATTACKING) stairMovement();
-				if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
+				//cout << anim << endl;
+				if (state == STATE_DASHING)
 				{
-					attackInStairs = true;
-					useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP) && canUseTrinket;
+					calcIncrement(velocityX, 0.f, 0.065f);
+					bDashing = velocityX != 0;
+					if (bDashing && Game::instance().getKey(GLFW_KEY_Z))
+					{
+						if (anim == DASH1)
+						{
+							sprite->changeAnimation(DASH_KICK);
+							velocityX = ((!lookingLeft - lookingLeft) * 10.f);
+							jumpAngle = 0;
+							startY = position.y;
+						}
+						else if (anim == DASH1_FINAL)
+						{
+							sprite->changeAnimation(DASH1);
+							velocityX = ((!lookingLeft - lookingLeft) * 10.f);
+							SoundEngine::instance().playSFX(SoundEngine::DASH);
+						}
+					}
+					else if (anim != DASH1_GETUP && abs(velocityX) <= 1.f)
+					{
+						sprite->changeAnimation(DASH1_GETUP);
+						fallFromDash = false;
+					}
 				}
-				bool goingUp = (prevYpos - position.y) > 0;
-				bool goingDown = (prevYpos - position.y) < 0;
-				Hitbox cb = getStairsCollisionBox();
-				int kf = sprite->getCurrentKeyframe();
-				if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
-				else if (goingDown) bClimbing = !tileMap->collisionMoveDown(cb, &position.y, quadSize.y) && (platforms == nullptr || !platforms->collisionMoveDown(cb, &position.y, quadSize.y));
-				else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
+				else if (state == STATE_DASHKICKING)
 				{
-					sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
-					if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey))
+					calcIncrement(velocityX, 0.f, 0.05f);
+					jumpAngle += 3;
+					if (jumpAngle >= 180)
 					{
-						whipping = true;
-						SoundEngine::instance().playSFX(SoundEngine::WHIP);
+						//cout << jumpAngle << endl;
+						jumpAngle = 0;
+						bDashing = false;
+						sprite->changeAnimation(DASH_KICK_FINAL);
 					}
-					else if (useSubweaponInStairs && !hasKey && canUseTrinket)
+					else if (anim != DASH_KICK_FINAL)
 					{
-						sprite->changeAnimation(ATTACK_UPSTAIRS_SUBWEAPON + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2);
-						subweaponCooldown = SUBWEAPON_COOLDOWN;
-						throwSubweapon = true;
+						position.y = startY - DASH_KICK_HEIGHT * sin(glm::radians((float)jumpAngle));
+						Hitbox cb = getTerrainCollisionBox();
+						tileMap->collisionMoveDown(cb, &position.y, quadSize.y);
+						if (platforms != nullptr) platforms->collisionMoveDown(cb, &position.y, quadSize.y);
+						//cout << jumpAngle << endl;
 					}
-					attackInStairs = useSubweaponInStairs = false;
-					int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
-					position.y -= float(correction);
+					bDashing = velocityX != 0;
+					if (!bDashing)
+					{
+						sprite->changeAnimation(CROUCH_FINAL);
+						fallFromDash = false;
+					}
 				}
-				bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
-				linedUpStair = bClimbing;
-				whipUpdate(deltaTime);
+				else if (state == STATE_COMBO_DASHING)
+				{
+					calcIncrement(velocityX, 0.f, 0.05f);
+					if (abs(velocityX) <= 1.f)
+					{
+						velocityX = (!lookingLeft - lookingLeft) * 1.f;
+						bDashing = false;
+						loseMomentum = true;
+						fallFromDash = false;
+					}
+				}
+				Game::instance().keyReleased(GLFW_KEY_Z);
+				position.y += FALL_SPEED * (state != STATE_COMBO_DASHING);
+				grounded = tileMap->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y)
+					|| (platforms != nullptr && platforms->collisionMoveDown(getTerrainCollisionBox(), &position.y, quadSize.y));
+				if (!fallFromDash && sprite->animation() == DASH_KICK_FINAL && grounded)
+				{
+					SoundEngine::instance().playSFX(SoundEngine::HIT_GROUND);
+					fallFromDash = true;
+				}
+				else if (!grounded && !bDashing)
+				{
+					sprite->changeAnimation(FALL);
+					dashOffLedge = true;
+				}
 			}
-			Game::instance().keyReleased(GLFW_KEY_Z);
-		}
-		else if ((int)position.x != stairPosX)
-		{
-			if (anim != WALK) sprite->changeAnimation(WALK);
-			bool goLeft = position.x > stairPosX;
-			position.x += (!goLeft - goLeft);
-		}
-		else if ((int)position.y != stairPosY)
-		{
-			//lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
-			position.y++;
-		}
-		else
-		{
-			sprite->changeAnimation(CLIMB_IDLE_UP+goDown);
-			lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
-			linedUpStair = true;
-			prevDownPressed = false;
-			bCrouching = false;
-		}
-	}
-	else if (bUlting)
-	{
-		if (startY - position.y < 64 && ultTimeElapsed == 0)
-		{
-			position.y -= 4;
-			if (startY - position.y == 64)
+			afterimages.updateAfterimage(deltaTime, glm::vec2(tileMapDispl) + position, anim, sprite->getCurrentKeyframe());
+			position.x += velocityX;
+			Hitbox cb = getTerrainCollisionBox();
+			if (velocityX > 0)
 			{
-				startY = position.y;
-				ultTimeElapsed++;
+				tileMap->collisionMoveRight(cb, &position.x);
+			}
+			else if (velocityX < 0)
+			{
+				tileMap->collisionMoveLeft(cb, &position.x);
+			}
+			ultTimeElapsed = 0;
+			prevRightPressed = Game::instance().getKey(GLFW_KEY_RIGHT);
+			prevLeftPressed = Game::instance().getKey(GLFW_KEY_LEFT) * !rightPressed;
+			prevDownPressed = Game::instance().getKey(GLFW_KEY_DOWN);
+			whipUpdate(deltaTime);
+		}
+		else if (bClimbing)
+		{
+			if (linedUpStair)
+			{
+				if (Game::instance().getKey(GLFW_KEY_Z) && !Game::instance().getKey(GLFW_KEY_DOWN))
+				{
+					jump();
+				}
+				else
+				{
+					prevYpos = position.y;
+					if (state != STATE_ATTACKING) stairMovement();
+					if (Game::instance().getKey(GLFW_KEY_X) && state != STATE_ATTACKING)
+					{
+						attackInStairs = true;
+						useSubweaponInStairs = Game::instance().getKey(GLFW_KEY_UP) && canUseTrinket;
+					}
+					bool goingUp = (prevYpos - position.y) > 0;
+					bool goingDown = (prevYpos - position.y) < 0;
+					Hitbox cb = getStairsCollisionBox();
+					int kf = sprite->getCurrentKeyframe();
+					if (goingUp) bClimbing = stairs->collisionMoveDown(cb);
+					else if (goingDown) bClimbing = !tileMap->collisionMoveDown(cb, &position.y, quadSize.y) && (platforms == nullptr || !platforms->collisionMoveDown(cb, &position.y, quadSize.y));
+					else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
+					{
+						sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
+						if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey))
+						{
+							whipping = true;
+							SoundEngine::instance().playSFX(SoundEngine::WHIP);
+						}
+						else if (useSubweaponInStairs && !hasKey && canUseTrinket)
+						{
+							sprite->changeAnimation(ATTACK_UPSTAIRS_SUBWEAPON + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2);
+							subweaponCooldown = SUBWEAPON_COOLDOWN;
+							throwSubweapon = true;
+						}
+						attackInStairs = useSubweaponInStairs = false;
+						int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;
+						position.y -= float(correction);
+					}
+					bClimbing = bClimbing && !(Game::instance().getKey(GLFW_KEY_DOWN) && Game::instance().getKey(GLFW_KEY_Z));
+					linedUpStair = bClimbing;
+					whipUpdate(deltaTime);
+				}
+				Game::instance().keyReleased(GLFW_KEY_Z);
+			}
+			else if ((int)position.x != stairPosX)
+			{
+				if (anim != WALK) sprite->changeAnimation(WALK);
+				bool goLeft = position.x > stairPosX;
+				position.x += (!goLeft - goLeft);
+			}
+			else if ((int)position.y != stairPosY)
+			{
+				//lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
+				position.y++;
+			}
+			else
+			{
+				sprite->changeAnimation(CLIMB_IDLE_UP + goDown);
+				lookingLeft = rightUpStair && goDown || (!rightUpStair && !goDown);
+				linedUpStair = true;
+				prevDownPressed = false;
+				bCrouching = false;
 			}
 		}
-		else
+		else if (bUlting)
 		{
-			ultTimeElapsed += deltaTime;
-			bUlting = ultTimeElapsed < 1500;
-			startY += (ultTimeElapsed > 1250);
+			if (startY - position.y < 64 && ultTimeElapsed == 0)
+			{
+				position.y -= 4;
+				if (startY - position.y == 64)
+				{
+					startY = position.y;
+					ultTimeElapsed++;
+				}
+			}
+			else
+			{
+				ultTimeElapsed += deltaTime;
+				bUlting = ultTimeElapsed < 1500;
+				startY += (ultTimeElapsed > 1250);
+			}
 		}
+		prevAnim = anim;
 	}
 	if (wounded())
 	{
@@ -950,7 +953,6 @@ void Player::childUpdate(int deltaTime)
 		timeWounded -= deltaTime;
 		if (timeWounded < 0) sprite->setColor(glm::vec4(1.f));
 	}
-	prevAnim = anim;
 	subweaponCooldown -= deltaTime / 1000.f;
 	setPosition(position);
 	//cout << position.x << ' ' << position.y << endl;
@@ -1132,6 +1134,17 @@ void Player::takeDmg()
 	bJumping = false;
 	backflipping = false;
 	timeWounded = WOUNDED_COOLDOWN;
+}
+
+void Player::lockInput()
+{
+	sprite->changeAnimation(PREP_ATK);
+	inputLocked = true;
+}
+
+void Player::unlockInput()
+{
+	inputLocked = false;
 }
 
 void Player::jump()

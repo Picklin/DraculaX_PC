@@ -224,6 +224,11 @@ int Wyvern::getPoints() const
     return POINTS;
 }
 
+bool Wyvern::battleStarted() const
+{
+    return appeared;
+}
+
 bool Wyvern::isWounded() const
 {
     return woundedCooldown > 0;

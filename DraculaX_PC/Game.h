@@ -29,7 +29,7 @@ public:
 
 	enum Levels
 	{
-		STAGE1, STAGE2, STAGE3, STAGE4, STAGE5, STAGE6, STAGE7, STAGE8, STAGE9, STAGE10, STAGE11
+		STAGE1, STAGE2, STAGE2_ALT, STAGE2_ALT2, STAGE3, STAGE3_ALT, STAGE4, STAGE4_ALT, STAGE5, STAGE5_ALT, STAGE6, STAGE7, STAGE8
 	};
 
 	void init();
@@ -51,6 +51,7 @@ public:
 
 	int getCurrentDubLang();
 	int getCurrentTxtLang();
+	int getCurrentLevel();
 
 	bool isTwoPlayerMode();
 	bool getKey(int key) const;

@@ -5,6 +5,23 @@
 #include "Game.h"
 #include "TextureManager.h"
 
+const string Scene::stageClearStr[2] = { "STAGE CLEAR", "NIVEL\nSUPERADO" };
+const string Scene::stageTitles[52] = {
+	"Dinner of Flames", "Cena en Llamas", "Birthplace of Tragedy", "El Origen de la Tragedia",
+	"God, Grant Me Strength", "Dios, Otórgame Fuerzas", "Oh Lord, Please Give Me Strength", "Oh Señor, Por Favor Dame Fuerzas",
+	"Breaking Through the Front Door", "Abriéndose Paso por la Puerta Principal", "I Hate Taking the Long Way Around", "Odio Tomar el Camino Más Largo",
+	"Crucifix on the Breast", "Crucifijo Junto al Pecho", "Crucifix Next to the Heart", "Crucifijo Junto al Corazón",
+	"An Evil Prayer Summons Darkness", "Una Oración Malvada Invoca la Oscuridad", "The Vengeful King of Bloodshed", "El Rey Vengativo de la Matanza",
+	"Release From the Thirst for Blood", "Saciado de la Sed de Sangre", "Let Thy Soul Be At Peace...", "Deja Que Tu Alma Esté En Paz...",
+	"Atop Countless Terrors", "Sobre Incontables Horrores", "Atop the Corpses of Thy Brethren", "Sobre los Cadáveres de Tus Hermanos",
+	"Fortress of the Water Demon", "La Fortaleza del Demonio Acuático", "The Final Divergence", "La Divergencia Final",
+	"The Devil Flies By Night", "El Diablo Vuela de Noche", "Toward the Tower of the Final Showdown", "Hacia la Torre del Enfrentamiento Final",
+	"Wandering", "Vagando", "Shudder", "Estremecimiento",
+	"A Nightmare Reborn", "El Renacer de una Pesadilla", "Undying Melody", "Melodía Inmortal",
+	"Hear Now the Requiem of Blood", "Escuchad Ahora el Réquiem de Sangre", "Believe in the Dawn", "Ten Fe en el Amanecer",
+	"Bloodlines", "Linajes", "The Brink of Death", "Al Borde de la Muerte"
+};
+
 Scene::~Scene()
 {
 	if (map != NULL)
@@ -68,6 +85,16 @@ void Scene::init(Player& player, GUI& gui, ShaderProgram& spriteShader, ShaderPr
 	blackScreen->setColor(glm::vec3(0.f));
 	fadeDuration = 0.5f;
 	blackScreenDuration = 0.25f;
+	textLanguage = Game::instance().getCurrentTxtLang();
+	currentStage = Game::instance().getCurrentLevel();
+	Texture* stageTexs = TextureManager::instance().getTexture("lvltitle");
+	stage = TexturedQuad::createTexturedQuad(glm::vec2(0.f + textLanguage * 0.5f, 0.f), glm::vec2(0.5f + textLanguage * 0.5f, 0.2f), *stageTexs, basicShader);
+	triangle = TexturedQuad::createTexturedQuad(glm::vec2(0.f + gui.isMaria() * 0.5f, 0.4f), glm::vec2(0.5f + gui.isMaria() * 0.5f, 0.6f), *stageTexs, basicShader);
+	stage->setPosition(glm::vec2(SCREEN_WIDTH / 2, 0));
+	triangle->setPosition(glm::vec2(SCREEN_WIDTH / 2, 0));
+	titleSpeed = 4.f;
+	stageTitle.init(basicShader, "images/fonts/font_intro.png", glm::ivec2(6, 12), 64);
+	stageTitleStr = stageTitles[currentStage * 4 + textLanguage + gui.isMaria() * 2];
 }
 
 void Scene::update(int deltaTime)
@@ -182,7 +209,7 @@ void Scene::updateActors(int deltaTime)
 					}
 					for (auto subwpn : subweapons)
 					{
-						if (collision(enemies[i]->getHitbox(), subwpn->getHitbox())) enemies[i]->takeDmg(subwpn->getDamage());
+						if (!enemies[i]->wounded() && collision(enemies[i]->getHitbox(), subwpn->getHitbox())) enemies[i]->takeDmg(subwpn->getDamage());
 					}
 				}
 				if (enemies[i]->getsRemoved())
@@ -270,6 +297,57 @@ void Scene::renderTransition()
 		float alpha = fadeTime / fadeDuration;
 		blackScreen->setAlpha(alpha);
 		blackScreen->render();
+	}
+}
+
+void Scene::renderTitle()
+{
+	if (!start)
+	{
+		basicShader->use();
+		triangle->render();
+		stage->render();
+		lvlnum->render();
+		stageTitle.render(stageTitleStr, glm::vec2(triangle->getPosition().y + 56, SCREEN_WIDTH / 2 + 12));
+	}
+}
+
+void Scene::calcIncrement(float& valToInc, float targetVal, float factor)
+{
+	if (abs(valToInc - targetVal) > 0.2f) valToInc = valToInc + (targetVal - valToInc) * factor;
+	else valToInc = targetVal;
+}
+
+void Scene::calcEaseIn(float& valToInc, float startVal, float targetVal, float factor)
+{
+	factor = factor * factor;
+	valToInc = startVal + (targetVal - startVal) * factor;
+}
+
+void Scene::updateStageTitle(int deltaTime)
+{
+	glm::vec2 titlePos(triangle->getPosition());
+	if (!titleAppeared && titleSpeed > 0)
+	{
+		titlePos.y += titleSpeed;
+		stage->setPosition(titlePos);
+		lvlnum->setPosition(glm::vec2(titlePos.x + 59, titlePos.y));
+		triangle->setPosition(titlePos);
+		calcIncrement(titleSpeed, 0.f, 0.035f);
+	}
+	else if (!start && timeElapsed >= 2)
+	{
+		titleAppeared = true;
+		titlePos.y += titleSpeed;
+		stage->setPosition(titlePos);
+		lvlnum->setPosition(glm::vec2(titlePos.x + 59, titlePos.y));
+		triangle->setPosition(titlePos);
+		calcEaseIn(titleSpeed, 0.f, 4.f, timeElapsed - 2);
+		if (timeElapsed > 4)
+		{
+			start = true;
+			player->unlockInput();
+		}
 	}
 }
 

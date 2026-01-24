@@ -2,13 +2,6 @@
 
 EffectsManager::EffectsManager()
 {
-	/*fragsTex = Texture();
-	fragsTex.loadFromFile("images/effects/fragments.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	fragsTex.setMagFilter(GL_NEAREST);
-
-	pointsTex = Texture();
-	pointsTex.loadFromFile("images/effects/points.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	pointsTex.setMagFilter(GL_NEAREST);*/
 }
 
 EffectsManager& EffectsManager::instance()

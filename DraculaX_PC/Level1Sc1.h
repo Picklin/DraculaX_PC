@@ -25,9 +25,9 @@ protected:
 	void updateCamera();
 	void doAction(int eventId) override;
 	const pair<int, int> setNewLevelAndScene() const;
-	Text text;
-	Text text2;
-	Text text3;
+	//Text text;
+	//Text text2;
+	//Text text3;
 
 private:
 	TexturedQuad* trunk;

@@ -56,7 +56,7 @@ void Level1Sc3::update(int deltaTime)
 				}
 			}
 		}
-		else if (!player->wounded() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
+		else if (!player->wounded() && wyvern->battleStarted() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
 		else if (!bossDefeated && wyvern->isEnded())
 		{
 			EffectsManager::instance().createExplosions(wyvern->getPosition(), glm::vec2(64.f, 64.f), 200, 32, 64, glm::vec4(1.f));
@@ -108,7 +108,7 @@ void Level1Sc3::render()
 	for (auto candle : candles) candle->render();
 	for (auto item : items) item->render();
 	EffectsManager::instance().render();
-	if (stageCleared) stageClearText.render(stageClearStr[Game::instance().getCurrentTxtLang()], glm::vec2(43 * 16, 72));
+	if (stageCleared) stageClearText.render(stageClearStr[textLanguage], glm::vec2(43 * 16, 72));
 	spriteShader->use();
 	spriteShader->setUniformMatrix4f("projection", projections[3]);
 	for (auto axe : subweapons) axe->render();
