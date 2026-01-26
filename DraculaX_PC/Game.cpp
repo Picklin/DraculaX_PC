@@ -26,8 +26,9 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	gameStarted = true;
+	gameStarted = false;
 	twoPlayerMode = false;
+	playingCinematic = true;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
 	currentLevel = STAGE1;
@@ -39,8 +40,10 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	titScreen.init(basicShader);
+	c = Cinematic::createCinematic(basicShader, "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
 	SoundEngine::instance().setMusicMode(false);	//cargamos sfx y paths para la música y establecemos si es arranged
-	start();		//comentar cuando se deje de testear
+	SoundEngine::instance().playIntro();
+	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 
@@ -91,6 +94,10 @@ bool Game::update(int deltaTime)
 		}
 		gui.update(deltaTime);
 	}
+	else if (playingCinematic)
+	{
+		c->update(deltaTime);
+	}
 	else
 	{
 		if (scene != NULL)
@@ -111,6 +118,10 @@ void Game::render()
 	{
 		scene->render();
 		//st.render();
+	}
+	else if (playingCinematic)
+	{
+		c->render();
 	}
 	else titScreen.render();
 }
@@ -323,6 +334,8 @@ Game::Game()
 	lvl1SC.emplace_back([this]() { return new Level1Sc3(); });
 	scenesFactory[1] = lvl1SC;
 	scene = nullptr;
+	c = nullptr;
 }
+
 
 

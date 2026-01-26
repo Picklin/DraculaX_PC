@@ -71,13 +71,13 @@ void Text::init(ShaderProgram& shader, const string& fontName, const glm::ivec2&
 	currentColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
 }
 
-void Text::render(const std::string& text, glm::vec2 position)
+void Text::render(const std::wstring& text, glm::vec2 position)
 {
     if (text.empty()) return;
 
     fontTex->use();
-	//shader->use();
-	//shader->setUniform2f("texCoordDispl", 0.f, 0.f);
+	shader->use();
+	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
     shader->setUniformMatrix4f("modelview", glm::mat4(1.f));
     shader->setUniform4f("color", currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 
@@ -99,9 +99,9 @@ void Text::render(const std::string& text, glm::vec2 position)
     int totalBlockHeight = numLines * CHAR_HEIGHT;
     int currentY = (int)position.y - (totalBlockHeight / 2);
 
-	std::stringstream ss(text);
-    std::string line;
-    while (getline(ss, line, '\n'))
+	std::wstringstream ss(text);
+    std::wstring line;
+    while (getline(ss, line, L'\n'))
     {
 		int lineWidth = line.length() * CHAR_WIDTH;
 		int startX = (int)position.x - lineWidth / 2;

@@ -39,8 +39,8 @@ void TitleScreen::init(ShaderProgram& program)
 	//title
 	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.875f), glm::vec2(1.f, 1.f), textures[1], *texProgram));
 	//bolts
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(1.f, 1.f), textures[2], *texProgram));
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), textures[2], *texProgram));
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.25f, 0.f), glm::vec2(0.5f, 1.f), textures[2], *texProgram));
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.25f, 1.f), textures[2], *texProgram));
 
 	quads[1]->setPosition(glm::vec2(145, 55));
 	quads[2]->setPosition(glm::vec2(88, 15));

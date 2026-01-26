@@ -81,9 +81,7 @@ protected:
 		BLOODLINES, VAMPIRE_KILLER, CROSS_FEAR, CROSS_HEART, BLOODY_TEARS, CEMETERY, BEGINNING, SLASH, GHOST_SHIP, OP_13, DEN
 	};
 	glm::mat4 projection;
-	static const string stageClearStr[2];
-	static const string stageTitles[56];
-	static const glm::vec2 stageNumCoords[14];
+	static const wstring stageClearStr[2];
 	vector<Item*> items;
 	vector<Candle*> candles;
 	vector<Subweapon*> subweapons;
@@ -117,7 +115,7 @@ protected:
 	TexturedQuad* triangle;
 	float titleSpeed;
 	Text stageTitle;
-	string stageTitleStr;
+	wstring stageTitleStr;
 	bool titleAppeared = false;
 	bool start = false;
 

@@ -7,14 +7,16 @@
 class Intro : public Cinematic
 {
 public:
-	void init(ShaderProgram& shader) override;
 	void update(int deltaTime) override;
 	void render() override;
+
+protected:
+	void init(ShaderProgram& shader) override;
 
 private:
 	enum BGIDs
 	{
-		BLACK_SCREEN, CASTLE_OUTSIDE, CASTLE_INSIDE, GIRL_ON_COFFIN, SOLDIERS, STAB, COFFIN_BREAK, DRACULA_APPEAR, CASTLEVANIA_CLOSE, CASTLEVANIA_FAR
+		CASTLE_OUTSIDE, CASTLE_INSIDE, GIRL_ON_COFFIN, SOLDIERS, STAB, COFFIN_BREAK, DRACULA_APPEAR, CASTLEVANIA_CLOSE, CASTLEVANIA_FAR
 	};
 
 };

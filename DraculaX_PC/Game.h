@@ -5,6 +5,7 @@
 #include "GUI.h"
 #include "SceneTesting.h"
 #include "TitleScreen.h"
+#include "Cinematic.h"
 
 #define SCREEN_WIDTH 256
 #define SCREEN_HEIGHT 224
@@ -18,6 +19,7 @@ class Game
 
 private:
 	Game();
+	//~Game();
 
 public:
 	static Game& instance()
@@ -70,6 +72,7 @@ private:
 	using SceneCreator = std::function<Scene* ()>;
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
+	Cinematic* c;
 
 	int currDubLang;
 	int currTxtLang;
@@ -91,6 +94,7 @@ private:
 	bool startPressedLastFrame = false;
 	bool next = false;
 	bool restart = false;
+	bool playingCinematic;
 	bool twoPlayerMode;
 };
 

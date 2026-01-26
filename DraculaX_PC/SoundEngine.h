@@ -29,6 +29,7 @@ public:
 	void playSFX(int sfxId);
 	void playLoopedSFX(int sfxId);
 	void stopLoopedSFX(int sfxId);
+	void playIntro();
 	void playOverture();
 	void fadeOutMusic(int fadeDurationMillisecs);
 
@@ -40,6 +41,7 @@ private:
 	void fadeInThreadFunc(ISound* sound, int durationMs);
 	void loadSFX();
 	void loadMusic();
+	void loadCinematics();
 	void loadMusicPaths(std::vector<std::string>& pathsContainer, const std::string& root);
 	void playMusic(const std::string& path, ISoundSource* source, bool loop);
 	void stopMusic(const std::string& path);
@@ -60,6 +62,8 @@ public:
 private:
 	std::vector<ISoundSource*> stageMusicSources[2];
 	std::vector<ISoundSource*> otherMusicSources[2];
+	std::vector<ISoundSource*> cinematicSources;
+	ISoundSource* introSource[2];
 	std::vector<std::pair<ISoundSource*, ISound*>> sfx;
 	std::vector<ISound*> activeSounds;
 	ISoundSource* overtureSource;

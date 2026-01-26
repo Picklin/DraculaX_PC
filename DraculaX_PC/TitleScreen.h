@@ -17,10 +17,10 @@ private:
 
 private:
 	Text pushRunButton;
-	const string msg[2]
+	const wstring msg[2]
 	{
-		" PUSH  RUN  BUTTON!",
-		"¡PULSA EL BOTON RUN!"
+		L" PUSH  RUN  BUTTON!",
+		L"¡PULSA EL BOTON RUN!"
 	};
 	int lang;
 	float boltTimer;

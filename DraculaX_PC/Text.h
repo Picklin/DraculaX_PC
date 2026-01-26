@@ -12,7 +12,7 @@ public:
     static Text CreateDialogueText(ShaderProgram& shader);
     static Text CreateStageClearText(ShaderProgram& shader);
     static Text CreateLettersAndNumsText(ShaderProgram& shader);
-    void render(const string& text, glm::vec2 position);
+    void render(const wstring& text, glm::vec2 position);
     void setAlpha(float alpha) {
 	    currentAlpha = alpha;
     }
