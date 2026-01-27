@@ -28,7 +28,8 @@ void Game::init()
 	bPlay = true;
 	gameStarted = false;
 	twoPlayerMode = false;
-	playingCinematic = true;
+	arranged = false;
+	playingCinematic = !gameStarted;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
 	currentLevel = STAGE1;
@@ -38,11 +39,12 @@ void Game::init()
 	player.init(MAP_OFFSET, spriteShader);
 	gui.init(guiShader, &player, false && twoPlayerMode);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
-	basicShader.use();
-	titScreen.init(basicShader);
-	c = Cinematic::createCinematic(basicShader, "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
-	SoundEngine::instance().setMusicMode(false);	//cargamos sfx y paths para la música y establecemos si es arranged
-	SoundEngine::instance().playIntro();
+	spriteShader.use();
+	titScreen.init(spriteShader);
+	c = Cinematic::createCinematic(spriteShader, "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
+	SoundEngine::instance().setMusicMode(arranged);	//cargamos sfx y paths para la música y establecemos si es arranged
+	SoundEngine::instance().loadCinematics();
+	if (playingCinematic) SoundEngine::instance().playIntro();
 	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
@@ -97,6 +99,8 @@ bool Game::update(int deltaTime)
 	else if (playingCinematic)
 	{
 		c->update(deltaTime);
+		playingCinematic = !c->ended();
+		if (!playingCinematic) SoundEngine::instance().stopAllSounds();
 	}
 	else
 	{
@@ -317,6 +321,11 @@ void Game::gameOver()
 bool Game::isTwoPlayerMode()
 {
 	return twoPlayerMode;
+}
+
+bool Game::isArranged()
+{
+	return arranged;
 }
 
 bool Game::getKey(int key) const

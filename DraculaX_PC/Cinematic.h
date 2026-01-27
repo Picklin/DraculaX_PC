@@ -7,9 +7,6 @@
 #include "TexturedQuad.h"
 #include "Text.h"
 
-#define SCREEN_WIDTH	256
-#define SCREEN_HEIGHT	224
-
 class Cinematic
 {
 public:
@@ -17,6 +14,7 @@ public:
 	static Cinematic* createCinematic(ShaderProgram& shader, int cinematicId);
 	virtual void update(int deltaTime) = 0;
 	virtual void render() = 0;
+	bool ended() const;
 
 protected:
 	virtual void init(ShaderProgram& shader) = 0;
@@ -38,22 +36,25 @@ protected:
 		float time;
 		float duration;
 	};
-	struct CurrentBg
+	struct Bg
 	{
-		int bgId;
+		Sprite* bg;
+		int id;
 		float time;
 		float duration;
+		float alpha = 1.f;
 	};
 	Text dialogueTxt;
 	queue<Line> script;
-	queue<Sprite*> movingBgs;
-	queue<TexturedQuad*> staticBgs;
+	queue<Bg> film;
 	vector<Sprite*> movingElems;
 	vector<TexturedQuad*> staticElems;
 	TexturedQuad* blackScreen;
 	ShaderProgram* shader = nullptr;
 	float timeElapsed = 0.f;
+	float endTime;
 	bool renderSubtitles = false;
+	bool renderBg = false;
 };
 
 #endif // !_CINEMATIC_INCLUDE

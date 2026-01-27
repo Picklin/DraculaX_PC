@@ -56,6 +56,7 @@ public:
 	int getCurrentLevel();
 
 	bool isTwoPlayerMode();
+	bool isArranged();
 	bool getKey(int key) const;
 
 private:
@@ -96,6 +97,7 @@ private:
 	bool restart = false;
 	bool playingCinematic;
 	bool twoPlayerMode;
+	bool arranged;
 };
 
 

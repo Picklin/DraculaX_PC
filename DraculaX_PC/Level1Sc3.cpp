@@ -82,8 +82,7 @@ void Level1Sc3::update(int deltaTime)
 		else if (!stageCleared && gui->stageCleared())
 		{
 			stageCleared = true;
-			stageClearText.CreateStageClearText(*basicShader);
-			stageClearText.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+			stageClearText = Text::CreateStageClearText(*basicShader);
 			SoundEngine::instance().stopLoopedSFX(SoundEngine::ORB);
 			SoundEngine::instance().playNonStageSong(SoundEngine::STAGE_CLEAR, false);
 		}

@@ -34,6 +34,11 @@ TextureManager::TextureManager()
     subweapons->loadFromFile("images/subweapons/axe.png", TEXTURE_PIXEL_FORMAT_RGBA);
     subweapons->setMagFilter(GL_NEAREST);
     addTexture("subweapons", subweapons);
+
+    Texture* introTexs1 = new Texture();
+    introTexs1->loadFromFile("images/cinematics/intro/introTexs1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    introTexs1->setMagFilter(GL_NEAREST);
+    addTexture("introTexs", introTexs1);
 }
 
 TextureManager& TextureManager::instance()

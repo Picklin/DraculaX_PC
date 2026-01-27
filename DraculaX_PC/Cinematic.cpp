@@ -27,6 +27,11 @@ Cinematic* Cinematic::createCinematic(ShaderProgram& shader, int cinematicId)
     return cinematic;
 }
 
+bool Cinematic::ended() const
+{
+    return timeElapsed >= endTime;
+}
+
 void Cinematic::loadScript(const string& scriptPath)
 {
     wifstream file(scriptPath, ios::binary);

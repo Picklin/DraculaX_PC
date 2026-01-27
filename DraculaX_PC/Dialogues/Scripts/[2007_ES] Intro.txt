@@ -1,16 +1,16 @@
-Hace mucho tiempo,\nla gente vivía feliz y contenta.
-Nadie se percató de la sombra que,\nlentamente, se extendía sobre ellos.
-La oscuridad nubló sus sentidos\ny el mal caló hondo en sus almas.
-Presos de la locura,\nhicieron un pacto con el diablo.
-A altas horas de la noche se reunieron\npara invocar los poderes de las tinieblas\ncon su sangre pecaminosa.
-Para redimirlos de su existencia mortal,
-con el comienzo de un\nnuevo mundo ante sus ojos.
-Y así sucedió que después de cien años,\nel mal volvió a hacerse carne.
-Como criatura inmortal de la noche,\npuede tomar la forma de un lobo,
-un murciélago
-o la niebla.
-Se deleita de la sangre de los humanos.
-¡Drácula!
-El príncipe de las tinieblas,
-el señor del castillo del diablo...
-...ha despertado.
+1.0|5.5|Hace mucho tiempo,\nla gente vivía feliz y contenta.
+7.25|4.5|Nadie se percató de la sombra que,\nlentamente, se extendía sobre ellos.
+21.75|5.75|La oscuridad nubló sus sentidos\ny el mal caló hondo en sus almas.
+29.5|5.0|Presos de la locura,\nhicieron un pacto con el Diablo.
+41.0|7.25|A altas horas de la noche se reunieron\npara invocar los poderes de las tinieblas\ncon su sangre pecaminosa.
+48.5|2.75|Para redimirlos de su existencia mortal,
+51.25|3.0|con el comienzo de un\nnuevo mundo ante sus ojos.
+67.0|5.75|Y así sucedió que después de cien años,\nel mal volvió a hacerse carne.
+73.25|4.5|Como criatura inmortal de la noche,\npuede tomar la forma de un lobo,
+78.0|1.5|un murciélago
+80.5|2.0|o la niebla.
+82.75|2.5|Se deleita de la sangre de los humanos.
+87.0|1.0|¡Drácula!
+88.0|1.75|El príncipe de las tinieblas,
+90.0|2.0|el señor del castillo del diablo...
+92.0|2.5|...ha despertado.

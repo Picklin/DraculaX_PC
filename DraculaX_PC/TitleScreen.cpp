@@ -45,8 +45,8 @@ void TitleScreen::init(ShaderProgram& program)
 	quads[1]->setPosition(glm::vec2(145, 55));
 	quads[2]->setPosition(glm::vec2(88, 15));
 
-	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
-	texProgram->setUniformMatrix4f("projection", projection);
+	//projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
+	//texProgram->setUniformMatrix4f("projection", projection);
 
 	pushRunButton = Text::CreateLettersAndNumsText(program);
 	pushRunButton.setColor(glm::vec4(252 / 255.f, 0.f, 0.f, 1.f));

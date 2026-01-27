@@ -21,6 +21,7 @@ public:
 	void stopAllSounds();
 
 	void setMusicMode(bool arranged);
+	void loadCinematics();
 	void playStageSong(int stageNum);
 	//void stopStageSong(int stageNum);
 	void playNonStageSong(int songId);
@@ -41,7 +42,6 @@ private:
 	void fadeInThreadFunc(ISound* sound, int durationMs);
 	void loadSFX();
 	void loadMusic();
-	void loadCinematics();
 	void loadMusicPaths(std::vector<std::string>& pathsContainer, const std::string& root);
 	void playMusic(const std::string& path, ISoundSource* source, bool loop);
 	void stopMusic(const std::string& path);
@@ -63,7 +63,7 @@ private:
 	std::vector<ISoundSource*> stageMusicSources[2];
 	std::vector<ISoundSource*> otherMusicSources[2];
 	std::vector<ISoundSource*> cinematicSources;
-	ISoundSource* introSource[2];
+	ISoundSource* introSource;
 	std::vector<std::pair<ISoundSource*, ISound*>> sfx;
 	std::vector<ISound*> activeSounds;
 	ISoundSource* overtureSource;

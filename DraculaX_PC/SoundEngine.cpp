@@ -14,7 +14,6 @@ SoundEngine::SoundEngine()
 	engine = createIrrKlangDevice();
 	loadSFX();
 	loadMusic();
-	loadCinematics();
 }
 
 void SoundEngine::checkCurrentSound(ISound* sound)
@@ -111,7 +110,8 @@ void SoundEngine::loadMusic()
 
 void SoundEngine::loadCinematics()
 {
-	introSource[0] = engine->addSoundSourceFromFile("Dialogues/Sound/[1993] Intro.wav");
+	if (arrangeMode) introSource = engine->addSoundSourceFromFile("Dialogues/Sound/[2007] Intro.mp3");
+	else introSource = engine->addSoundSourceFromFile("Dialogues/Sound/[1993] Intro.wav");
 }
 
 void SoundEngine::loadMusicPaths(std::vector<std::string>& pathsContainer, const std::string& root)
@@ -190,7 +190,7 @@ void SoundEngine::stopLoopedSFX(int sfxId)
 
 void SoundEngine::playIntro()
 {
-	engine->play2D(introSource[0]);
+	engine->play2D(introSource);
 }
 
 void SoundEngine::playOverture()
