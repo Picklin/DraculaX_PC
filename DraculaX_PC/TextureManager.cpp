@@ -39,6 +39,19 @@ TextureManager::TextureManager()
     introTexs1->loadFromFile("images/cinematics/intro/introTexs1.png", TEXTURE_PIXEL_FORMAT_RGBA);
     introTexs1->setMagFilter(GL_NEAREST);
     addTexture("introTexs", introTexs1);
+    Texture* introTexs2 = new Texture();
+    introTexs2->loadFromFile("images/cinematics/intro/introTexs2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    introTexs2->setMagFilter(GL_NEAREST);
+    addTexture("introTexs2", introTexs2);
+
+    Texture* dracula = new Texture();
+    dracula->loadFromFile("images/cinematics/intro/Dracula_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    dracula->setMagFilter(GL_NEAREST);
+    addTexture("dracula_intro", dracula);
+    Texture* bat = new Texture();
+    bat->loadFromFile("images/cinematics/intro/bat_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    bat->setMagFilter(GL_NEAREST);
+    addTexture("bat_intro", bat);
 }
 
 TextureManager& TextureManager::instance()

@@ -1,7 +1,7 @@
 0.75|2.0|En los viejos buenos tiempos,
 3.0|3.5|los humanos aún vivían\nen paz y armonía.
-7.5|5.0|Nadie creyó que en el futuro\nllegaría semejante amenaza.
-21.25|3.0|Sin embargo, a la sombra\nde la paz y el desarrollo,
+7.5|4.25|Nadie creyó que en el futuro\nllegaría semejante amenaza.
+21.75|3.0|Sin embargo, a la sombra\nde la paz y el desarrollo,
 25.0|3.25|seguía y sigue habiendo el mal.
 29.75|7.5|La gente empezó a rechazar el desarrollo\ny a ver la paz como una degeneración.
 41.25|6.25|Estamos aquí reunidos para invocar a los\npoderes del mal con nuestra sangre maldita
@@ -12,9 +12,9 @@
 75.75|0.75|de un lobo,
 76.75|1.25|o de la niebla.
 78.75|1.5|Adora la noche.
-81.0|2.5|Se deleita de la sangre\nde mujeres jóvenes
-83.0|2.25|y vive eternamente.
-86.75|2.25|El amo del castillo del diablo,
-89.5|1.75|el señor del mal,
+81.0|2.0|Se deleita de la sangre\nde mujeres jóvenes
+83.5|2.0|y vive eternamente.
+86.75|2.25|El amo del castillo del Diablo,
+89.5|1.75|el Señor del mal,
 91.5|1.5|el Conde Drácula...
-93.5|2.5|...ha despertado.
+93.0|2.5|...ha despertado.

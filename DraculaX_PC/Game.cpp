@@ -41,7 +41,7 @@ void Game::init()
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	spriteShader.use();
 	titScreen.init(spriteShader);
-	c = Cinematic::createCinematic(spriteShader, "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
+	c = Cinematic::createCinematic(spriteShader, arranged ? "Dialogues/Scripts/[2007_ES] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
 	SoundEngine::instance().setMusicMode(arranged);	//cargamos sfx y paths para la música y establecemos si es arranged
 	SoundEngine::instance().loadCinematics();
 	if (playingCinematic) SoundEngine::instance().playIntro();

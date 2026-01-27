@@ -21,14 +21,23 @@ private:
 	{
 		CASTLE_OUTSIDE, CASTLE_INSIDE, GIRL_ON_COFFIN, SOLDIERS, STAB, COFFIN_BREAK, DRACULA_APPEAR, CASTLEVANIA_CLOSE, CASTLEVANIA_FAR
 	};
-	Sprite* coffin;
-	TexturedQuad* bolts[2];
+	Sprite* dracula;
+	Sprite* bat;
+	Sprite* lights;
+	Sprite* titleBg;
+	Sprite* title;
+	TexturedQuad* coffin;
+	TexturedQuad* bolts[4];
+	TexturedQuad* blood[2];
 	float cameraX = 0.f;
 	float cameraY = 0.f;
 	float thunderCooldown = 0.f;
 	float boltDuration;
 	float stabVelocityFactor;
+	float batPosition = 0.f;
 	bool renderBigBolt;
+	bool renderBlood;
+	bool titleShowed = false;
 };
 
 #endif // !_INTRO_INCLUDE
