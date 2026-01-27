@@ -12,15 +12,18 @@ class Cinematic
 public:
 	static Cinematic* createCinematic(ShaderProgram& shader, const string& scriptPath, int cinematicId);
 	static Cinematic* createCinematic(ShaderProgram& shader, int cinematicId);
-	virtual void update(int deltaTime) = 0;
+	void update(int deltaTime);
 	virtual void render() = 0;
 	bool ended() const;
 
 protected:
-	virtual void init(ShaderProgram& shader) = 0;
+	virtual void initChild() = 0;
+	virtual void filmUpdate(int deltaTime) = 0;
+	virtual float setEndTime() const = 0;
 	Cinematic() {}
 
 private:
+	void init(ShaderProgram& shader);
 	void loadScript(const string& scriptPath);
 
 public:
@@ -47,12 +50,12 @@ protected:
 	Text dialogueTxt;
 	queue<Line> script;
 	queue<Bg> film;
-	vector<Sprite*> movingElems;
-	vector<TexturedQuad*> staticElems;
-	TexturedQuad* blackScreen;
+	//vector<Sprite*> movingElems;
+	//vector<TexturedQuad*> staticElems;
+	TexturedQuad* blackScreen = nullptr;
 	ShaderProgram* shader = nullptr;
 	float timeElapsed = 0.f;
-	float endTime;
+	float endTime = 0.f;
 	bool renderSubtitles = false;
 	bool renderBg = false;
 };

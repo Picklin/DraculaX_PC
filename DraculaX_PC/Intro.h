@@ -7,11 +7,12 @@
 class Intro : public Cinematic
 {
 public:
-	void update(int deltaTime) override;
 	void render() override;
 
 protected:
-	void init(ShaderProgram& shader) override;
+	void initChild() override;
+	void filmUpdate(int deltaTime) override;
+	float setEndTime() const override;
 
 private:
 	void calcEaseIn(float& valToInc, float startVal, float targetVal, float factor);
