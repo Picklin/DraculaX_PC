@@ -211,6 +211,12 @@
     <ClCompile Include="Intro.cpp">
       <Filter>Archivos de código fuente\Cinematics</Filter>
     </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Archivos de código fuente\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="Options.cpp">
+      <Filter>Archivos de código fuente\Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -359,6 +365,12 @@
     </ClInclude>
     <ClInclude Include="Intro.h">
       <Filter>Archivos de encabezado\Cinematics</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Archivos de encabezado\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Options.h">
+      <Filter>Archivos de encabezado\Screens</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

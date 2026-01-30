@@ -29,7 +29,8 @@ void Game::init()
 	gameStarted = false;
 	twoPlayerMode = false;
 	arranged = false;
-	playingCinematic = !gameStarted;
+	initialConfigSet = true;
+	playingCinematic = !gameStarted && initialConfigSet;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
 	currentLevel = STAGE1;
@@ -40,8 +41,8 @@ void Game::init()
 	gui.init(guiShader, &player, false && twoPlayerMode);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	spriteShader.use();
-	titScreen.init(spriteShader);
-	c = Cinematic::createCinematic(spriteShader, arranged ? "Dialogues/Scripts/[2007_ES] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
+	cinematic = Cinematic::createCinematic(spriteShader, arranged ? "Dialogues/Scripts/[2007_ES] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
+	currentMenu = Screen::createScreen(spriteShader, Screen::TITLE);
 	SoundEngine::instance().setMusicMode(arranged);	//cargamos sfx y paths para la música y establecemos si es arranged
 	SoundEngine::instance().loadCinematics();
 	if (playingCinematic) SoundEngine::instance().playIntro();
@@ -98,18 +99,13 @@ bool Game::update(int deltaTime)
 	}
 	else if (playingCinematic)
 	{
-		c->update(deltaTime);
-		playingCinematic = !c->ended();
+		cinematic->update(deltaTime);
+		playingCinematic = !cinematic->ended();
 		if (!playingCinematic) SoundEngine::instance().stopAllSounds();
 	}
 	else
 	{
-		if (scene != NULL)
-		{
-			delete scene;
-			scene = nullptr;
-		}
-		titScreen.update(deltaTime);
+		currentMenu->update(deltaTime);
 	}
 
 	return bPlay;
@@ -125,9 +121,9 @@ void Game::render()
 	}
 	else if (playingCinematic)
 	{
-		c->render();
+		cinematic->render();
 	}
-	else titScreen.render();
+	else currentMenu->render();
 }
 
 void Game::changeScene(int level, int scene)
@@ -147,7 +143,7 @@ void Game::restartScene()
 
 void Game::win()
 {
-	//titScreen.win();
+	//currentMenu.win();
 	gameStarted = false;
 	reset();
 }
@@ -249,7 +245,7 @@ void Game::initShaders()
 		cout << "Vertex Shader Error" << endl;
 		cout << "" << vShader.log() << endl << endl;
 	}
-	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
+	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture_sprites.frag");
 	if (!fShader.isCompiled())
 	{
 		cout << "Fragment Shader Error" << endl;
@@ -267,11 +263,18 @@ void Game::initShaders()
 	spriteShader.bindFragmentOutput("outColor");
 
 	vShader.free();
+	fShader.free();
 	vShader.initFromFile(VERTEX_SHADER, "shaders/texture_basic.vert");
 	if (!vShader.isCompiled())
 	{
 		cout << "Vertex Shader Error" << endl;
 		cout << "" << vShader.log() << endl << endl;
+	}
+	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture_backgrounds.frag");
+	if (!fShader.isCompiled())
+	{
+		cout << "Fragment Shader Error" << endl;
+		cout << "" << fShader.log() << endl << endl;
 	}
 	basicShader.init();
 	basicShader.addShader(vShader);
@@ -313,7 +316,7 @@ void Game::reset()
 
 void Game::gameOver()
 {
-	//titScreen.gameOver();
+	//currentMenu.gameOver();
 	gameStarted = false;
 	reset();
 }
@@ -343,7 +346,7 @@ Game::Game()
 	lvl1SC.emplace_back([this]() { return new Level1Sc3(); });
 	scenesFactory[1] = lvl1SC;
 	scene = nullptr;
-	c = nullptr;
+	cinematic = nullptr;
 }
 
 

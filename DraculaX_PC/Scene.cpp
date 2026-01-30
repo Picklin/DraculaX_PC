@@ -144,14 +144,15 @@ void Scene::setViewportOffset(int offset)
 void Scene::initStageTitle()
 {
 	currentStage = Game::instance().getCurrentLevel();
+	//currentStage = 5;
 	Texture* stageTexs = TextureManager::instance().getTexture("lvltitle");
 	if (currentStage < 12) stage = TexturedQuad::createTexturedQuad(glm::vec2(0.f + textLanguage * 0.5f, 0.f), glm::vec2(0.5f + textLanguage * 0.5f, 0.2f), *stageTexs, *basicShader);
 	else stage = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.2f), glm::vec2(0.5f, 0.4f), *stageTexs, *basicShader);
 	lvlnum = TexturedQuad::createTexturedQuad(stageNumCoords[currentStage], stageNumCoords[currentStage] + 0.1f, *stageTexs, *basicShader);
 	triangle = TexturedQuad::createTexturedQuad(glm::vec2(0.f + gui->isMaria() * 0.5f, 0.4f), glm::vec2(0.5f + gui->isMaria() * 0.5f, 0.6f), *stageTexs, *basicShader);
-	stage->setPosition(glm::vec2(SCREEN_WIDTH / 2, 0));
-	lvlnum->setPosition(glm::vec2(SCREEN_WIDTH / 2 + 59, 0));
-	triangle->setPosition(glm::vec2(SCREEN_WIDTH / 2, 0));
+	stage->setPosition(glm::vec2(SCREEN_WIDTH / 2 - 40, -16));
+	lvlnum->setPosition(glm::vec2(SCREEN_WIDTH / 2 + 59 - 40, -16));
+	triangle->setPosition(glm::vec2(SCREEN_WIDTH / 2 - 40, -16));
 	titleSpeed = 4.f;
 	stageTitle = Text::CreateDialogueText(*basicShader);
 	stageTitleStr = stageTitles[currentStage * 4 + textLanguage + gui->isMaria() * 2];
@@ -309,7 +310,9 @@ void Scene::updateCamera()
 
 void Scene::renderTransition()
 {
-	//basicShader->use();
+	basicShader->use();
+	glm::mat4 projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
+	basicShader->setUniformMatrix4f("projection", projection);
 	if (fadeOut)
 	{
 		float alpha = 1.f - (timeElapsed / fadeDuration);
@@ -332,7 +335,7 @@ void Scene::renderTitle()
 		triangle->render();
 		stage->render();
 		lvlnum->render();
-		stageTitle.render(stageTitleStr, glm::vec2(triangle->getPosition().y + 56, SCREEN_WIDTH / 2 + 12));
+		stageTitle.render(stageTitleStr, glm::vec2(triangle->getPosition().y + 56 - 24, SCREEN_WIDTH / 2 + 12 - 16));
 	}
 }
 
@@ -359,14 +362,14 @@ void Scene::updateStageTitle(int deltaTime)
 		triangle->setPosition(titlePos);
 		calcIncrement(titleSpeed, 0.f, 0.035f);
 	}
-	else if (!start && timeElapsed >= 2)
+	else if (!start && timeElapsed >= 2.5f)
 	{
 		titleAppeared = true;
 		titlePos.y += titleSpeed;
 		stage->setPosition(titlePos);
 		lvlnum->setPosition(glm::vec2(titlePos.x + 59, titlePos.y));
 		triangle->setPosition(titlePos);
-		calcEaseIn(titleSpeed, 0.f, 4.f, timeElapsed - 2);
+		calcEaseIn(titleSpeed, 0.f, 4.f, timeElapsed - 2.5f);
 		if (timeElapsed > 4)
 		{
 			start = true;

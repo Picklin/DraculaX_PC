@@ -14,7 +14,9 @@ void Intro::initChild()
 	glm::vec2 offset(0.2f);
 	bool arr = Game::instance().isArranged();
 	coffin = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.2f), glm::vec2(0.2f, 0.4f), *introTexs1, *shader);
-	Texture* boltsTex = TextureManager::instance().getTexture("bolts");
+	Texture* boltsTex = new Texture();
+	boltsTex->loadFromFile("images/screens/bolts.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("bolts", boltsTex);
 	bolts[0] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.75f, 1.f), *boltsTex, *shader);
 	bolts[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.f), glm::vec2(1.f, 1.f), *boltsTex, *shader);
 	bolts[2] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.25f, 1.f), *boltsTex, *shader);
@@ -165,12 +167,17 @@ void Intro::initChild()
 	bg.alpha = 1.f;
 	bg.id = CASTLEVANIA_CLOSE;
 	film.push(bg);
-	Texture* titleBgTex = TextureManager::instance().getTexture("titleBG");
+	Texture* titleBgTex = new Texture();
+	titleBgTex->loadFromFile("images/screens/titleBG.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("titleBG", titleBgTex);
+	Texture* titleTex = new Texture();
+	titleTex->loadFromFile("images/screens/titleOriginal.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("titleOriginal", titleTex);
 	titleBg = Sprite::createSprite(fullScreen, glm::vec2(0.5f, 0.25f), titleBgTex, shader);
 	titleBg->setNumberAnimations(4);
 	titleBg->setAnimationSpeed(0, 10);
-	titleBg->animatorY(0, 4, 0.f, 0.25f, 0.5f);
-	titleBg->setAnimationSpeed(1, 2);
+	titleBg->animatorY(0, 3, 0.f, 0.25f, 0.5f);
+	titleBg->setAnimationSpeed(1, 1);
 	titleBg->addKeyframe(1, glm::vec2(0.5f, 0.75f));
 	titleBg->setAnimationSpeed(2, 0);
 	titleBg->addKeyframe(2, glm::vec2(0.f, 0.f));
@@ -203,7 +210,7 @@ void Intro::initChild()
 	testSp->setPosition(glm::vec2(0, -391));
 	bg.bg = testSp;
 	bg.time = 86.f;
-	bg.duration = 16.f;
+	bg.duration = 17.f;
 	bg.alpha = 0.f;
 	bg.id = CASTLEVANIA_FAR;
 	film.push(bg);
@@ -312,7 +319,7 @@ void Intro::filmUpdate(int deltaTime)
 				if (timeElapsed >= 98) title->update(deltaTime);
 				if (timeElapsed >= 99.75f && title->animation() < 2) title->changeAnimation(2);
 			}
-			if (thunderCooldown <= 0)
+			if (thunderCooldown <= 0 && !titleShowed)
 			{
 				if (titleBg->animation() != 3) titleBg->changeAnimation(3);
 				boltDuration -= deltaTime;
@@ -338,7 +345,7 @@ void Intro::filmUpdate(int deltaTime)
 
 float Intro::setEndTime() const
 {
-	return 102.0f;
+	return 103.0f;
 }
 
 void Intro::render()
@@ -409,7 +416,7 @@ void Intro::render()
 			if (cameraY >= 0)
 			{
 				titleBg->render();
-				if (thunderCooldown <= 0) bolts[2 + renderBigBolt]->render();
+				if (thunderCooldown <= 0 && !titleShowed) bolts[2 + renderBigBolt]->render();
 				if (timeElapsed >= 98) title->render();
 			}
 			else film.front().bg->render();

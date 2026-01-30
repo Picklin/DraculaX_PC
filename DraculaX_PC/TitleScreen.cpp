@@ -16,17 +16,9 @@ void TitleScreen::init(ShaderProgram& program)
 	sprites.reserve(1);
 	quads.reserve(3);
 
-	textures[0].loadFromFile("images/screens/titleBG.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textures[0].setMagFilter(GL_NEAREST);
-	TextureManager::instance().addTexture("titleBG", &textures[0]);
-	textures[1].loadFromFile("images/screens/titleOriginal.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textures[1].setMagFilter(GL_NEAREST);
-	TextureManager::instance().addTexture("titleOriginal", &textures[1]);
-	textures[2].loadFromFile("images/screens/bolts.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textures[2].setMagFilter(GL_NEAREST);
-	TextureManager::instance().addTexture("bolts", &textures[2]);
 	//background
-	sprites.emplace_back(Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.5f, 0.25f), &textures[0], texProgram));
+	Texture* titleBgTex = TextureManager::instance().getTexture("titleBG");
+	sprites.emplace_back(Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.5f, 0.25f), titleBgTex, texProgram));
 	sprites[0]->setNumberAnimations(2);
 	sprites[0]->setAnimationSpeed(0, 0);
 	sprites[0]->addKeyframe(0, glm::vec2(0.f, 0.f));
@@ -37,10 +29,11 @@ void TitleScreen::init(ShaderProgram& program)
 	sprites[0]->setTransition(1, 0);
 	sprites[0]->changeAnimation(0);
 	//title
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.875f), glm::vec2(1.f, 1.f), textures[1], *texProgram));
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.875f), glm::vec2(1.f, 1.f), *TextureManager::instance().getTexture("titleOriginal"), *texProgram));
 	//bolts
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.25f, 0.f), glm::vec2(0.5f, 1.f), textures[2], *texProgram));
-	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.25f, 1.f), textures[2], *texProgram));
+	Texture* boltsTex = TextureManager::instance().getTexture("bolts");
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.25f, 0.f), glm::vec2(0.5f, 1.f), *boltsTex, *texProgram));
+	quads.emplace_back(TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.25f, 1.f), *boltsTex, *texProgram));
 
 	quads[1]->setPosition(glm::vec2(145, 55));
 	quads[2]->setPosition(glm::vec2(88, 15));

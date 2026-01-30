@@ -171,6 +171,8 @@
     <ClCompile Include="Level1Sc2.cpp" />
     <ClCompile Include="Level1Sc3.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Options.cpp" />
     <ClCompile Include="Orb.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
@@ -221,6 +223,8 @@
     <ClInclude Include="Level1Sc1.h" />
     <ClInclude Include="Level1Sc2.h" />
     <ClInclude Include="Level1Sc3.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="Orb.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />

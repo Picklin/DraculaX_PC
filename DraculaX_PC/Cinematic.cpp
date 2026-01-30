@@ -4,7 +4,6 @@
 #include <functional>
 #include <fstream>
 #include <sstream>
-using namespace std;
 
 using CinematicCreator = function<Cinematic* ()>;
 static const CinematicCreator cinematicCreator[Cinematic::COUNT] =

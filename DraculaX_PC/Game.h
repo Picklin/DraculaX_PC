@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "GUI.h"
 #include "SceneTesting.h"
-#include "TitleScreen.h"
+#include "Screen.h"
 #include "Cinematic.h"
 
 #define SCREEN_WIDTH 256
@@ -67,13 +67,13 @@ private:
 
 private:
 	Player player;
-	TitleScreen titScreen;
 	GUI gui;
 	ShaderProgram spriteShader, basicShader, guiShader;
 	using SceneCreator = std::function<Scene* ()>;
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
-	Cinematic* c;
+	Screen* currentMenu;
+	Cinematic* cinematic;
 
 	int currDubLang;
 	int currTxtLang;
@@ -98,6 +98,7 @@ private:
 	bool playingCinematic;
 	bool twoPlayerMode;
 	bool arranged;
+	bool initialConfigSet = false;
 };
 
 

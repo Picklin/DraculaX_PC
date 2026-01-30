@@ -8,9 +8,11 @@
 class TitleScreen : public Screen
 {
 public:
-	void init(ShaderProgram& program) override;
 	void update(int deltaTime) override;
 	void render() override;
+
+protected:
+	void init(ShaderProgram& program) override;
 
 private:
 	void reset();
