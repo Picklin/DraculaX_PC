@@ -21,7 +21,7 @@ public:
 	void render();
 	void setPosition(const glm::vec2& pos);
 	bool isEnded() const { return ended; }
-	void setColor(const glm::vec4& color) { sprite->setColor(color); }
+	void setColor(const glm::vec3& color) { sprite->setColor(color); }
 	void setFlicker();
 	void free();
 

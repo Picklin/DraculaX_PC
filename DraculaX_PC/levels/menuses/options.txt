@@ -1,0 +1,33 @@
+TILEMAP
+32 28 							-- Size of tile map in tiles
+8 8 							-- Tile size & block size
+images/menuses/menu_tiles.png 	-- Tilesheet
+26 3 								-- Number of tiles in tilesheet
+                                
+                                
+                                
+           wx@@@@@@yz           
+           ZXXXXXXXX[           
+         ab{|AAAAAA}~cd         
+                                
+                                
+   ws???????????vz   78::::::;< 
+   ZXXXXXXXXXXXXX[   QRTTTTTTUV 
+ ab{tYYYYYYYYYYYu~cd klnnnnnnop 
+   ws???????????vz   78::::::;< 
+   ZXXXXXXXXXXXXX[   QRTTTTTTUV 
+ ab{tYYYYYYYYYYYu~cd klnnnnnnop 
+   ws???????????vz   78::::::;< 
+   ZXXXXXXXXXXXXX[   QRTTTTTTUV 
+ ab{tYYYYYYYYYYYu~cd klnnnnnnop 
+   ws???????????vz   78::::::;< 
+   ZXXXXXXXXXXXXX[   QRTTTTTTUV 
+ ab{tYYYYYYYYYYYu~cd klnnnnnnop 
+                                
+                                
+                                
+                                
+             wx@@yz             
+             ZXXXX[             
+           ab{|AA}~cd           
+                                

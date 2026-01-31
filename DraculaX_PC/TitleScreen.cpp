@@ -9,10 +9,8 @@
 
 void TitleScreen::init(ShaderProgram& program)
 {
-	this->texProgram = &program;
 	this->lang = Game::instance().getCurrentTxtLang();
 
-	textures.resize(3);
 	sprites.reserve(1);
 	quads.reserve(3);
 
@@ -38,16 +36,14 @@ void TitleScreen::init(ShaderProgram& program)
 	quads[1]->setPosition(glm::vec2(145, 55));
 	quads[2]->setPosition(glm::vec2(88, 15));
 
-	//projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
-	//texProgram->setUniformMatrix4f("projection", projection);
-
 	pushRunButton = Text::CreateLettersAndNumsText(program);
-	pushRunButton.setColor(glm::vec4(252 / 255.f, 0.f, 0.f, 1.f));
+	pushRunButton->setColor(glm::vec3(252 / 255.f, 0.f, 0.f));
 
 	boltTimer = BOLT_FREQ;
 	boltDuration = BOLT_DURATION;
 	renderBigBolt = true;
 
+	Screen::init(program);
 	reset();
 }
 
@@ -97,7 +93,7 @@ void TitleScreen::render()
 			sprites[0]->setAlpha(alpha);
 			quads[0]->setAlpha(alpha+1.25f);
 		}
-		else if (renderText) pushRunButton.render(msg[lang], glm::vec2(128.f, 144.f));
+		else if (renderText) pushRunButton->render(msg[lang], glm::vec2(128.f, 144.f));
 	}
 }
 

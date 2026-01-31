@@ -4,53 +4,45 @@ TextureManager::TextureManager()
 {
     Texture* pixel = new Texture();
     pixel->loadFromFile("images/pixel.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    pixel->setMagFilter(GL_NEAREST);
     addTexture("pixel", pixel);
 
     Texture* orb = new Texture();
     orb->loadFromFile("images/gui&items/orb.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    orb->setMagFilter(GL_NEAREST);
     addTexture("orb", orb);
 
     Texture* lvlTitle = new Texture();
     lvlTitle->loadFromFile("images/levels/leveltitle.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    lvlTitle->setMagFilter(GL_NEAREST);
     addTexture("lvltitle", lvlTitle);
 
     Texture* dialogueFont = new Texture();
     dialogueFont->loadFromFile("images/fonts/font_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    dialogueFont->setMagFilter(GL_NEAREST);
     addTexture("dialogue", dialogueFont);
     Texture* stageClearFont = new Texture();
     stageClearFont->loadFromFile("images/fonts/BigLetters.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    stageClearFont->setMagFilter(GL_NEAREST);
     addTexture("BigLetters", stageClearFont);
     Texture* lettersAndNumsFont = new Texture();
     lettersAndNumsFont->loadFromFile("images/fonts/Letters&Nums.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    lettersAndNumsFont->setMagFilter(GL_NEAREST);
     addTexture("Letters&Nums", lettersAndNumsFont);
+    Texture* menuFont = new Texture();
+    menuFont->loadFromFile("images/fonts/menu_font.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    addTexture("MenuText", menuFont);
 
     Texture* subweapons = new Texture();
     subweapons->loadFromFile("images/subweapons/axe.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    subweapons->setMagFilter(GL_NEAREST);
     addTexture("subweapons", subweapons);
 
     Texture* introTexs1 = new Texture();
     introTexs1->loadFromFile("images/cinematics/intro/introTexs1.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    introTexs1->setMagFilter(GL_NEAREST);
     addTexture("introTexs", introTexs1);
     Texture* introTexs2 = new Texture();
     introTexs2->loadFromFile("images/cinematics/intro/introTexs2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    introTexs2->setMagFilter(GL_NEAREST);
     addTexture("introTexs2", introTexs2);
 
     Texture* dracula = new Texture();
     dracula->loadFromFile("images/cinematics/intro/Dracula_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    dracula->setMagFilter(GL_NEAREST);
     addTexture("dracula_intro", dracula);
     Texture* bat = new Texture();
     bat->loadFromFile("images/cinematics/intro/bat_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    bat->setMagFilter(GL_NEAREST);
     addTexture("bat_intro", bat);
 }
 

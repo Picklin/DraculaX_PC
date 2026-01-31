@@ -47,7 +47,7 @@ protected:
 		float duration;
 		float alpha = 1.f;
 	};
-	Text dialogueTxt;
+	Text* dialogueTxt;
 	queue<Line> script;
 	queue<Bg> film;
 	//vector<Sprite*> movingElems;

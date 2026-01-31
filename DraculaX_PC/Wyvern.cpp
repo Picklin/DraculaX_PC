@@ -170,7 +170,7 @@ void Wyvern::update(int deltaTime)
     else
     {
         deathTimeElapsed += deltaTime / 1000.f;
-        sprite->setColor(glm::vec4(glm::vec3(colorValue), alpha));
+        sprite->setColor(glm::vec3(colorValue));
         if (colorValue < 0.2f)
         {
             colorValue = 0.2f;

@@ -4,14 +4,14 @@
 
 namespace
 {
-	const glm::vec4 fire1Colors[7] = {
-		glm::vec4(182 / 255.f, 0.f, 0.f, 1.f),
-		glm::vec4(218 / 255.f, 0.f, 0.f, 1.f),
-		glm::vec4(255 / 255.f, 0.f, 0.f, 1.f),
-		glm::vec4(255 / 255.f, 36 / 255.f, 0.f, 1.f),
-		glm::vec4(255 / 255.f, 36 / 255.f, 0.f, 1.f),
-		glm::vec4(255 / 255.f, 0.f, 0.f, 1.f),
-		glm::vec4(218 / 255.f, 0.f, 0.f, 1.f),
+	const glm::vec3 fire1Colors[7] = {
+		glm::vec3(182 / 255.f, 0.f, 0.f),
+		glm::vec3(218 / 255.f, 0.f, 0.f),
+		glm::vec3(255 / 255.f, 0.f, 0.f),
+		glm::vec3(255 / 255.f, 36 / 255.f, 0.f),
+		glm::vec3(255 / 255.f, 36 / 255.f, 0.f),
+		glm::vec3(255 / 255.f, 0.f, 0.f),
+		glm::vec3(218 / 255.f, 0.f, 0.f),
 	};
 	const glm::vec2 treePos[6] = {
 		glm::vec2(CAMERA_X + SCREEN_WIDTH * 4 + 16, CAMERA_Y + SCREEN_HEIGHT + 16),

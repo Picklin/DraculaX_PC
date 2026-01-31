@@ -9,23 +9,29 @@
 class Text
 {
 public:
-    static Text CreateDialogueText(ShaderProgram& shader);
-    static Text CreateStageClearText(ShaderProgram& shader);
-    static Text CreateLettersAndNumsText(ShaderProgram& shader);
+    static Text* CreateDialogueText(ShaderProgram& shader);
+    static Text* CreateStageClearText(ShaderProgram& shader);
+    static Text* CreateLettersAndNumsText(ShaderProgram& shader);
+    static Text* CreateMenuText(ShaderProgram& shader);
     void render(const wstring& text, glm::vec2 position);
     void setAlpha(float alpha) {
 	    currentAlpha = alpha;
     }
-    void setColor(const glm::vec4& color) {
+    void setColor(const glm::vec3& color) {
         currentColor = color;  
 	}
 
 private:
     void init(ShaderProgram& shader, const string & fontName, const glm::ivec2 & size, int maxChars);
 
+public:
+    enum TextType
+    {
+        DIALOGUE, STAGE_CLEAR, STAGE_STATS, MENU, COUNT
+    };
 private:
     Texture* fontTex;
-	glm::vec4 currentColor;
+	glm::vec3 currentColor;
     string fontName;
     ShaderProgram* shader;
     GLuint vao, vbo;

@@ -120,7 +120,7 @@ void Item::update(int deltaTime)
         if (timeElapsed < ungrabableTime)
         {
             if ((timeElapsed / (deltaTime * 2)) % 4 == 0) sprite->invertColor();
-            else sprite->setColor(glm::vec4(1.f));
+            else sprite->setColor(glm::vec3(1.f));
         }
         /*else if (lifeSpan - timeElapsed <= 2000)
         {

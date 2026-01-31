@@ -35,7 +35,7 @@ public:
 	void setTransition(int animFrom, int animTo);
 	void setAngleDegrees(float angleDegrees);
 	void setCenter(const glm::vec2& center);
-	void setColor(const glm::vec4& color);
+	void setColor(const glm::vec3 & color);
 	void setAlpha(float alpha) { this->color.a = alpha; }
 	void setScale(glm::vec2 scale);
 	void setKeyframe(int frame) { currentKeyframe = frame; }

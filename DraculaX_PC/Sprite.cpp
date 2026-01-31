@@ -198,9 +198,9 @@ void Sprite::setCenter(const glm::vec2& center)
 	this->center = center;
 }
 
-void Sprite::setColor(const glm::vec4& color)
+void Sprite::setColor(const glm::vec3 & color)
 {
-	this->color = color;
+	this->color = glm::vec4(color, this->color.a);
 }
 
 void Sprite::setScale(glm::vec2 scale)

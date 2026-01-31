@@ -3,7 +3,6 @@
 #define _TITLESCREEN_INCLUDE
 
 #include "Screen.h"
-#include "Text.h"
 
 class TitleScreen : public Screen
 {
@@ -18,7 +17,7 @@ private:
 	void reset();
 
 private:
-	Text pushRunButton;
+	Text* pushRunButton;
 	const wstring msg[2]
 	{
 		L" PUSH  RUN  BUTTON!",

@@ -63,21 +63,21 @@ void EffectsManager::freeTextures()
 	effects.clear();
 }
 
-void EffectsManager::createFueguito(const glm::vec2& pos, const glm::vec4& color, bool background)
+void EffectsManager::createFueguito(const glm::vec2& pos, const glm::vec3& color, bool background)
 {
 	Fueguito* f = new Fueguito();
 	initEffect(f, pos, color);
 	(background) ? backgroundEffects.push_back(f) : effects.push_back(f);
 }
 
-void EffectsManager::createFuegote(const glm::vec2& pos, const glm::vec4& color, bool background)
+void EffectsManager::createFuegote(const glm::vec2& pos, const glm::vec3& color, bool background)
 {
 	Fuegote* fue = new Fuegote();
 	initEffect(fue, pos, color);
 	(background) ? backgroundEffects.push_back(fue) : effects.push_back(fue);
 }
 
-void EffectsManager::createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color)
+void EffectsManager::createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
 {
 	ExplosionClusterSettings explSettings;
 	explSettings.numExplosions = numExplosions;
@@ -90,7 +90,7 @@ void EffectsManager::createExplosions(const glm::vec2* pos, const glm::vec2& ent
 	explSet.push_back(explSettings);
 }
 
-void EffectsManager::createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color)
+void EffectsManager::createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
 {
 	ExplosionClusterSettings miniExplSettings;
 	miniExplSettings.numExplosions = numExplosions;
@@ -103,7 +103,7 @@ void EffectsManager::createMiniExplosions(const glm::vec2* pos, const glm::vec2&
 	explSet.push_back(miniExplSettings);
 }
 
-void EffectsManager::initEffect(Effect* e, const glm::vec2& pos, const glm::vec4& color)
+void EffectsManager::initEffect(Effect* e, const glm::vec2& pos, const glm::vec3& color)
 {
 	e->init(tileMapDispl, *shader);
 	e->setPosition(pos);

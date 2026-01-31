@@ -10,7 +10,7 @@ out vec4 outColor;
 void main()
 {
 	vec2 scrollPosition = vec2(texCoordFrag.x, texCoordFrag.y + yOffset);
-	vec4 texColor = texture(tex, texCoordFrag);
+	vec4 texColor = texture(tex, scrollPosition);
 	outColor = color * texColor;
 }
 

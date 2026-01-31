@@ -1,5 +1,6 @@
 #include "Options.h"
 #include "TitleScreen.h"
+#include "Game.h"
 #include <functional>
 
 using ScreenCreator = function<Screen* ()>;
@@ -18,7 +19,6 @@ Screen* Screen::createScreen(ShaderProgram& program, int screenId)
 
 void Screen::render()
 {
-	//texProgram->setUniformMatrix4f("projection", projection); //solo cuando cambie la proyección
 	for (auto sp : sprites)
 	{
 		sp->render();
@@ -27,4 +27,10 @@ void Screen::render()
 	{
 		quad->render();
 	}
+}
+
+void Screen::init(ShaderProgram& program)
+{
+	program.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f));
+	this->texProgram = &program;
 }

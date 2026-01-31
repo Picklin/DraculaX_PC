@@ -15,6 +15,11 @@ enum TextLanguages
 	EN_TXT, ES_TXT
 };
 
+enum SubtitlesLanguages
+{
+	EN_SUB, ES_SUB, NONE
+};
+
 void Game::init()
 {
 	/*
@@ -29,7 +34,7 @@ void Game::init()
 	gameStarted = false;
 	twoPlayerMode = false;
 	arranged = false;
-	initialConfigSet = true;
+	initialConfigSet = false;
 	playingCinematic = !gameStarted && initialConfigSet;
 	currDubLang = JP_DUB;
 	currTxtLang = ES_TXT;
@@ -40,9 +45,9 @@ void Game::init()
 	player.init(MAP_OFFSET, spriteShader);
 	gui.init(guiShader, &player, false && twoPlayerMode);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
-	spriteShader.use();
+	basicShader.use();
 	cinematic = Cinematic::createCinematic(spriteShader, arranged ? "Dialogues/Scripts/[2007_ES] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
-	currentMenu = Screen::createScreen(spriteShader, Screen::TITLE);
+	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
 	SoundEngine::instance().setMusicMode(arranged);	//cargamos sfx y paths para la música y establecemos si es arranged
 	SoundEngine::instance().loadCinematics();
 	if (playingCinematic) SoundEngine::instance().playIntro();
@@ -101,7 +106,11 @@ bool Game::update(int deltaTime)
 	{
 		cinematic->update(deltaTime);
 		playingCinematic = !cinematic->ended();
-		if (!playingCinematic) SoundEngine::instance().stopAllSounds();
+		if (!playingCinematic)
+		{
+			SoundEngine::instance().stopAllSounds();
+			basicShader.use();
+		}
 	}
 	else
 	{
@@ -190,6 +199,12 @@ void Game::setScreenWidth(int width)
 void Game::setViewportOffset(int offset)
 {
 	//scene->setviewportOffset(offset);
+}
+
+void Game::setInitialConfig()
+{
+	initialConfigSet = true;
+	spriteShader.use();
 }
 
 int Game::getCurrentDubLang()
@@ -347,6 +362,7 @@ Game::Game()
 	scenesFactory[1] = lvl1SC;
 	scene = nullptr;
 	cinematic = nullptr;
+	currentMenu = nullptr;
 }
 
 

@@ -114,7 +114,7 @@ protected:
 	TexturedQuad* lvlnum;
 	TexturedQuad* triangle;
 	float titleSpeed;
-	Text stageTitle;
+	Text* stageTitle;
 	wstring stageTitleStr;
 	bool titleAppeared = false;
 	bool start = false;

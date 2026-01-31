@@ -23,7 +23,7 @@ protected:
 	const pair<int, int> setNewLevelAndScene() const override;
 
 private:
-	Text stageClearText;
+	Text* stageClearText;
 	Wyvern* wyvern = nullptr;
 	TexturedQuad* cielo;
 	TexturedQuad* castlevania;

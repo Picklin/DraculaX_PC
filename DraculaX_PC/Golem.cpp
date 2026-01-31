@@ -184,8 +184,8 @@ void Golem::makeEndSound() const
 
 void Golem::makeEndEffect() const
 {
-	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec4(1.f));
-	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec4(1.f));
+	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec3(1.f));
+	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec3(1.f));
 }
 
 void Golem::childUpdate(int deltaTime)

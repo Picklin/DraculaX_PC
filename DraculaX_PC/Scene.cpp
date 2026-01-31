@@ -335,7 +335,7 @@ void Scene::renderTitle()
 		triangle->render();
 		stage->render();
 		lvlnum->render();
-		stageTitle.render(stageTitleStr, glm::vec2(triangle->getPosition().y + 56 - 24, SCREEN_WIDTH / 2 + 12 - 16));
+		stageTitle->render(stageTitleStr, glm::vec2(triangle->getPosition().y + 56 - 24, SCREEN_WIDTH / 2 + 12 - 16));
 	}
 }
 
@@ -467,7 +467,7 @@ void Scene::destroyCandle(Candle& candle)
 	else items.push_back(ItemManager::instance().getHeartsOrMoneyBag(pos, dropId));
 	candle.destroy();
 	SoundEngine::instance().playSFX(candle.getSFXId());
-	EffectsManager::instance().createFuegote(pos+glm::vec2(8), glm::vec4(1.f), false);
+	EffectsManager::instance().createFuegote(pos+glm::vec2(8), glm::vec3(1.f), false);
 }
 
 void Scene::initManagers()

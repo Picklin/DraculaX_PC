@@ -947,11 +947,11 @@ void Player::childUpdate(int deltaTime)
 	if (wounded())
 	{
 		if ((timeWounded / (deltaTime * 2)) % 4 == 0)
-			sprite->setColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
+			sprite->setColor(glm::vec3(1.f, 0.f, 0.f));
 		else
-			sprite->setColor(glm::vec4(1.f));
+			sprite->setColor(glm::vec3(1.f));
 		timeWounded -= deltaTime;
-		if (timeWounded < 0) sprite->setColor(glm::vec4(1.f));
+		if (timeWounded < 0) sprite->setColor(glm::vec3(1.f));
 	}
 	subweaponCooldown -= deltaTime / 1000.f;
 	setPosition(position);

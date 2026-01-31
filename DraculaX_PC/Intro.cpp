@@ -261,7 +261,7 @@ void Intro::filmUpdate(int deltaTime)
 	{
 		int timeMilisecs = int(timeElapsed * 1000);
 		float colorValue = 1 - (((timeMilisecs / (deltaTime * 2)) % 2 == 0) * 0.5f);
-		film.front().bg->setColor(glm::vec4(glm::vec3(colorValue), 1.f));
+		film.front().bg->setColor(glm::vec3(colorValue));
 		if (cameraY > 0)
 		{
 			cameraY--;
@@ -424,7 +424,7 @@ void Intro::render()
 		else film.front().bg->render();
 		if (film.front().alpha < 1) blackScreen->render();
 	}
-	if (renderSubtitles) dialogueTxt.render(script.front().line, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 32));
+	if (renderSubtitles) dialogueTxt->render(script.front().line, glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 32));
 }
 
 void Intro::calcEaseIn(float& valToInc, float startVal, float targetVal, float factor)

@@ -1,5 +1,4 @@
 #include <vector>
-#include <iostream>
 #include <map>
 #include <sstream>
 #include "Text.h"
@@ -27,26 +26,33 @@ const map<char, int> specialCharMap = {
     {'Ñ', 26},
 };
 
-Text Text::CreateDialogueText(ShaderProgram& shader)
+Text* Text::CreateDialogueText(ShaderProgram& shader)
 {
-    Text t;
-    t.init(shader, "dialogue", glm::ivec2(6, 12), 64);
+    Text* t = new Text();
+    t->init(shader, "dialogue", glm::ivec2(6, 12), 64);
     return t;
 }
 
-Text Text::CreateStageClearText(ShaderProgram& shader)
+Text* Text::CreateStageClearText(ShaderProgram& shader)
 {
-    Text t;
-    t.init(shader, "BigLetters", glm::ivec2(16, 16), 26);
-    t.setColor(glm::vec4(108 / 255.f, 252 / 255.f, 0.f, 1.f));
+    Text* t = new Text();
+    t->init(shader, "BigLetters", glm::ivec2(16, 16), 26);
+    t->setColor(glm::vec3(108 / 255.f, 252 / 255.f, 0.f));
     return t;
 }
 
-Text Text::CreateLettersAndNumsText(ShaderProgram& shader)
+Text* Text::CreateLettersAndNumsText(ShaderProgram& shader)
 {
-    Text t;
-    t.init(shader, "Letters&Nums", glm::ivec2(8, 8), 40);
-    t.setColor(glm::vec4(144 / 255.f, 144 / 255.f, 252 / 255.f, 1.f));
+    Text* t = new Text();
+    t->init(shader, "Letters&Nums", glm::ivec2(8, 8), 40);
+    t->setColor(glm::vec3(144 / 255.f, 144 / 255.f, 252 / 255.f));
+    return t;
+}
+
+Text* Text::CreateMenuText(ShaderProgram& shader)
+{
+    Text* t = new Text();
+    t->init(shader, "MenuText", glm::ivec2(8, 8), 40);
     return t;
 }
 
@@ -68,7 +74,7 @@ void Text::init(ShaderProgram& shader, const string& fontName, const glm::ivec2&
     glBindVertexArray(0);
 
 	currentAlpha = 1.0f;
-	currentColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
+	currentColor = glm::vec3(1.f, 1.f, 1.f);
 }
 
 void Text::render(const std::wstring& text, glm::vec2 position)
@@ -79,7 +85,7 @@ void Text::render(const std::wstring& text, glm::vec2 position)
 	shader->use();
 	shader->setUniform2f("texCoordDispl", 0.f, 0.f);
     shader->setUniformMatrix4f("modelview", glm::mat4(1.f));
-    shader->setUniform4f("color", currentColor.r, currentColor.g, currentColor.b, currentColor.a);
+    shader->setUniform4f("color", currentColor.r, currentColor.g, currentColor.b, currentAlpha);
 
     std::vector<TextVertex> vertices;
     vertices.reserve(text.size() * 6);
@@ -119,7 +125,7 @@ void Text::render(const std::wstring& text, glm::vec2 position)
                 continue;
             }
             else if (c < 65 || c > 126) {
-                if ((c >= 48 && c <= 57) && fontName == "Letters&Nums")
+                if ((c >= 48 && c <= 57) && (fontName == "Letters&Nums" || fontName == "MenuText"))
                 {
 					charIndex = (int(c) - 48 + 30);
                 }

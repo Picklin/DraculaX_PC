@@ -50,6 +50,7 @@ public:
 	void mouseRelease(int button);
 	void setScreenWidth(int width);
 	void setViewportOffset(int offset);
+	void setInitialConfig();
 
 	int getCurrentDubLang();
 	int getCurrentTxtLang();

@@ -5,6 +5,7 @@
 #include <vector>
 #include "Sprite.h"
 #include "TexturedQuad.h"
+#include "Text.h"
 
 class Screen
 {
@@ -14,7 +15,7 @@ public:
 	virtual void render();
 
 protected:
-	virtual void init(ShaderProgram& program) = 0;
+	virtual void init(ShaderProgram& program);
 
 public:
 	enum screenType
@@ -23,10 +24,8 @@ public:
 	};
 protected:
 	ShaderProgram* texProgram;
-	vector<Texture> textures;
 	vector<Sprite*> sprites;
 	vector<TexturedQuad*> quads;
-	glm::mat4 projection;
 };
 
 #endif // !_SCREEN_INCLUDE

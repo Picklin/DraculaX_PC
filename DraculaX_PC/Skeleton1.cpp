@@ -75,7 +75,7 @@ void Skeleton1::makeEndSound() const
 
 void Skeleton1::makeEndEffect() const
 {
-	EffectsManager::instance().createMiniExplosions(&position, myCenter(), 21, 32, 32, glm::vec4(1.f));
+	EffectsManager::instance().createMiniExplosions(&position, myCenter(), 21, 32, 32, glm::vec3(1.f));
 }
 
 void Skeleton1::childUpdate(int deltaTime)

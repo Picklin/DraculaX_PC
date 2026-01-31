@@ -17,15 +17,15 @@ public:
 	void render();
 	void free();
 	void freeTextures();
-	void createFueguito(const glm::vec2& pos, const glm::vec4& color, bool background);
-	void createFuegote(const glm::vec2& pos, const glm::vec4& color, bool background);
-	void createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color);
-	void createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec4& color);
+	void createFueguito(const glm::vec2& pos, const glm::vec3& color, bool background);
+	void createFuegote(const glm::vec2& pos, const glm::vec3& color, bool background);
+	void createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
+	void createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
 	const vector<Effect*>& getBackgroundEffectsList() const { return backgroundEffects; }
 
 private:
 	EffectsManager();
-	void initEffect(Effect* e, const glm::vec2& pos, const glm::vec4& color);
+	void initEffect(Effect* e, const glm::vec2& pos, const glm::vec3& color);
 	void updateExplosions(int deltaTime);
 
 private:
@@ -41,7 +41,7 @@ private:
 		int offset = 32;
 		bool bigExplosion = false;
 		bool background = false;
-		glm::vec4 explosionColor;
+		glm::vec3 explosionColor;
 		const glm::vec2* entityPos = nullptr;
 		glm::vec2 entityOffset;	//offset para que se sitúe en el centro de la entidad. Ej: colocarse en el centro de un enemigo
 		int timeBetweenExplosions = 125;	//en milisegundos
