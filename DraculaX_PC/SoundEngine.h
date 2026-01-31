@@ -24,7 +24,6 @@ public:
 	void loadCinematics();
 	void playStageSong(int stageNum);
 	//void stopStageSong(int stageNum);
-	void playNonStageSong(int songId);
 	void playNonStageSong(int songId, bool loop);
 	//void stopNonStageSong(int songId);
 	void playSFX(int sfxId);
@@ -43,7 +42,8 @@ private:
 	void loadSFX();
 	void loadMusic();
 	void loadMusicPaths(std::vector<std::string>& pathsContainer, const std::string& root);
-	void playMusic(const std::string& path, ISoundSource* source, bool loop);
+	void playMusic(const std::string& path, int musicId, bool arranged, bool loop);
+	void playMusic(const std::string& path, int musicId, bool arranged);
 	void stopMusic(const std::string& path);
 
 public:

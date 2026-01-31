@@ -111,7 +111,7 @@ void Wyvern::update(int deltaTime)
             if (appeared)
             {
                 SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
-                SoundEngine::instance().playNonStageSong(SoundEngine::BOSS);
+                SoundEngine::instance().playNonStageSong(SoundEngine::BOSS, true);
                 sprite->changeAnimation(IDLE);
                 moveSpeed = 1.f;
                 position.x = 49 * 16;

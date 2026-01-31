@@ -1,9 +1,12 @@
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #include "Intro.h"
 #include "Game.h"
 #include "TextureManager.h"
 #include <functional>
 #include <fstream>
 #include <sstream>
+#include <codecvt>
+#include <locale>
 
 using CinematicCreator = function<Cinematic* ()>;
 static const CinematicCreator cinematicCreator[Cinematic::COUNT] =
@@ -80,7 +83,7 @@ void Cinematic::init(ShaderProgram& shader)
 void Cinematic::loadScript(const string& scriptPath)
 {
     wifstream file(scriptPath, ios::binary);
-    file.imbue(locale("es_ES.UTF-8"));
+    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
     wstring lineRaw;
     while (getline(file, lineRaw))
     {

@@ -78,6 +78,8 @@ private:
 	Screen* menus[Screen::NUM_SCREENS];
 	Cinematic* cinematic;
 
+	float timeBeforeCinematic;
+
 	int currDubLang;
 	int currTxtLang;
 	int currSubMode;

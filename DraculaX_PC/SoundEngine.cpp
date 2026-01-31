@@ -122,15 +122,31 @@ void SoundEngine::loadMusicPaths(std::vector<std::string>& pathsContainer, const
 	}
 }
 
-void SoundEngine::playMusic(const std::string& path, ISoundSource* source, bool loop)
+void SoundEngine::playMusic(const std::string& path, int musicId, bool arranged, bool loop)
 {
+	ISoundSource* source = otherMusicSources[arrangeMode][musicId];
 	if (source == nullptr)
 	{
 		source = engine->addSoundSourceFromFile(path.c_str());
 		source->setDefaultVolume(0.25f);
+		otherMusicSources[arrangeMode][musicId] = source;
 	}
 	checkCurrentSound(musicSound);
 	musicSound = engine->play2D(source, loop, false, true);
+	addActiveSound(musicSound);
+}
+
+void SoundEngine::playMusic(const std::string& path, int musicId, bool arranged)
+{
+	ISoundSource* source = stageMusicSources[arrangeMode][musicId];
+	if (source == nullptr)
+	{
+		source = engine->addSoundSourceFromFile(path.c_str());
+		source->setDefaultVolume(0.25f);
+		otherMusicSources[arrangeMode][musicId] = source;
+	}
+	checkCurrentSound(musicSound);
+	musicSound = engine->play2D(source, true, false, true);
 	addActiveSound(musicSound);
 }
 
@@ -142,7 +158,7 @@ void SoundEngine::stopMusic(const std::string& path)
 
 void SoundEngine::playStageSong(int stageNum)
 {
-	playMusic(songPaths[arrangeMode][stageNum], stageMusicSources[arrangeMode][stageNum], true);
+	playMusic(songPaths[arrangeMode][stageNum], stageNum, arrangeMode);
 }
 
 /*void SoundEngine::stopStageSong(int stageNum)
@@ -150,14 +166,9 @@ void SoundEngine::playStageSong(int stageNum)
 	stopMusic(songPaths[arrangeMode][stageNum]);
 }*/
 
-void SoundEngine::playNonStageSong(int songId)
-{
-	playMusic(otherMusicPaths[arrangeMode][songId], otherMusicSources[arrangeMode][songId], true);
-}
-
 void SoundEngine::playNonStageSong(int songId, bool loop)
 {
-	playMusic(otherMusicPaths[arrangeMode][songId], otherMusicSources[arrangeMode][songId], loop);
+	playMusic(otherMusicPaths[arrangeMode][songId], songId, arrangeMode, loop);
 }
 
 /*void SoundEngine::stopNonStageSong(int songId)
