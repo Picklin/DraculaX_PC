@@ -20,7 +20,7 @@ protected:
 public:
 	enum screenType
 	{
-		OPTIONS, TITLE, COUNT
+		OPTIONS, TITLE, NUM_SCREENS
 	};
 protected:
 	ShaderProgram* texProgram;

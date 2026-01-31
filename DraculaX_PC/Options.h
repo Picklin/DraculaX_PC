@@ -13,6 +13,7 @@ public:
 
 protected:
 	void init(ShaderProgram& program) override;
+	void apply();
 
 private:
 	Text* text;
@@ -29,6 +30,7 @@ private:
 	bool downPressed = false;
 	bool rightPressed = false;
 	bool leftPressed = false;
+	bool aPressed = false;
 };
 
 #endif // !_OPTIONS1_INCLUDE

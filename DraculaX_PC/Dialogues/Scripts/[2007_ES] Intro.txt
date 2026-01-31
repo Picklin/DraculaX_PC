@@ -11,6 +11,6 @@
 80.5|2.0|o la niebla.
 82.75|2.5|Se deleita de la sangre de los humanos.
 87.0|1.0|¡Drácula!
-88.0|1.75|El príncipe de las tinieblas,
-90.0|2.0|el señor del castillo del diablo...
+88.0|1.75|El Príncipe de las tinieblas,
+90.0|2.0|el Señor del Castillo del Diablo...
 92.0|2.5|...ha despertado.

@@ -41,6 +41,8 @@ public:
 	void restartScene();
 	void win();
 	void start();
+	void applyConfig(int lang, int dub, int sub, bool mus);
+	void setInitialConfig();
 
 	// Input callback methods
 	void keyPressed(int key);
@@ -50,7 +52,6 @@ public:
 	void mouseRelease(int button);
 	void setScreenWidth(int width);
 	void setViewportOffset(int offset);
-	void setInitialConfig();
 
 	int getCurrentDubLang();
 	int getCurrentTxtLang();
@@ -74,10 +75,12 @@ private:
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
 	Screen* currentMenu;
+	Screen* menus[Screen::NUM_SCREENS];
 	Cinematic* cinematic;
 
 	int currDubLang;
 	int currTxtLang;
+	int currSubMode;
 	int currentLevel;
 	int currentScene;
 	int nextLevel;
@@ -98,8 +101,7 @@ private:
 	bool restart = false;
 	bool playingCinematic;
 	bool twoPlayerMode;
-	bool arranged;
-	bool initialConfigSet = false;
+	bool arranged = false;
 };
 
 

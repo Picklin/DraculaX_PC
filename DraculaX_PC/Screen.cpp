@@ -4,7 +4,7 @@
 #include <functional>
 
 using ScreenCreator = function<Screen* ()>;
-static const ScreenCreator screenCreator[Screen::COUNT] =
+static const ScreenCreator screenCreator[Screen::NUM_SCREENS] =
 {
 	[]() {return new Options(); },
 	[]() {return new TitleScreen(); },

@@ -23,9 +23,9 @@ images/menuses/menu_tiles.png 	-- Tilesheet
    ws???????????vz   78::::::;< 
    ZXXXXXXXXXXXXX[   QRTTTTTTUV 
  ab{tYYYYYYYYYYYu~cd klnnnnnnop 
-                                
-                                
-                                
+   ws???????????vz              
+   ZXXXXXXXXXXXXX[              
+ ab{tYYYYYYYYYYYu~cd            
                                 
              wx@@yz             
              ZXXXX[             

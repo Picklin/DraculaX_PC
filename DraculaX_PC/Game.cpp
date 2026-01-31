@@ -33,11 +33,10 @@ void Game::init()
 	bPlay = true;
 	gameStarted = false;
 	twoPlayerMode = false;
-	arranged = false;
-	initialConfigSet = false;
-	playingCinematic = !gameStarted && initialConfigSet;
+	playingCinematic = false;
+	currSubMode = 0;
 	currDubLang = JP_DUB;
-	currTxtLang = ES_TXT;
+	currTxtLang = EN_TXT;
 	currentLevel = STAGE1;
 	currentScene = 0;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -46,11 +45,8 @@ void Game::init()
 	gui.init(guiShader, &player, false && twoPlayerMode);
 	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
-	cinematic = Cinematic::createCinematic(spriteShader, arranged ? "Dialogues/Scripts/[2007_ES] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt", Cinematic::INTRO);
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
-	SoundEngine::instance().setMusicMode(arranged);	//cargamos sfx y paths para la música y establecemos si es arranged
-	SoundEngine::instance().loadCinematics();
-	if (playingCinematic) SoundEngine::instance().playIntro();
+	menus[Screen::OPTIONS] = currentMenu;
 	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
@@ -110,6 +106,8 @@ bool Game::update(int deltaTime)
 		{
 			SoundEngine::instance().stopAllSounds();
 			basicShader.use();
+			currentMenu = Screen::createScreen(basicShader, Screen::TITLE);
+			menus[Screen::TITLE] = currentMenu;
 		}
 	}
 	else
@@ -165,6 +163,31 @@ void Game::start()
 	gui.reset();
 }
 
+void Game::applyConfig(int lang, int dub, int sub, bool mus)
+{
+	if (currTxtLang != lang || currDubLang != dub || currSubMode != sub || arranged != mus)
+	{
+		this->currTxtLang = lang;
+		this->currDubLang = dub;
+		this->currSubMode = sub;
+		this->arranged = mus;
+		SoundEngine::instance().playSFX(SoundEngine::OPTION_SELECT);
+	}
+}
+
+void Game::setInitialConfig()
+{
+	playingCinematic = true;
+	spriteShader.use();
+	if (currSubMode != NONE)
+		cinematic = Cinematic::createCinematic(spriteShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
+			: ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[1993_EN] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt"), Cinematic::INTRO);
+	else cinematic = Cinematic::createCinematic(spriteShader, Cinematic::INTRO);
+	SoundEngine::instance().setMusicMode(arranged);
+	SoundEngine::instance().loadCinematics();
+	SoundEngine::instance().playIntro();
+}
+
 void Game::keyPressed(int key)
 {
 	if (key == -1) return;
@@ -201,11 +224,6 @@ void Game::setViewportOffset(int offset)
 	//scene->setviewportOffset(offset);
 }
 
-void Game::setInitialConfig()
-{
-	initialConfigSet = true;
-	spriteShader.use();
-}
 
 int Game::getCurrentDubLang()
 {

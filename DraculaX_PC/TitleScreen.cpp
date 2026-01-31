@@ -9,6 +9,7 @@
 
 void TitleScreen::init(ShaderProgram& program)
 {
+	Screen::init(program);
 	this->lang = Game::instance().getCurrentTxtLang();
 
 	sprites.reserve(1);
@@ -43,7 +44,6 @@ void TitleScreen::init(ShaderProgram& program)
 	boltDuration = BOLT_DURATION;
 	renderBigBolt = true;
 
-	Screen::init(program);
 	reset();
 }
 
