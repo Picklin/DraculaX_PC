@@ -29,7 +29,7 @@ private:
 public:
 	enum CinematicType
 	{
-		INTRO, COUNT
+		INTRO, COOL_INTRO, COUNT
 	};
 
 protected:
@@ -45,7 +45,7 @@ protected:
 		int id;
 		float time;
 		float duration;
-		float alpha = 1.f;
+		float alpha;
 	};
 	Text* dialogueTxt = nullptr;
 	queue<Line> script;

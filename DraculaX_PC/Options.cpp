@@ -98,7 +98,7 @@ void Options::apply()
 void Options::update(int deltaTime)
 {
 	bgYoffset -= 0.025f;
-	if (bgYoffset < 0.f) bgYoffset = 0.95f;
+	if (bgYoffset < 0.f) bgYoffset = 0.975f;
 	sprites[0]->update(deltaTime);
 	sprites[1]->update(deltaTime);
 	bool up, down, right, left, a;
@@ -110,7 +110,7 @@ void Options::update(int deltaTime)
 	if (a && !aPressed)
 	{
 		if (currentFlamePos == 8) apply();
-		else if (currentFlamePos == 10) Game::instance().setInitialConfig();
+		else if (currentFlamePos == 10) Game::instance().setNextCinematic(Cinematic::INTRO, 2000, 3.f);
 	}
 	else if (down && !downPressed)
 	{

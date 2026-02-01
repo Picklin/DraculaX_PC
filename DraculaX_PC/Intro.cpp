@@ -8,7 +8,6 @@
 void Intro::initChild()
 {
 	Texture* introTexs1 = TextureManager::instance().getTexture("introTexs");
-	blackScreen->setAlpha(0.f);
 	//Sprite* testSp = Sprite::createSprite(glm::vec2(0.f, 0.f), glm::vec2(0.2f, 0.2f), introTexs1, &shader);
 	glm::ivec2 fullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glm::vec2 offset(0.2f);
@@ -76,6 +75,7 @@ void Intro::initChild()
 	bg.bg = testSp;
 	bg.time = 11.75f;
 	bg.duration = 8.25f + 0.45f * !arr;
+	bg.alpha = 1.f;
 	bg.id = CASTLE_OUTSIDE;
 	film.push(bg);
 	testSp = Sprite::createSprite(fullScreen, offset, introTexs1, shader);
@@ -331,13 +331,6 @@ void Intro::filmUpdate(int deltaTime)
 				}
 			}
 		}
-	}
-	float alpha = film.front().alpha;
-	if (alpha < 1.f)
-	{
-		alpha += deltaTime / 1000.f;
-		blackScreen->setAlpha(1-alpha);
-		film.front().alpha = alpha;
 	}
 	thunderCooldown -= deltaTime / 1000.f;
 	renderBg = true;

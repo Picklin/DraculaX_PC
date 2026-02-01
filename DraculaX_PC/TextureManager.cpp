@@ -44,6 +44,10 @@ TextureManager::TextureManager()
     Texture* bat = new Texture();
     bat->loadFromFile("images/cinematics/intro/bat_intro.png", TEXTURE_PIXEL_FORMAT_RGBA);
     addTexture("bat_intro", bat);
+
+    Texture* introBgTex = new Texture();
+    introBgTex->loadFromFile("images/cinematics/intro_cool/cool_intro_bgs.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    addTexture("coolIntroBg", introBgTex);
 }
 
 TextureManager& TextureManager::instance()

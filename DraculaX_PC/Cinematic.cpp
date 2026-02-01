@@ -1,5 +1,6 @@
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #include "Intro.h"
+#include "CoolIntro.h"
 #include "Game.h"
 #include "TextureManager.h"
 #include <functional>
@@ -11,7 +12,8 @@
 using CinematicCreator = function<Cinematic* ()>;
 static const CinematicCreator cinematicCreator[Cinematic::COUNT] =
 {
-    []() {return new Intro(); }
+    []() {return new Intro(); },
+    []() {return new CoolIntro(); }
 };
 
 Cinematic* Cinematic::createCinematic(ShaderProgram& shader, const string& scriptPath, int cinematicId)
@@ -51,6 +53,14 @@ void Cinematic::update(int deltaTime)
         {
             film.front().bg->update(deltaTime);
             filmUpdate(deltaTime);
+            float alpha = film.front().alpha;
+            if (alpha < 1.f)
+            {
+                alpha += deltaTime / 1000.f;
+                blackScreen->setAlpha(1 - alpha);
+                film.front().alpha = alpha;
+            }
+            renderBg = true;
         }
         else if (timeElapsed > (film.front().time + film.front().duration))
         {
@@ -75,6 +85,7 @@ void Cinematic::init(ShaderProgram& shader)
     this->shader = &shader;
     blackScreen = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), *TextureManager::instance().getTexture("pixel"), shader);
     blackScreen->setColor(glm::vec3(0));
+    blackScreen->setAlpha(0.f);
     initChild();
     endTime = setEndTime();
     this->shader->setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f));

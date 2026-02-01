@@ -21,7 +21,7 @@ public:
 	void stopAllSounds();
 
 	void setMusicMode(bool arranged);
-	void loadCinematics();
+	void loadGermanIntro();
 	void playStageSong(int stageNum);
 	//void stopStageSong(int stageNum);
 	void playNonStageSong(int songId, bool loop);

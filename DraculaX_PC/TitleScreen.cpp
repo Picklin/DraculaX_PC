@@ -71,7 +71,7 @@ void TitleScreen::update(int deltaTime)
 		timeBeforeStart -= deltaTime / 1000.f;
 		if (timeBeforeStart <= 0)
 		{
-			Game::instance().start();
+			Game::instance().setNextCinematic(Cinematic::COOL_INTRO, 500, 3.f);
 			reset();
 		}
 		else if (timeBeforeStart > VANISH_TIME) renderText = fmod(timeBeforeStart, .5f) < .25f;

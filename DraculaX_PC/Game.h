@@ -41,8 +41,11 @@ public:
 	void restartScene();
 	void win();
 	void start();
+	void resume();
+	void setNextCinematic(int cinematicId, int fadeOutMilisecs, float timeBeforeCinematic);
+	void playCinematic(int cinematicId);
+	void stopCinematic(int cinematicId);
 	void applyConfig(int lang, int dub, int sub, bool mus);
-	void setInitialConfig();
 
 	// Input callback methods
 	void keyPressed(int key);
@@ -87,6 +90,7 @@ private:
 	int currentScene;
 	int nextLevel;
 	int nextScene;
+	int currentCinematicId;
 
 	struct Key
 	{
@@ -96,7 +100,7 @@ private:
 
 	Key keys[GLFW_KEY_LAST + 1]; // Store key states so that we can have access at any time
 	bool bPlay; // Continue to play game?
-	bool gameStarted = false;
+	bool playingGame = false;
 	bool paused = false;
 	bool startPressedLastFrame = false;
 	bool next = false;

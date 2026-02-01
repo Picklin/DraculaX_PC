@@ -31,9 +31,8 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	gameStarted = false;
+	playingGame = false;
 	twoPlayerMode = false;
-	playingCinematic = false;
 	currSubMode = 0;
 	currDubLang = JP_DUB;
 	currTxtLang = EN_TXT;
@@ -56,7 +55,7 @@ bool Game::update(int deltaTime)
 {
 	updateGameInputs();
 
-	if (gameStarted)
+	if (playingGame)
 	{
 		if (next)
 		{
@@ -105,10 +104,7 @@ bool Game::update(int deltaTime)
 		playingCinematic = !cinematic->ended();
 		if (!playingCinematic)
 		{
-			SoundEngine::instance().stopAllSounds();
-			basicShader.use();
-			currentMenu = Screen::createScreen(basicShader, Screen::TITLE);
-			menus[Screen::TITLE] = currentMenu;
+			stopCinematic(currentCinematicId);
 		}
 	}
 	else if (timeBeforeCinematic <= 0)
@@ -121,14 +117,7 @@ bool Game::update(int deltaTime)
 		playingCinematic = timeBeforeCinematic <= 0;
 		if (playingCinematic)
 		{
-			spriteShader.use();
-			if (currSubMode != NONE)
-				cinematic = Cinematic::createCinematic(spriteShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
-					: ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[1993_EN] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt"), Cinematic::INTRO);
-			else cinematic = Cinematic::createCinematic(spriteShader, Cinematic::INTRO);
-			SoundEngine::instance().setMusicMode(arranged);
-			SoundEngine::instance().loadCinematics();
-			SoundEngine::instance().playIntro();
+			playCinematic(currentCinematicId);
 		}
 	}
 
@@ -138,7 +127,7 @@ bool Game::update(int deltaTime)
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	if (gameStarted)
+	if (playingGame)
 	{
 		scene->render();
 		//st.render();
@@ -168,16 +157,70 @@ void Game::restartScene()
 void Game::win()
 {
 	//currentMenu.win();
-	gameStarted = false;
+	playingGame = false;
 	reset();
 }
 
 void Game::start()
 {
-	gameStarted = true;
+	playingGame = true;
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
 	gui.reset();
+}
+
+void Game::resume()
+{
+	playingGame = true;
+	scene = scenesFactory[currentLevel][currentScene]();
+	scene->init(player, gui, spriteShader, basicShader);
+}
+
+void Game::setNextCinematic(int cinematicId, int fadeOutMilisecs, float timeBeforeCinematic)
+{
+	this->timeBeforeCinematic = timeBeforeCinematic;
+	currentCinematicId = cinematicId;
+	SoundEngine::instance().fadeOutMusic(fadeOutMilisecs);
+}
+
+void Game::playCinematic(int cinematicId)
+{
+	spriteShader.use();
+	if (cinematicId == Cinematic::INTRO)
+	{
+		if (currSubMode != NONE)
+			cinematic = Cinematic::createCinematic(spriteShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
+				: ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[1993_EN] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt"), Cinematic::INTRO);
+		else cinematic = Cinematic::createCinematic(spriteShader, Cinematic::INTRO);
+		SoundEngine::instance().setMusicMode(arranged);
+		SoundEngine::instance().loadGermanIntro();
+		SoundEngine::instance().playIntro();
+	}
+	else if (cinematicId == Cinematic::COOL_INTRO)
+	{
+		cinematic = Cinematic::createCinematic(spriteShader, Cinematic::COOL_INTRO);
+		SoundEngine::instance().playOverture();
+	}
+	playingCinematic = true;
+}
+
+void Game::stopCinematic(int cinematicId)
+{
+	SoundEngine::instance().stopAllSounds();
+	if (cinematicId == Cinematic::INTRO)
+	{
+		basicShader.use();
+		currentMenu = Screen::createScreen(basicShader, Screen::TITLE);
+		menus[Screen::TITLE] = currentMenu;
+	}
+	else if (cinematicId == Cinematic::COOL_INTRO)
+	{
+		start();
+	}
+	else
+	{
+		resume();
+	}
 }
 
 void Game::applyConfig(int lang, int dub, int sub, bool mus)
@@ -195,12 +238,6 @@ void Game::applyConfig(int lang, int dub, int sub, bool mus)
 		this->arranged = mus;
 		SoundEngine::instance().playSFX(SoundEngine::OPTION_SELECT);
 	}
-}
-
-void Game::setInitialConfig()
-{
-	timeBeforeCinematic = 3.f;
-	SoundEngine::instance().fadeOutMusic(2000);
 }
 
 void Game::keyPressed(int key)
@@ -365,7 +402,7 @@ void Game::reset()
 void Game::gameOver()
 {
 	//currentMenu.gameOver();
-	gameStarted = false;
+	playingGame = false;
 	reset();
 }
 

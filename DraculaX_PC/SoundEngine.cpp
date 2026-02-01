@@ -108,7 +108,7 @@ void SoundEngine::loadMusic()
 	musicSound = nullptr;
 }
 
-void SoundEngine::loadCinematics()
+void SoundEngine::loadGermanIntro()
 {
 	if (arrangeMode) introSource = engine->addSoundSourceFromFile("Dialogues/Sound/[2007] Intro.mp3");
 	else introSource = engine->addSoundSourceFromFile("Dialogues/Sound/[1993] Intro.wav");
