@@ -48,6 +48,10 @@ TextureManager::TextureManager()
     Texture* introBgTex = new Texture();
     introBgTex->loadFromFile("images/cinematics/intro_cool/cool_intro_bgs.png", TEXTURE_PIXEL_FORMAT_RGBA);
     addTexture("coolIntroBg", introBgTex);
+    
+    Texture* lvl0Tex = new Texture();
+    lvl0Tex->loadFromFile("images/levels/lvl0/texs1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    addTexture("prologueTexs", lvl0Tex);
 }
 
 TextureManager& TextureManager::instance()
