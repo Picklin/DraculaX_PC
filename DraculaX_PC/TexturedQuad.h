@@ -17,6 +17,7 @@ public:
 	// Textured quads can only be created inside an OpenGL context
 	static TexturedQuad* createTexturedQuad(const glm::vec2& topLeft, const glm::vec2& bottomRight, Texture& tex, ShaderProgram& program);
 	void setPosition(const glm::vec2& pos);
+	void incPosition(const glm::vec2 & inc);
 	void setColor(const glm::vec3& color);
 	void setAlpha(float alpha);
 	void render() const;

@@ -52,6 +52,11 @@ TextureManager::TextureManager()
     Texture* lvl0Tex = new Texture();
     lvl0Tex->loadFromFile("images/levels/lvl0/texs1.png", TEXTURE_PIXEL_FORMAT_RGBA);
     addTexture("prologueTexs", lvl0Tex);
+
+    //provisional
+    Texture* titleBgTex = new Texture();
+    titleBgTex->loadFromFile("images/screens/titleBG.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    addTexture("titleBG", titleBgTex);
 }
 
 TextureManager& TextureManager::instance()

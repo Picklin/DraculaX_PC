@@ -218,6 +218,11 @@ void Sprite::setPosition(const glm::vec2& pos)
 	position = pos;
 }
 
+void Sprite::incPosition(const glm::vec2& inc)
+{
+	position += inc;
+}
+
 const bool Sprite::animationEnded()
 {
 	bool ret = animationDoneOnce && currentKeyframe == 0;

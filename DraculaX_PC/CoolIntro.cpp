@@ -2,12 +2,19 @@
 #include "TextureManager.h"
 #include "Game.h"
 
+const float redColors[3] = { 72 / 255.f, 108 / 255.f, 144 / 255.f };
+
 void CoolIntro::initChild()
 {
 	Texture* bgTex = TextureManager::instance().getTexture("coolIntroBg");
 	glm::ivec2 fullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glm::vec2 offset(0.125f, 0.2f);
 	Texture* lvl0Tex = TextureManager::instance().getTexture("prologueTexs");
+	blackBarTop = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(256.f, 48.f), *TextureManager::instance().getTexture("pixel"), *shader);
+	blackBarBottom = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(256.f, 32.f), *TextureManager::instance().getTexture("pixel"), *shader);
+	blackBarBottom->setPosition(glm::vec2(0, 224 - 32));
+	blackBarTop->setColor(glm::vec3(0));
+	blackBarBottom->setColor(glm::vec3(0));
 	Texture* boltsTex;
 	if (TextureManager::instance().exists("bolts"))
 	{
@@ -23,6 +30,11 @@ void CoolIntro::initChild()
 	bolts[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.25f, 0.f), glm::vec2(0.5f, 1.f), *boltsTex, *shader);
 	bolts[0]->setPosition(glm::vec2(88, 15));
 	bolts[1]->setPosition(glm::vec2(145, 55));
+	Texture* handTex = new Texture();
+	handTex->loadFromFile("images/cinematics/intro_cool/cool_intro_texs.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("hand", handTex);
+	introQuads[HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 0.35f), *handTex, *shader);
+	introQuads[HAND]->setPosition(glm::vec2(-64, -128));
 	Sprite* sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
@@ -35,6 +47,7 @@ void CoolIntro::initChild()
 	bg.alpha = 1.f;
 	bg.id = MAP;
 	film.push(bg);
+	introQuads[RICHTER1] = TexturedQuad::createTexturedQuad(glm::vec2(0.125f, 0.f), glm::vec2(0.25f,0.2f), *bgTex, *shader);
 	sp = Sprite::createSprite(glm::ivec2(64, 32), glm::vec2(0.125f, 0.125f), lvl0Tex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 15);
@@ -75,17 +88,139 @@ void CoolIntro::initChild()
 	bg.duration = 6.25f;
 	bg.id = HORSES;
 	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, glm::vec2(0.5f, 0.25f), TextureManager::instance().getTexture("titleBG"), shader);
+	sp->setNumberAnimations(2);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.f, 0.f));
+	sp->setAnimationSpeed(1, 20);
+	sp->addKeyframe(1, glm::vec2(0.5f, 0.f));
+	sp->addKeyframe(1, glm::vec2(0.f, 0.0f));
+	sp->addKeyframe(1, glm::vec2(0.5f, 0.f));
+	sp->setTransition(1, 0);
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 9.f;
+	bg.duration = 6.f;
+	bg.id = CASTLEVANIA;
+	boltDuration = 64;	//milisecs
+	film.push(bg);
+	Texture* skelTex = new Texture();
+	skelTex->loadFromFile("images/cinematics/intro_cool/skeleton_cementery.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("skeleton_intro_cementery", skelTex);
+	introQuads[SKELETON_CEMENTERY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), *skelTex, *shader);
+	introQuads[SKELETON_CEMENTERY]->setPosition(glm::vec2(32, SCREEN_HEIGHT));
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(3);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.25f, 0.f));
+	sp->setAnimationSpeed(1, 8);
+	sp->animatorX(1, 2, 0.375f, 0.125f, 0.f);
+	sp->setAnimationSpeed(2, 0);
+	sp->addKeyframe(2, glm::vec2(0.625f, 0.f));
+	sp->setTransition(1, 2);
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 15.5f;
+	bg.duration = 5.5f;
+	bg.id = CEMENTERY;
+	film.push(bg);
+	introQuads[GIANT_QUAD] = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.f), glm::vec2(1.f, 0.4f), *bgTex, *shader);
+	introQuads[GIANT_QUAD]->setPosition(glm::vec2(0, -SCREEN_HEIGHT));
+	Texture* giant_bg = new Texture();
+	giant_bg->loadFromFile("images/cinematics/intro_cool/bg1.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("giant_bg", giant_bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, 672), glm::vec2(32.f, 7.f), giant_bg, shader);
+	sp->setPosition(glm::vec2(0, 48 - SCREEN_HEIGHT));
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 8);
+	sp->animatorY(0, 3, 0.f, 0.25f, 0.f);
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 21.f;
+	bg.duration = 4.f;
+	bg.id = GIANT;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(3);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.f, 0.2f));
+	sp->setAnimationSpeed(1, 0);
+	sp->addKeyframe(1, glm::vec2(0.125f, 0.2f));
+	sp->setAnimationSpeed(2, 0);
+	sp->addKeyframe(2, glm::vec2(0.25f, 0.2f));
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 25.f;
+	bg.duration = 2.5f;
+	bg.id = PEOPLE;
+	film.push(bg);
+	glm::vec2 annettePos(48, SCREEN_HEIGHT - 32);
+	sp = Sprite::createSprite(glm::ivec2(128, 160), glm::vec2(0.f, 0.35f), glm::vec2(0.4f, 0.85f), handTex, shader);
+	sp->setPosition(annettePos);
+	introQuads[ANNETTE_EYES] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.65f, 0.15f), *handTex, *shader);
+	introQuads[ANNETTE_EYES]->setPosition(annettePos + glm::vec2(32+6,48));
+	bg.bg = sp;
+	bg.time = 27.5f;
+	bg.duration = 3.f;
+	bg.id = ANNETTE;
+	film.push(bg);
 }
 
 void CoolIntro::filmUpdate(int deltaTime)
 {
 	int filmId = film.front().id;
-	if (filmId == HORSES)
+	if (filmId == MAP && introQuads[HAND]->getPosition().x < 24)
 	{
+		introQuads[HAND]->incPosition(glm::vec2(4, 8));
+	}
+	else if (filmId == HORSES)
+	{
+		if (timeElapsed >= 3.75f && richter1Alpha > 0)
+		{
+			richter1Alpha -= deltaTime / 3000.f;
+			introQuads[RICHTER1]->setAlpha(richter1Alpha);
+		}
 		bgXScroll += 0.0125f;
 		introSprites[WHEELS]->update(deltaTime);
 		introSprites[HORSES]->update(deltaTime);
 	}
+	else if (filmId == CASTLEVANIA && boltTimer <= 0)
+	{
+		if (film.front().bg->animation() != 1) film.front().bg->changeAnimation(1);
+		boltDuration -= deltaTime;
+		if (boltDuration < 0)
+		{
+			boltTimer = 2.f;
+			boltDuration = 64;
+			renderBigBolt = !renderBigBolt;
+		}
+	}
+	else if (filmId == CEMENTERY)
+	{
+		if (timeElapsed >= 17 && film.front().bg->animation() < 1) film.front().bg->changeAnimation(1);
+		else if (timeElapsed >= 19 && introQuads[SKELETON_CEMENTERY]->getPosition().y > 80) introQuads[SKELETON_CEMENTERY]->incPosition(glm::vec2(0, -2));
+	}
+	else if (filmId == GIANT && introQuads[GIANT_QUAD]->getPosition().y < -32)
+	{
+		introQuads[GIANT_QUAD]->incPosition(glm::vec2(0, 1.f));
+		glm::vec2 pos(introQuads[GIANT_QUAD]->getPosition());
+		pos.y += 48;
+		film.front().bg->setPosition(pos);
+	}
+	else if (filmId == PEOPLE)
+	{
+		Sprite* s = film.front().bg;
+		if (timeElapsed >= 26.75f) s->changeAnimation(2);
+		else if (timeElapsed >= 26.f) s->changeAnimation(1);
+		else s->changeAnimation(0);
+	}
+	else if (filmId == ANNETTE && introQuads[ANNETTE_EYES]->getPosition().y > 96)
+	{
+		glm::vec2 inc(0, -1);
+		introQuads[ANNETTE_EYES]->incPosition(inc);
+		film.front().bg->incPosition(inc);
+	}
+	boltTimer -= deltaTime / 1000.f;
 }
 
 void CoolIntro::render()
@@ -93,7 +228,13 @@ void CoolIntro::render()
 	if (renderBg)
 	{
 		int filmId = film.front().id;
-		if (filmId == HORSES)
+		if (filmId == MAP)
+		{
+			film.front().bg->render();
+			introQuads[HAND]->render();
+			blackBarTop->render();
+		}
+		else if (filmId == HORSES)
 		{
 			shader->setUniform1f("xOffset", bgXScroll * 0.25f);
 			introQuads[SKY]->render();
@@ -113,6 +254,30 @@ void CoolIntro::render()
 			introQuads[GRASS]->render();
 			shader->setUniform1f("xOffset", 0.f);
 			film.front().bg->render();
+			introQuads[RICHTER1]->render();
+		}
+		else if (filmId == CASTLEVANIA)
+		{
+			film.front().bg->render();
+			if (boltTimer <= 0) bolts[renderBigBolt]->render();
+		}
+		else if (filmId == CEMENTERY)
+		{
+			film.front().bg->render();
+			introQuads[SKELETON_CEMENTERY]->render();
+			blackBarBottom->render();
+		}
+		else if (filmId == GIANT)
+		{
+			film.front().bg->render();
+			introQuads[GIANT_QUAD]->render();
+		}
+		else if (filmId == ANNETTE)
+		{
+			film.front().bg->render();
+			introQuads[ANNETTE_EYES]->render();
+			blackBarTop->render();
+			blackBarBottom->render();
 		}
 		else film.front().bg->render();
 	}

@@ -30,6 +30,7 @@ public:
 	void free();
 
 	void setPosition(const glm::vec2& pos);
+	void incPosition(const glm::vec2& inc);
 	void setNumberAnimations(int nAnimations);
 	void setAnimationSpeed(int animId, int keyframesPerSec);
 	void setTransition(int animFrom, int animTo);
