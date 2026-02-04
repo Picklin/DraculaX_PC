@@ -2,7 +2,11 @@
 #include "TextureManager.h"
 #include "Game.h"
 
-const float redColors[3] = { 72 / 255.f, 108 / 255.f, 144 / 255.f };
+namespace {
+	const float redColors[3] = { 72 / 255.f, 108 / 255.f, 144 / 255.f };
+	const float amplitude = 16.f;
+	const float frequency = 5.f;
+}
 
 void CoolIntro::initChild()
 {
@@ -10,11 +14,13 @@ void CoolIntro::initChild()
 	glm::ivec2 fullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glm::vec2 offset(0.125f, 0.2f);
 	Texture* lvl0Tex = TextureManager::instance().getTexture("prologueTexs");
-	blackBarTop = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(256.f, 48.f), *TextureManager::instance().getTexture("pixel"), *shader);
-	blackBarBottom = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(256.f, 32.f), *TextureManager::instance().getTexture("pixel"), *shader);
-	blackBarBottom->setPosition(glm::vec2(0, 224 - 32));
-	blackBarTop->setColor(glm::vec3(0));
-	blackBarBottom->setColor(glm::vec3(0));
+	Texture* pixTex = TextureManager::instance().getTexture("pixel");
+	blackBar48px = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, 48.f), *pixTex, *shader);
+	blackBar32px = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, 32.f), *pixTex, *shader);
+	redBackground = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), *pixTex, *shader);
+	blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
+	blackBar48px->setColor(glm::vec3(0));
+	blackBar32px->setColor(glm::vec3(0));
 	Texture* boltsTex;
 	if (TextureManager::instance().exists("bolts"))
 	{
@@ -34,7 +40,9 @@ void CoolIntro::initChild()
 	handTex->loadFromFile("images/cinematics/intro_cool/cool_intro_texs.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("hand", handTex);
 	introQuads[HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 0.35f), *handTex, *shader);
-	introQuads[HAND]->setPosition(glm::vec2(-64, -128));
+	introQuads[HAND]->setPosition(glm::vec2(-72, -128));
+	shakeAngleStep = 16;
+	shakeDist = 16;
 	Sprite* sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
@@ -154,24 +162,168 @@ void CoolIntro::initChild()
 	bg.duration = 2.5f;
 	bg.id = PEOPLE;
 	film.push(bg);
-	glm::vec2 annettePos(48, SCREEN_HEIGHT - 32);
+	glm::vec2 annettePos(64, 64);
 	sp = Sprite::createSprite(glm::ivec2(128, 160), glm::vec2(0.f, 0.35f), glm::vec2(0.4f, 0.85f), handTex, shader);
 	sp->setPosition(annettePos);
-	introQuads[ANNETTE_EYES] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.65f, 0.15f), *handTex, *shader);
-	introQuads[ANNETTE_EYES]->setPosition(annettePos + glm::vec2(32+6,48));
+	introQuads[ANNETTE_EYES] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.65f, 0.05f), *handTex, *shader);
+	introQuads[ANNETTE_EYES]->setPosition(annettePos + glm::vec2(32 + 6, 48));
+	introQuads[ANNETTE_MOUTH] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.1f), glm::vec2(0.6f, 0.15f), *handTex, *shader);
+	introQuads[ANNETTE_MOUTH]->setPosition(annettePos + glm::vec2(32 + 6, 48 + 32));
 	bg.bg = sp;
 	bg.time = 27.5f;
 	bg.duration = 3.f;
 	bg.id = ANNETTE;
+	film.push(bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.2f), bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.2f));
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 30.5f;
+	bg.duration = 2.5f;
+	bg.id = GIANTS;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 1);
+	sp->addKeyframe(0, glm::vec2(0.625f, 0.2f));
+	sp->changeAnimation(0);
+	introQuads[BOOT] = TexturedQuad::createTexturedQuad(glm::vec2(0.7f, 0.f), glm::vec2(1.f, 0.5f), *handTex, *shader);
+	introQuads[BOOT]->setPosition(glm::vec2(94, -160));
+	bg.bg = sp;
+	bg.time = 33.f;
+	bg.duration = 1.f;
+	bg.id = RICHTER_BOOT;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(3);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.f, 0.4f));
+	sp->setAnimationSpeed(1, 0);
+	sp->addKeyframe(1, glm::vec2(0.125f, 0.4f));
+	sp->setAnimationSpeed(2, 0);
+	sp->addKeyframe(2, glm::vec2(0.25f, 0.4f));
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 34.f;
+	bg.duration = 1.5f;
+	bg.id = RICHTER_ARRIVE;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(4);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.4f));
+	sp->setAnimationSpeed(1, 0);
+	sp->addKeyframe(1, glm::vec2(0.625f, 0.8f));
+	sp->setAnimationSpeed(2, 0);
+	sp->addKeyframe(2, glm::vec2(0.750f, 0.8f));
+	sp->setAnimationSpeed(3, 0);
+	sp->addKeyframe(3, glm::vec2(0.875f, 0.8f));
+	sp->changeAnimation(0);
+	Texture* richterParts = new Texture();
+	richterParts->loadFromFile("images/cinematics/intro_cool/richter_parts.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("richterParts", richterParts);
+	glm::vec2 offset2(0.25f, 0.25f);
+	introSprites[RICHT_HANDS] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	introSprites[RICHT_HANDS]->setNumberAnimations(2);
+	introSprites[RICHT_HANDS]->setAnimationSpeed(0, 15);
+	introSprites[RICHT_HANDS]->animatorX(0, 3, 0.f, 0.25f, 0.f);
+	introSprites[RICHT_HANDS]->setAnimationSpeed(1, 15);
+	introSprites[RICHT_HANDS]->addKeyframe(1, glm::vec2(0.75f, 0.f));
+	introSprites[RICHT_HANDS]->animatorX(1, 2, 0.f, 0.25f, 0.25f);
+	introSprites[RICHT_HANDS]->changeAnimation(0);
+	introSprites[RICHT_DUST] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	introSprites[RICHT_DUST]->setNumberAnimations(2);
+	introSprites[RICHT_DUST]->setAnimationSpeed(0, 15);
+	introSprites[RICHT_DUST]->animatorX(0, 2, 0.5f, 0.25f, 0.25f);
+	introSprites[RICHT_DUST]->addKeyframe(0, glm::vec2(0.f, 0.5f));
+	introSprites[RICHT_DUST]->setAnimationSpeed(1, 0);
+	introSprites[RICHT_DUST]->addKeyframe(1, glm::vec2(0.5f, 0.75f));
+	introSprites[RICHT_DUST]->setTransition(0, 1);
+	introSprites[RICHT_DUST]->changeAnimation(0);
+	introSprites[RICHT_DUST]->setPosition(glm::vec2(0, 112));
+	introSprites[RICHT_WHIP] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	introSprites[RICHT_WHIP]->setNumberAnimations(2);
+	introSprites[RICHT_WHIP]->setAnimationSpeed(0, 0);
+	introSprites[RICHT_WHIP]->addKeyframe(0, glm::vec2(0.f, 0.75f));
+	introSprites[RICHT_WHIP]->setAnimationSpeed(1, 0);
+	introSprites[RICHT_WHIP]->addKeyframe(1, glm::vec2(0.25f, 0.75f));
+	introSprites[RICHT_WHIP]->changeAnimation(0);
+	introSprites[RICHT_WHIP]->setPosition(glm::vec2(128, 16));
+	introSprites[RICHT_FACE] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	introSprites[RICHT_FACE]->setNumberAnimations(3);
+	introSprites[RICHT_FACE]->setAnimationSpeed(0, 0);
+	introSprites[RICHT_FACE]->addKeyframe(0, glm::vec2(0.25f, 0.5f));
+	introSprites[RICHT_FACE]->setAnimationSpeed(1, 10);
+	introSprites[RICHT_FACE]->addKeyframe(1, glm::vec2(0.5f, 0.5f));
+	introSprites[RICHT_FACE]->setAnimationSpeed(2, 0);
+	introSprites[RICHT_FACE]->addKeyframe(2, glm::vec2(0.75f, 0.5f));
+	introSprites[RICHT_FACE]->setTransition(1, 2);
+	introSprites[RICHT_FACE]->changeAnimation(0);
+	introSprites[RICHT_FACE]->setPosition(glm::vec2(128, 112));
+	Texture* bootTex = new Texture();
+	bootTex->loadFromFile("images/cinematics/intro_cool/boot.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("boot", bootTex);
+	introQuads[BOOT2] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1.f), *bootTex, *shader);
+	introQuads[BOOT2]->setPosition(glm::vec2(-SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+	//blackBox128x112 = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(128, 112), *pixTex, *shader);
+	//blackBox128x112->setColor(glm::vec3(0));
+	bg.bg = sp;
+	bg.time = 35.75f;
+	bg.duration = 4.75f;
+	bg.id = RICHTER_READY;
+	film.push(bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 3, SCREEN_HEIGHT), glm::vec2(0.375f, 0.2f), bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.f, 0.6f));
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 41.f;
+	bg.duration = 2.f;
+	bg.id = RICHTER_WHIP1;
+	film.push(bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 4, SCREEN_HEIGHT), glm::vec2(0.5f, 0.2f), bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.5f, 0.4f));
+	sp->changeAnimation(0);
+	sp->setPosition(glm::vec2(-SCREEN_WIDTH * 3, 0));
+	bg.bg = sp;
+	bg.time = 43.f;
+	bg.duration = 1.5f;
+	bg.id = RICHTER_WHIP2;
 	film.push(bg);
 }
 
 void CoolIntro::filmUpdate(int deltaTime)
 {
 	int filmId = film.front().id;
-	if (filmId == MAP && introQuads[HAND]->getPosition().x < 24)
+	if (filmId == MAP)
 	{
-		introQuads[HAND]->incPosition(glm::vec2(4, 8));
+		if (introQuads[HAND]->getPosition().x < 16) introQuads[HAND]->incPosition(glm::vec2(4, 8));
+		else if (shaking)
+		{
+			shakeAngle += shakeAngleStep;
+			if (shakeAngle >= 180)
+			{
+				shaking = false;
+				shakeAngle = 0;
+			}
+			else
+			{
+				float positionY = startY + shakeDist * sin(glm::radians((float)shakeAngle));
+				film.front().bg->setPosition(glm::vec2(0, positionY));
+				introQuads[HAND]->setPosition(glm::vec2(introQuads[HAND]->getPosition().x, positionY + 48));
+			}
+		}
+		else if (!shaked)
+		{
+			shaking = true;
+			shaked = true;
+			startY = 0.f;
+		}
 	}
 	else if (filmId == HORSES)
 	{
@@ -210,15 +362,93 @@ void CoolIntro::filmUpdate(int deltaTime)
 	else if (filmId == PEOPLE)
 	{
 		Sprite* s = film.front().bg;
-		if (timeElapsed >= 26.75f) s->changeAnimation(2);
-		else if (timeElapsed >= 26.f) s->changeAnimation(1);
+		if (timeElapsed >= 26.6f) s->changeAnimation(2);
+		else if (timeElapsed >= 25.75f) s->changeAnimation(1);
 		else s->changeAnimation(0);
+		redBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed * 10)], 0, 0));
 	}
-	else if (filmId == ANNETTE && introQuads[ANNETTE_EYES]->getPosition().y > 96)
+	else if (filmId == ANNETTE)
 	{
-		glm::vec2 inc(0, -1);
-		introQuads[ANNETTE_EYES]->incPosition(inc);
-		film.front().bg->incPosition(inc);
+		if (introQuads[ANNETTE_EYES]->getPosition().y > 80)
+		{
+			glm::vec2 inc(0, -.5f);
+			introQuads[ANNETTE_EYES]->incPosition(inc);
+			introQuads[ANNETTE_MOUTH]->incPosition(inc);
+			film.front().bg->incPosition(inc);
+		}
+		else
+		{
+			if (timeElapsed >= 29.5f && !annetteBlinked)
+			{
+				annetteEyesDuration = 128;
+				annetteBlinked = true;
+			}
+			else if (annetteEyesDuration > 0) annetteEyesDuration -= deltaTime;
+		}
+		redBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed*10)], 0, 0));
+	}
+	else if (filmId == GIANTS && cameraX > -SCREEN_WIDTH / 2.f)
+	{
+		film.front().bg->setPosition(glm::vec2(cameraX--, 0));
+	}
+	else if (filmId == RICHTER_BOOT && introQuads[BOOT]->getPosition().y < 32)
+	{
+		introQuads[BOOT]->incPosition(glm::vec2(0, 8));
+	}
+	else if (filmId == RICHTER_ARRIVE)
+	{
+		Sprite* sp = film.front().bg;
+		if (timeElapsed > 34.5f && sp->animation() == 0) sp->changeAnimation(1);
+		else if (timeElapsed > 35.f && sp->animation() == 1) sp->changeAnimation(2);
+	}
+	else if (filmId == RICHTER_READY)
+	{
+		introSprites[RICHT_HANDS]->update(deltaTime);
+		int anim = film.front().bg->animation();
+		float bootPosX = introQuads[BOOT2]->getPosition().x;
+		if (timeElapsed >= 37.f && bootPosX < 0)
+		{
+			if (introSprites[RICHT_HANDS]->animation() == 0)
+			{
+				//cout << "cambio de animacion de las manos" << endl;
+				introSprites[RICHT_HANDS]->changeAnimation(1);
+				cameraX = 0;
+			}
+			else
+			{
+				//cout << "apareciendo la bota" << endl;
+				introQuads[BOOT2]->incPosition(glm::vec2(4, 0));	
+			}
+		}
+		else if (timeElapsed >= 39.f)
+		{
+			//cout << "cara" << endl;
+			if (timeElapsed >= 39.5f && introSprites[RICHT_FACE]->animation() == 0) introSprites[RICHT_FACE]->changeAnimation(1);
+			if (anim != 3) film.front().bg->changeAnimation(3);
+			else introSprites[RICHT_FACE]->update(deltaTime);
+		}	
+		else if (timeElapsed >= 38.f)
+		{
+			//cout << "whip ready" << endl;
+			if (introSprites[RICHT_WHIP]->getPosition().y > 0) introSprites[RICHT_WHIP]->incPosition(glm::vec2(0, -2));
+			else if (introSprites[RICHT_WHIP]->animation() != 1) introSprites[RICHT_WHIP]->changeAnimation(1);
+			if (anim != 2) film.front().bg->changeAnimation(2);
+		}
+		else if (bootPosX == 0)
+		{
+			//cout << "entro, aparece la bota, momento: " << timeElapsed << endl;
+			if (anim != 1) film.front().bg->changeAnimation(1);
+			introSprites[RICHT_DUST]->update(deltaTime);
+		}
+	}
+	else if (filmId == RICHTER_WHIP1 && cameraX > -SCREEN_WIDTH * 2)
+	{
+		cameraX -= 4;
+		film.front().bg->setPosition(glm::vec2(cameraX, 0));
+	}
+	else if (filmId == RICHTER_WHIP2 && film.front().bg->getPosition().x < 0)
+	{
+		film.front().bg->incPosition(glm::vec2(8, 0));
 	}
 	boltTimer -= deltaTime / 1000.f;
 }
@@ -232,7 +462,7 @@ void CoolIntro::render()
 		{
 			film.front().bg->render();
 			introQuads[HAND]->render();
-			blackBarTop->render();
+			blackBar48px->render();
 		}
 		else if (filmId == HORSES)
 		{
@@ -265,19 +495,50 @@ void CoolIntro::render()
 		{
 			film.front().bg->render();
 			introQuads[SKELETON_CEMENTERY]->render();
-			blackBarBottom->render();
+			blackBar32px->render();
 		}
 		else if (filmId == GIANT)
 		{
 			film.front().bg->render();
 			introQuads[GIANT_QUAD]->render();
 		}
+		else if (filmId == PEOPLE)
+		{
+			redBackground->render();
+			film.front().bg->render();
+		}
 		else if (filmId == ANNETTE)
 		{
+			redBackground->render();
 			film.front().bg->render();
-			introQuads[ANNETTE_EYES]->render();
-			blackBarTop->render();
-			blackBarBottom->render();
+			if (introQuads[ANNETTE_EYES]->getPosition().y > 80)
+			{
+				introQuads[ANNETTE_EYES]->render();
+				introQuads[ANNETTE_MOUTH]->render();
+			}
+			else if (annetteEyesDuration > 0) introQuads[ANNETTE_EYES]->render();
+			blackBar32px->setPosition(glm::vec2(0, 0));
+			blackBar32px->render();
+			blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
+			blackBar32px->render();
+		}
+		else if (filmId == RICHTER_BOOT)
+		{
+			film.front().bg->render();
+			introQuads[BOOT]->render();
+			blackBar32px->setPosition(glm::vec2(0, 0));
+			blackBar32px->render();
+			blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
+			blackBar32px->render();
+		}
+		else if (filmId == RICHTER_READY)
+		{
+			film.front().bg->render();
+			introSprites[RICHT_HANDS]->render();
+			if (introQuads[BOOT2]->getPosition().x < 0) introQuads[BOOT2]->render();
+			else if (timeElapsed < 38.f) introSprites[RICHT_DUST]->render();
+			if (timeElapsed >= 38.f) introSprites[RICHT_WHIP]->render();
+			if (film.front().bg->animation() == 3) introSprites[RICHT_FACE]->render();
 		}
 		else film.front().bg->render();
 	}
@@ -286,4 +547,9 @@ void CoolIntro::render()
 float CoolIntro::setEndTime() const
 {
 	return 64.f;
+}
+
+int CoolIntro::getColorIndex(int range, float freq)
+{
+	return int((sin(freq) + 1) / 2 * range);
 }

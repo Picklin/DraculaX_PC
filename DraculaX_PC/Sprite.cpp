@@ -260,6 +260,11 @@ const vector<AnimKeyframes>& Sprite::getAnimations() const
 	return animations;
 }
 
+const glm::vec2& Sprite::getPosition() const
+{
+	return position;
+}
+
 void Sprite::animatorX(int animId, int numFrames, float beginOffset, float inc, float yOffset)
 {
 	for (int i = 0; i < numFrames; i++)

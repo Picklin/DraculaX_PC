@@ -151,7 +151,7 @@ int main(void)
 		if (currentTime - timePreviousFrame >= timePerFrame)
 		{
 			/* Update & render steps of the game loop */
-			if (!Game::instance().update(int(1000.0f * (currentTime - timePreviousFrame))))
+			if (!Game::instance().update(/*int(1000.0f * (currentTime - timePreviousFrame))*/16))
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 			Game::instance().render();
 			timePreviousFrame = currentTime;

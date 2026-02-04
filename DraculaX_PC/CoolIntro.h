@@ -14,6 +14,9 @@ protected:
 	float setEndTime() const override;
 
 private:
+	int getColorIndex(int range, float freq);
+
+private:
 	enum BGIDs
 	{
 		MAP, RIDING, CASTLEVANIA, CEMENTERY, GIANT, PEOPLE, ANNETTE, GIANTS,
@@ -21,14 +24,16 @@ private:
 	};
 	enum Quads
 	{
-		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, GIANT_QUAD, ANNETTE_EYES, COUNT
+		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, GIANT_QUAD, ANNETTE_EYES, ANNETTE_MOUTH, BOOT, BOOT2, COUNT
 	};
 	enum Sprites
 	{
-		WHEELS, HORSES, COUNT2
+		WHEELS, HORSES, RICHT_HANDS, RICHT_DUST, RICHT_WHIP, RICHT_FACE, COUNT2
 	};
-	TexturedQuad* blackBarTop;
-	TexturedQuad* blackBarBottom;
+	TexturedQuad* blackBar48px;
+	TexturedQuad* blackBar32px;
+	//TexturedQuad* blackBox128x112;
+	TexturedQuad* redBackground;
 	TexturedQuad* bolts[2];
 	TexturedQuad* introQuads[COUNT];
 	Sprite* introSprites[COUNT2];
@@ -36,8 +41,17 @@ private:
 	float bgXScroll = 0.f;
 	float boltTimer = 2.f;
 	float richter1Alpha = 1.f;
+	float startY;
+	float cameraX = 0.f;
 	int boltDuration;
+	int annetteEyesDuration;
+	int shakeAngleStep;
+	int shakeDist;
+	int shakeAngle = 0;
+	bool shaking = false;
+	bool shaked = false;
 	bool renderBigBolt = false;
+	bool annetteBlinked = false;
 };
 
 #endif // !_COOLINTRO_INCLUDE

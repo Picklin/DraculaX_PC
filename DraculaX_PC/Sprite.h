@@ -54,6 +54,7 @@ public:
 	float getAngleDegrees() const;
 	float getTimeAnimation() const;
 	const vector<AnimKeyframes>& getAnimations() const;
+	const glm::vec2& getPosition() const;
 
 	void animatorX(int animId, int numFrames, float beginOffset, float inc, float yOffset);
 	void animatorY(int animId, int numFrames, float beginOffset, float inc, float xOffset);
