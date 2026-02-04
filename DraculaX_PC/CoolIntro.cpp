@@ -17,7 +17,7 @@ void CoolIntro::initChild()
 	Texture* pixTex = TextureManager::instance().getTexture("pixel");
 	blackBar48px = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, 48.f), *pixTex, *shader);
 	blackBar32px = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, 32.f), *pixTex, *shader);
-	redBackground = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), *pixTex, *shader);
+	colorBackground = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), *pixTex, *shader);
 	blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
 	blackBar48px->setColor(glm::vec3(0));
 	blackBar32px->setColor(glm::vec3(0));
@@ -145,7 +145,7 @@ void CoolIntro::initChild()
 	sp->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 21.f;
-	bg.duration = 4.f;
+	bg.duration = 3.75f;
 	bg.id = GIANT;
 	film.push(bg);
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
@@ -295,6 +295,100 @@ void CoolIntro::initChild()
 	bg.duration = 1.5f;
 	bg.id = RICHTER_WHIP2;
 	film.push(bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT), glm::vec2(0.0625f, 0.2f), bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.6f));
+	sp->changeAnimation(0);
+	sp->setPosition(glm::vec2(-SCREEN_WIDTH, 0));
+	Texture* pfire = new Texture();
+	pfire->loadFromFile("images/cinematics/intro_cool/purple_fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("pfire", pfire);
+	introSprites[PURPLE_FIRE] = Sprite::createSprite(glm::ivec2(80), glm::vec2(0.2f, 1.f), pfire, shader);
+	introSprites[PURPLE_FIRE]->setNumberAnimations(1);
+	introSprites[PURPLE_FIRE]->setAnimationSpeed(0, 10);
+	introSprites[PURPLE_FIRE]->animatorX(0, 5, 0.f, 0.2f, 0.f);
+	introSprites[PURPLE_FIRE]->changeAnimation(0);
+	introSprites[PURPLE_FIRE]->setPosition(glm::vec2(49, 48));
+	introQuads[RICHTER2] = TexturedQuad::createTexturedQuad(glm::vec2(0.4375f, 0.6f), glm::vec2(0.5f, 0.8f), *bgTex, *shader);
+	introQuads[RICHTER2]->setPosition(glm::vec2(SCREEN_WIDTH * 2 + SCREEN_WIDTH/2, 0));
+	bg.bg = sp;
+	bg.time = 44.75f;
+	bg.duration = 3.25f;
+	bg.id = RICHTER_WHIP3;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.5f, 0.6f));
+	sp->changeAnimation(0);
+	Texture* richtEyes = new Texture();
+	richtEyes->loadFromFile("images/cinematics/intro_cool/richter_sus.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("richtEyes", richtEyes);
+	introSprites[RICHTER_EYES] = Sprite::createSprite(fullScreen, glm::vec2(0.25f, 1.f), richtEyes, shader);
+	introSprites[RICHTER_EYES]->setNumberAnimations(2);
+	introSprites[RICHTER_EYES]->setAnimationSpeed(0, 10);
+	introSprites[RICHTER_EYES]->animatorX(0, 2, 0.f, 0.25f, 0.f);
+	introSprites[RICHTER_EYES]->setAnimationSpeed(1, 0);
+	introSprites[RICHTER_EYES]->addKeyframe(1, glm::vec2(0.5f, 0.f));
+	introSprites[RICHTER_EYES]->setTransition(0, 1);
+	introSprites[RICHTER_EYES]->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 48.f;
+	bg.duration = 2.f;
+	bg.id = RICHTER_SUS;
+	film.push(bg);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.2f), bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.625f, 0.6f));
+	sp->changeAnimation(0);
+	sp->setPosition(glm::vec2(-SCREEN_WIDTH, 0));
+	Texture* richtAmbushed = new Texture();
+	richtAmbushed->loadFromFile("images/cinematics/intro_cool/richter_ambushed.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("richtAmbushed", richtAmbushed);
+	Texture* skelAmbush = new Texture();
+	skelAmbush->loadFromFile("images/cinematics/intro_cool/skeleton.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("skelAmbush", skelAmbush);
+	introQuads[RICHTER3] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *richtAmbushed, *shader);
+	introQuads[SKELETON_AMBUSH] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *skelAmbush, *shader);
+	introQuads[RICHTER3]->setPosition(glm::vec2(79, 56));
+	introQuads[SKELETON_AMBUSH]->setPosition(glm::vec2(21, 109));
+	bg.bg = sp;
+	bg.time = 50.25f;
+	bg.duration = 2.25f;
+	bg.id = RICHTER_AMBUSHED;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(1);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.875f, 0.6f));
+	sp->changeAnimation(0);
+	Texture* hands = new Texture();
+	hands->loadFromFile("images/cinematics/intro_cool/hands.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("richtHands", hands);
+	introQuads[RIGHT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), *hands, *shader);
+	introQuads[LEFT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(1.f, 1.f), *hands, *shader);
+	introQuads[RIGHT_HAND]->setPosition(glm::vec2(50, 142));
+	introQuads[LEFT_HAND]->setPosition(glm::vec2(142, 142));
+	bg.bg = sp;
+	bg.time = 52.75f;
+	bg.duration = 1.f;
+	bg.id = RICHTER_ULT1;
+	film.push(bg);
+	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
+	sp->setNumberAnimations(2);
+	sp->setAnimationSpeed(0, 30);
+	sp->addKeyframe(0, glm::vec2(0.f, 0.8f));
+	sp->setAnimationSpeed(1, 30);
+	sp->animatorX(1, 4, 0.125f, 0.125f, 0.8f);
+	sp->setTransition(0, 1);
+	sp->changeAnimation(0);
+	bg.bg = sp;
+	bg.time = 54.f;
+	bg.duration = 7.f;
+	bg.id = RICHTER_ULT2;
+	film.push(bg);
 }
 
 void CoolIntro::filmUpdate(int deltaTime)
@@ -365,7 +459,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 		if (timeElapsed >= 26.6f) s->changeAnimation(2);
 		else if (timeElapsed >= 25.75f) s->changeAnimation(1);
 		else s->changeAnimation(0);
-		redBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed * 10)], 0, 0));
+		colorBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed * 10)], 0, 0));
 	}
 	else if (filmId == ANNETTE)
 	{
@@ -385,7 +479,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 			}
 			else if (annetteEyesDuration > 0) annetteEyesDuration -= deltaTime;
 		}
-		redBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed*10)], 0, 0));
+		colorBackground->setColor(glm::vec3(redColors[getColorIndex(3, timeElapsed*10)], 0, 0));
 	}
 	else if (filmId == GIANTS && cameraX > -SCREEN_WIDTH / 2.f)
 	{
@@ -413,6 +507,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 				//cout << "cambio de animacion de las manos" << endl;
 				introSprites[RICHT_HANDS]->changeAnimation(1);
 				cameraX = 0;
+				colorBackground->setColor(glm::vec3(0, 0, 36/255.f));
 			}
 			else
 			{
@@ -449,6 +544,32 @@ void CoolIntro::filmUpdate(int deltaTime)
 	else if (filmId == RICHTER_WHIP2 && film.front().bg->getPosition().x < 0)
 	{
 		film.front().bg->incPosition(glm::vec2(8, 0));
+	}
+	else if (filmId == RICHTER_WHIP3)
+	{
+		Sprite* sp = film.front().bg;
+		if (sp->getPosition().x < 0) sp->incPosition(glm::vec2(2, 0));
+		if (introQuads[RICHTER2]->getPosition().x > 128) introQuads[RICHTER2]->incPosition(glm::vec2(-4, 0));
+		else if (timeElapsed >= 47.25f && !introSprites[PURPLE_FIRE]->animationEnded()) introSprites[PURPLE_FIRE]->update(deltaTime);
+	}
+	else if (filmId == RICHTER_SUS && timeElapsed >= 48.75f)
+	{
+		introSprites[RICHTER_EYES]->update(deltaTime);
+	}
+	else if (filmId == RICHTER_AMBUSHED && film.front().bg->getPosition().x < 0)
+	{
+		introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-1, 0));
+		film.front().bg->incPosition(glm::vec2(2, 0));
+	}
+	else if (filmId == RICHTER_ULT1 && introQuads[RIGHT_HAND]->getPosition().y > (SCREEN_HEIGHT - 32 - 64))
+	{
+		introQuads[RIGHT_HAND]->incPosition(glm::vec2(.5, -.5));
+		introQuads[LEFT_HAND]->incPosition(glm::vec2(-.5, -.5));
+	}
+	else if (filmId == RICHTER_ULT2 && timeElapsed >= 57.f && film.front().alpha > 0)
+	{
+		blackScreenAlpha += deltaTime / 3000.f;
+		blackScreen->setAlpha(blackScreenAlpha);
 	}
 	boltTimer -= deltaTime / 1000.f;
 }
@@ -504,12 +625,12 @@ void CoolIntro::render()
 		}
 		else if (filmId == PEOPLE)
 		{
-			redBackground->render();
+			colorBackground->render();
 			film.front().bg->render();
 		}
 		else if (filmId == ANNETTE)
 		{
-			redBackground->render();
+			colorBackground->render();
 			film.front().bg->render();
 			if (introQuads[ANNETTE_EYES]->getPosition().y > 80)
 			{
@@ -540,7 +661,43 @@ void CoolIntro::render()
 			if (timeElapsed >= 38.f) introSprites[RICHT_WHIP]->render();
 			if (film.front().bg->animation() == 3) introSprites[RICHT_FACE]->render();
 		}
+		else if (filmId == RICHTER_WHIP3)
+		{
+			colorBackground->render();
+			film.front().bg->render();
+			if (timeElapsed >= 47.25f && !introSprites[PURPLE_FIRE]->animationEnded()) introSprites[PURPLE_FIRE]->render();
+			introQuads[RICHTER2]->render();
+			blackBar48px->setPosition(glm::vec2(0));
+			blackBar48px->render();
+			blackBar48px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 48));
+			blackBar48px->render();
+		}
+		else if (filmId == RICHTER_SUS)
+		{
+			film.front().bg->render();
+			introSprites[RICHTER_EYES]->render();
+		}
+		else if (filmId == RICHTER_AMBUSHED)
+		{
+			introQuads[SKELETON_AMBUSH]->render();
+			introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(164, 0));
+			shader->setUniform1f("frameWidth", 1.f);
+			shader->setUniform1i("flip", true);
+			introQuads[SKELETON_AMBUSH]->render();
+			introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-164, 0));
+			shader->setUniform1i("flip", false);
+			introQuads[RICHTER3]->render();
+			film.front().bg->render();
+		}
+		else if (filmId == RICHTER_ULT1)
+		{
+			film.front().bg->render();
+			introQuads[RIGHT_HAND]->render();
+			introQuads[LEFT_HAND]->render();
+			blackBar32px->render();
+		}
 		else film.front().bg->render();
+		if (blackScreenAlpha > 0) blackScreen->render();
 	}
 }
 

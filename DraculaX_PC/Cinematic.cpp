@@ -53,7 +53,7 @@ void Cinematic::update(int deltaTime)
         {
             film.front().bg->update(deltaTime);
             filmUpdate(deltaTime);
-            float alpha = film.front().alpha;
+            float alpha = film.front(). alpha;
             if (alpha < 1.f)
             {
                 alpha += deltaTime / 1000.f;
