@@ -56,7 +56,7 @@ void Level1Sc3::update(int deltaTime)
 				}
 			}
 		}
-		else if (!player->wounded() && wyvern->battleStarted() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
+		if (!player->wounded() && wyvern->battleStarted() && collision(wyvBox, player->getHitbox())) gui->takeDmg(15);
 		else if (!bossDefeated && wyvern->isEnded())
 		{
 			EffectsManager::instance().createExplosions(wyvern->getPosition(), glm::vec2(64.f, 64.f), 200, 32, 64, glm::vec3(1.f));
@@ -134,7 +134,7 @@ TileMap* Level1Sc3::setStairsMap()
 
 void Level1Sc3::initItems()
 {
-	Candle* candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(7 * map->getTileSize(), 11 * map->getTileSize()), ItemManager::HEART);
+	Candle* candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(7 * map->getTileSize(), 11 * map->getTileSize()), GUI::CAT);
 	candles.push_back(candle1);
 	candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(12 * map->getTileSize(), 11 * map->getTileSize()), ItemManager::FOUR_HUNDRED);
 	candles.push_back(candle1);

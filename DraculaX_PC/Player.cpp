@@ -632,7 +632,7 @@ void Player::childUpdate(int deltaTime)
 					{
 						attack();
 					}
-					else if (Game::instance().getKey(GLFW_KEY_UP)
+					else if (Game::instance().getKey(GLFW_KEY_UP) && stairs != nullptr
 						&& (((tile = stairs->collisionMoveDownWithTileNum(pixBoxR)) == 1)
 							|| ((tile = stairs->collisionMoveDownWithTileNum(pixBoxL)) == 2)))
 					{
