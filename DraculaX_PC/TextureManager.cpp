@@ -46,7 +46,7 @@ TextureManager::TextureManager()
     addTexture("bat_intro", bat);
 
     Texture* introBgTex = new Texture();
-    introBgTex->loadFromFile("images/cinematics/intro_cool/cool_intro_bgs.png", TEXTURE_PIXEL_FORMAT_RGBA);
+    introBgTex->loadFromFile("images/cinematics/intro_cool/cool_intro_bgs_v2.png", TEXTURE_PIXEL_FORMAT_RGBA);
     addTexture("coolIntroBg", introBgTex);
     
     Texture* lvl0Tex = new Texture();
@@ -57,6 +57,8 @@ TextureManager::TextureManager()
     Texture* titleBgTex = new Texture();
     titleBgTex->loadFromFile("images/screens/titleBG.png", TEXTURE_PIXEL_FORMAT_RGBA);
     addTexture("titleBG", titleBgTex);
+
+    
 }
 
 TextureManager& TextureManager::instance()

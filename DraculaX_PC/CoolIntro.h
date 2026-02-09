@@ -24,7 +24,7 @@ private:
 	};
 	enum Quads
 	{
-		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, GIANT_QUAD, ANNETTE_EYES, ANNETTE_MOUTH,
+		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, ANNETTE_EYES, ANNETTE_MOUTH,
 		BOOT, BOOT2, RICHTER2, RICHTER3, SKELETON_AMBUSH, RIGHT_HAND, LEFT_HAND, COUNT
 	};
 	enum Sprites
@@ -38,6 +38,7 @@ private:
 	TexturedQuad* bolts[2];
 	TexturedQuad* introQuads[COUNT];
 	Sprite* introSprites[COUNT2];
+	Texture* bgPalette;
 
 	float bgXScroll = 0.f;
 	float boltTimer = 2.f;

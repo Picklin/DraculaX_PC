@@ -46,8 +46,8 @@ void Game::init()
 	basicShader.use();
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
 	menus[Screen::OPTIONS] = currentMenu;
-	SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
-	//playCinematic(Cinematic::COOL_INTRO);
+	//SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
+	playCinematic(Cinematic::COOL_INTRO);
 	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
@@ -186,20 +186,20 @@ void Game::setNextCinematic(int cinematicId, int fadeOutMilisecs, float timeBefo
 
 void Game::playCinematic(int cinematicId)
 {
-	spriteShader.use();
+	cinematicShader.use();
 	if (cinematicId == Cinematic::INTRO)
 	{
 		if (currSubMode != NONE)
-			cinematic = Cinematic::createCinematic(spriteShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
+			cinematic = Cinematic::createCinematic(cinematicShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
 				: ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[1993_EN] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt"), Cinematic::INTRO);
-		else cinematic = Cinematic::createCinematic(spriteShader, Cinematic::INTRO);
+		else cinematic = Cinematic::createCinematic(cinematicShader, Cinematic::INTRO);
 		SoundEngine::instance().setMusicMode(arranged);
 		SoundEngine::instance().loadGermanIntro();
 		SoundEngine::instance().playIntro();
 	}
 	else if (cinematicId == Cinematic::COOL_INTRO)
 	{
-		cinematic = Cinematic::createCinematic(spriteShader, Cinematic::COOL_INTRO);
+		cinematic = Cinematic::createCinematic(cinematicShader, Cinematic::COOL_INTRO);
 		SoundEngine::instance().playOverture();
 	}
 	currentCinematicId = cinematicId;
@@ -349,19 +349,31 @@ void Game::initShaders()
 	}
 	spriteShader.bindFragmentOutput("outColor");
 
-	vShader.free();
 	fShader.free();
-	vShader.initFromFile(VERTEX_SHADER, "shaders/texture_basic.vert");
-	if (!vShader.isCompiled())
-	{
-		cout << "Vertex Shader Error" << endl;
-		cout << "" << vShader.log() << endl << endl;
-	}
 	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture_backgrounds.frag");
 	if (!fShader.isCompiled())
 	{
 		cout << "Fragment Shader Error" << endl;
 		cout << "" << fShader.log() << endl << endl;
+	}
+	
+	cinematicShader.init();
+	cinematicShader.addShader(vShader);
+	cinematicShader.addShader(fShader);
+	cinematicShader.link();
+	if (!cinematicShader.isLinked())
+	{
+		cout << "Shader Linking Error" << endl;
+		cout << "" << cinematicShader.log() << endl << endl;
+	}
+	cinematicShader.bindFragmentOutput("outColor");
+	
+	vShader.free();
+	vShader.initFromFile(VERTEX_SHADER, "shaders/texture_basic.vert");
+	if (!vShader.isCompiled())
+	{
+		cout << "Vertex Shader Error" << endl;
+		cout << "" << vShader.log() << endl << endl;
 	}
 	basicShader.init();
 	basicShader.addShader(vShader);
@@ -436,6 +448,3 @@ Game::Game()
 	cinematic = nullptr;
 	currentMenu = nullptr;
 }
-
-
-

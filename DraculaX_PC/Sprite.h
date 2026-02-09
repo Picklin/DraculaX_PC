@@ -40,6 +40,8 @@ public:
 	void setAlpha(float alpha) { this->color.a = alpha; }
 	void setScale(glm::vec2 scale);
 	void setKeyframe(int frame) { currentKeyframe = frame; }
+	void setColorPalette(Texture* palette) { this->palette = palette; }
+	void setPaletteRow(float row) { currentPaletteRow = row; }
 	void invertColor() { invert = true; }
 	void addKeyframe(int animId, const glm::vec2& frame);
 	void addAnimations(const vector<AnimKeyframes>& anims);
@@ -61,22 +63,24 @@ public:
 
 
 private:
-	Texture* texture;
-	ShaderProgram* shaderProgram;
-	GLuint vao;
-	GLuint vbo;
-	GLint posLocation, texCoordLocation;
+	vector<AnimKeyframes> animations;
+	glm::vec4 color = glm::vec4(1.f);
 	glm::vec2 quadSize;
 	glm::vec2 center;
 	glm::vec2 scale = glm::vec2(1.f);
 	glm::vec2 position;
-	float angleDegrees = 0.f;
-	int currentAnimation, currentKeyframe;
-	float timeAnimation;
 	glm::vec2 texCoordDispl;
-	vector<AnimKeyframes> animations;
+	Texture* texture;
+	Texture* palette = nullptr;
+	ShaderProgram* shaderProgram;
+	GLuint vao;
+	GLuint vbo;
+	GLint posLocation, texCoordLocation;
+	int currentAnimation, currentKeyframe;
+	float angleDegrees = 0.f;
+	float timeAnimation;
+	float currentPaletteRow;
 	bool animationDoneOnce = false;
-	glm::vec4 color = glm::vec4(1.f);
 	bool invert = false;
 };
 

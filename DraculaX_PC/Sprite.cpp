@@ -92,22 +92,27 @@ void Sprite::render()
 {
 	glm::mat4 modelview = glm::mat4(1.f);
 	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
-	//modelview = glm::translate(modelview, glm::vec3(center.x, center.y, 0.f));
-	//modelview = glm::rotate(modelview, glm::radians(angleDegrees), glm::vec3(0.f, 0.f, 1.f));
-	//modelview = glm::translate(modelview, glm::vec3(-center.x, -center.y, 0.f));
-	//modelview = glm::scale(modelview, glm::vec3(scale, 1.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
 	shaderProgram->setUniform1i("invert", invert);
-	//glEnable(GL_TEXTURE_2D);
+	if (palette)
+	{
+		shaderProgram->setUniform1i("usePalette", true);
+		glActiveTexture(GL_TEXTURE1);
+		palette->use();
+		shaderProgram->setUniform1i("paletteLUT", 1);
+		shaderProgram->setUniform1f("currentPaletteRow", currentPaletteRow);
+	}
+	glActiveTexture(GL_TEXTURE0);
 	texture->use();
+	shaderProgram->setUniform1i("tex", 0);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//glDisable(GL_TEXTURE_2D);
 	invert = false;
 	shaderProgram->setUniform1i("invert", invert);
 	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
+	shaderProgram->setUniform1i("usePalette", false);
 }
 
 void Sprite::render(glm::vec2& position, int anim, int frame)
@@ -119,12 +124,23 @@ void Sprite::render(glm::vec2& position, int anim, int frame)
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	shaderProgram->setUniform4f("color", color.x, color.y, color.z, color.a);
 	shaderProgram->setUniform1i("invert", invert);
-	glEnable(GL_TEXTURE_2D);
+	if (palette)
+	{
+		shaderProgram->setUniform1i("usePalette", true);
+		glActiveTexture(GL_TEXTURE1);
+		palette->use();
+		shaderProgram->setUniform1i("paletteLUT", 1);
+		shaderProgram->setUniform1f("currentPaletteRow", currentPaletteRow);
+	}
+	glActiveTexture(GL_TEXTURE0);
 	texture->use();
+	shaderProgram->setUniform1i("tex", 0);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisable(GL_TEXTURE_2D);
 	invert = false;
+	shaderProgram->setUniform1i("invert", invert);
+	shaderProgram->setUniform2f("texCoordDispl", 0.f, 0.f);
+	shaderProgram->setUniform1i("usePalette", false);
 }
 
 void Sprite::free()

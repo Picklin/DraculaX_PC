@@ -73,7 +73,7 @@ private:
 private:
 	Player player;
 	GUI gui;
-	ShaderProgram spriteShader, basicShader, guiShader;
+	ShaderProgram spriteShader, basicShader, guiShader, cinematicShader;
 	using SceneCreator = std::function<Scene* ()>;
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;

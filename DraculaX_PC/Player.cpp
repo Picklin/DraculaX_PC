@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "SoundEngine.h"
+#include "TextureManager.h"
 
 #define FALL_SPEED 5
 #define DASH_KICK_HEIGHT 32
@@ -127,6 +128,11 @@ namespace
 		{ PlayerAnims::WOUNDED_UPSTAIRS, PlayerStates::STATE_WOUNDED },
 		{ PlayerAnims::WOUNDED_DOWNSTAIRS, PlayerStates::STATE_WOUNDED },
 	};
+	const float colorPalettesRows[6] = { 0.f, 0.125f, 0.25f, 0.375f, 0.5f, 0.625f };
+	enum ColorPalettes
+	{
+		DEFAULT, DAMAGED, BURNT, SLOWED, PETRIFIED, ULTIMATE
+	};
 	const float moveSpeed = 1.25f;
 }
 
@@ -153,9 +159,30 @@ void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 {
 	Entity::init(tileMapPos, shaderProgram);
 	afterimages.sprite = sprite;
-	whipTex.loadFromFile("images/Richter/whip.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	whipTex.setMagFilter(GL_NEAREST);
-	whip = Sprite::createSprite(glm::ivec2(128, 64), glm::vec2(0.1f, 1.f), &whipTex, &shaderProgram);
+	if (TextureManager::instance().exists("whip"))
+	{
+		whipTex = TextureManager::instance().getTexture("whip");
+	}
+	else
+	{
+		whipTex = new Texture();
+		whipTex->loadFromFile("images/Richter/whip.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		TextureManager::instance().addTexture("whip", whipTex);
+	}
+	if (TextureManager::instance().exists("RichterPalette"))
+	{
+		palette = TextureManager::instance().getTexture("RichterPalette");
+	}
+	else
+	{
+		palette = new Texture();
+		palette->loadFromFile("images/Richter/Richter_colorPalettes.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		palette->setWrapS(GL_CLAMP_TO_EDGE);
+		TextureManager::instance().addTexture("RichterPalette", palette);
+	}
+	sprite->setColorPalette(palette);
+	sprite->setPaletteRow(colorPalettesRows[DEFAULT]);
+	whip = Sprite::createSprite(glm::ivec2(128, 64), glm::vec2(0.1f, 1.f), whipTex, &shaderProgram);
 	whip->setNumberAnimations(2);
 	whip->setAnimationSpeed(0, 30);
 	whip->animatorX(0, 6, 0.f, 0.1f, 0.f);
@@ -231,7 +258,7 @@ bool Player::wounded() const
 
 const string Player::getSpritesheet() const
 {
-	return "images/Richter/Richter_v4.png";
+	return "images/Richter/Richter_v4_base.png";
 }
 
 const glm::vec2 Player::getSizeInSpritesheet() const
@@ -947,7 +974,7 @@ void Player::childUpdate(int deltaTime)
 	if (wounded())
 	{
 		if ((timeWounded / (deltaTime * 2)) % 4 == 0)
-			sprite->setColor(glm::vec3(1.f, 0.f, 0.f));
+			sprite->setColor(glm::vec3(1.f, 0.5f, 0.5f));
 		else
 			sprite->setColor(glm::vec3(1.f));
 		timeWounded -= deltaTime;

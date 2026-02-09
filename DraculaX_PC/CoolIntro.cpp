@@ -11,8 +11,18 @@ namespace {
 void CoolIntro::initChild()
 {
 	Texture* bgTex = TextureManager::instance().getTexture("coolIntroBg");
+	if (TextureManager::instance().exists("bgPalette"))
+	{
+		bgPalette = TextureManager::instance().getTexture("bgPalette");
+	}
+	else
+	{
+		bgPalette = new Texture();
+		bgPalette->loadFromFile("images/cinematics/intro_cool/palettes.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		TextureManager::instance().addTexture("bgPalette", bgPalette);
+	}
 	glm::ivec2 fullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
-	glm::vec2 offset(0.125f, 0.2f);
+	glm::vec2 offset(0.125f, 0.25f);
 	Texture* lvl0Tex = TextureManager::instance().getTexture("prologueTexs");
 	Texture* pixTex = TextureManager::instance().getTexture("pixel");
 	blackBar48px = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(SCREEN_WIDTH, 48.f), *pixTex, *shader);
@@ -55,7 +65,7 @@ void CoolIntro::initChild()
 	bg.alpha = 1.f;
 	bg.id = MAP;
 	film.push(bg);
-	introQuads[RICHTER1] = TexturedQuad::createTexturedQuad(glm::vec2(0.125f, 0.f), glm::vec2(0.25f,0.2f), *bgTex, *shader);
+	introQuads[RICHTER1] = TexturedQuad::createTexturedQuad(glm::vec2(0.125f, 0.f), glm::vec2(0.25f,0.25f), *bgTex, *shader);
 	sp = Sprite::createSprite(glm::ivec2(64, 32), glm::vec2(0.125f, 0.125f), lvl0Tex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 15);
@@ -118,31 +128,25 @@ void CoolIntro::initChild()
 	introQuads[SKELETON_CEMENTERY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), *skelTex, *shader);
 	introQuads[SKELETON_CEMENTERY]->setPosition(glm::vec2(32, SCREEN_HEIGHT));
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
-	sp->setNumberAnimations(3);
+	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
 	sp->addKeyframe(0, glm::vec2(0.25f, 0.f));
-	sp->setAnimationSpeed(1, 8);
-	sp->animatorX(1, 2, 0.375f, 0.125f, 0.f);
-	sp->setAnimationSpeed(2, 0);
-	sp->addKeyframe(2, glm::vec2(0.625f, 0.f));
-	sp->setTransition(1, 2);
 	sp->changeAnimation(0);
+	sp->setColorPalette(bgPalette);
+	sp->setPaletteRow(0.f);
 	bg.bg = sp;
 	bg.time = 15.5f;
 	bg.duration = 5.5f;
 	bg.id = CEMENTERY;
 	film.push(bg);
-	introQuads[GIANT_QUAD] = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.f), glm::vec2(1.f, 0.4f), *bgTex, *shader);
-	introQuads[GIANT_QUAD]->setPosition(glm::vec2(0, -SCREEN_HEIGHT));
-	Texture* giant_bg = new Texture();
-	giant_bg->loadFromFile("images/cinematics/intro_cool/bg1.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	TextureManager::instance().addTexture("giant_bg", giant_bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, 672), glm::vec2(32.f, 7.f), giant_bg, shader);
-	sp->setPosition(glm::vec2(0, 48 - SCREEN_HEIGHT));
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT * 2), glm::vec2(0.125f, 0.5f), bgTex, shader);
 	sp->setNumberAnimations(1);
-	sp->setAnimationSpeed(0, 8);
-	sp->animatorY(0, 3, 0.f, 0.25f, 0.f);
+	sp->setAnimationSpeed(0, 0);
+	sp->addKeyframe(0, glm::vec2(0.875f, 0.f));
 	sp->changeAnimation(0);
+	sp->setPosition(glm::vec2(0, -SCREEN_HEIGHT));
+	sp->setColorPalette(bgPalette);
+	sp->setPaletteRow(0.2f);
 	bg.bg = sp;
 	bg.time = 21.f;
 	bg.duration = 3.75f;
@@ -151,11 +155,11 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(3);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.f, 0.2f));
+	sp->addKeyframe(0, glm::vec2(0.f, 0.25f));
 	sp->setAnimationSpeed(1, 0);
-	sp->addKeyframe(1, glm::vec2(0.125f, 0.2f));
+	sp->addKeyframe(1, glm::vec2(0.125f, 0.25f));
 	sp->setAnimationSpeed(2, 0);
-	sp->addKeyframe(2, glm::vec2(0.25f, 0.2f));
+	sp->addKeyframe(2, glm::vec2(0.25f, 0.25f));
 	sp->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 25.f;
@@ -174,10 +178,10 @@ void CoolIntro::initChild()
 	bg.duration = 3.f;
 	bg.id = ANNETTE;
 	film.push(bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.2f), bgTex, shader);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.25f), bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.375f, 0.2f));
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.25f));
 	sp->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 30.5f;
@@ -187,7 +191,7 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 1);
-	sp->addKeyframe(0, glm::vec2(0.625f, 0.2f));
+	sp->addKeyframe(0, glm::vec2(0.625f, 0.25f));
 	sp->changeAnimation(0);
 	introQuads[BOOT] = TexturedQuad::createTexturedQuad(glm::vec2(0.7f, 0.f), glm::vec2(1.f, 0.5f), *handTex, *shader);
 	introQuads[BOOT]->setPosition(glm::vec2(94, -160));
@@ -199,11 +203,11 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(3);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.f, 0.4f));
+	sp->addKeyframe(0, glm::vec2(0.f, 0.5f));
 	sp->setAnimationSpeed(1, 0);
-	sp->addKeyframe(1, glm::vec2(0.125f, 0.4f));
+	sp->addKeyframe(1, glm::vec2(0.125f, 0.5f));
 	sp->setAnimationSpeed(2, 0);
-	sp->addKeyframe(2, glm::vec2(0.25f, 0.4f));
+	sp->addKeyframe(2, glm::vec2(0.25f, 0.5f));
 	sp->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 34.f;
@@ -213,13 +217,13 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(4);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.375f, 0.4f));
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.5f));
 	sp->setAnimationSpeed(1, 0);
-	sp->addKeyframe(1, glm::vec2(0.625f, 0.8f));
+	sp->addKeyframe(1, glm::vec2(0.5f, 0.5f));
 	sp->setAnimationSpeed(2, 0);
-	sp->addKeyframe(2, glm::vec2(0.750f, 0.8f));
+	sp->addKeyframe(2, glm::vec2(0.625f, 0.5f));
 	sp->setAnimationSpeed(3, 0);
-	sp->addKeyframe(3, glm::vec2(0.875f, 0.8f));
+	sp->addKeyframe(3, glm::vec2(0.75f, 0.5f));
 	sp->changeAnimation(0);
 	Texture* richterParts = new Texture();
 	richterParts->loadFromFile("images/cinematics/intro_cool/richter_parts.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -274,20 +278,20 @@ void CoolIntro::initChild()
 	bg.duration = 4.75f;
 	bg.id = RICHTER_READY;
 	film.push(bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 3, SCREEN_HEIGHT), glm::vec2(0.375f, 0.2f), bgTex, shader);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 3, SCREEN_HEIGHT), glm::vec2(0.375f, 0.25f), bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.f, 0.6f));
+	sp->addKeyframe(0, glm::vec2(0.f, 0.75f));
 	sp->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 41.f;
 	bg.duration = 2.f;
 	bg.id = RICHTER_WHIP1;
 	film.push(bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 4, SCREEN_HEIGHT), glm::vec2(0.5f, 0.2f), bgTex, shader);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 4, SCREEN_HEIGHT), glm::vec2(0.5f, 0.25f), bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.5f, 0.4f));
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.f));
 	sp->changeAnimation(0);
 	sp->setPosition(glm::vec2(-SCREEN_WIDTH * 3, 0));
 	bg.bg = sp;
@@ -295,10 +299,10 @@ void CoolIntro::initChild()
 	bg.duration = 1.5f;
 	bg.id = RICHTER_WHIP2;
 	film.push(bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT), glm::vec2(0.0625f, 0.2f), bgTex, shader);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT), glm::vec2(0.0625f, 0.25f), bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.375f, 0.6f));
+	sp->addKeyframe(0, glm::vec2(0.375f, 0.75f));
 	sp->changeAnimation(0);
 	sp->setPosition(glm::vec2(-SCREEN_WIDTH, 0));
 	Texture* pfire = new Texture();
@@ -310,7 +314,7 @@ void CoolIntro::initChild()
 	introSprites[PURPLE_FIRE]->animatorX(0, 5, 0.f, 0.2f, 0.f);
 	introSprites[PURPLE_FIRE]->changeAnimation(0);
 	introSprites[PURPLE_FIRE]->setPosition(glm::vec2(49, 48));
-	introQuads[RICHTER2] = TexturedQuad::createTexturedQuad(glm::vec2(0.4375f, 0.6f), glm::vec2(0.5f, 0.8f), *bgTex, *shader);
+	introQuads[RICHTER2] = TexturedQuad::createTexturedQuad(glm::vec2(0.4375f, 0.75f), glm::vec2(0.5f, 1.f), *bgTex, *shader);
 	introQuads[RICHTER2]->setPosition(glm::vec2(SCREEN_WIDTH * 2 + SCREEN_WIDTH/2, 0));
 	bg.bg = sp;
 	bg.time = 44.75f;
@@ -320,7 +324,7 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.5f, 0.6f));
+	sp->addKeyframe(0, glm::vec2(0.5f, 0.75f));
 	sp->changeAnimation(0);
 	Texture* richtEyes = new Texture();
 	richtEyes->loadFromFile("images/cinematics/intro_cool/richter_sus.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -338,10 +342,10 @@ void CoolIntro::initChild()
 	bg.duration = 2.f;
 	bg.id = RICHTER_SUS;
 	film.push(bg);
-	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.2f), bgTex, shader);
+	sp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH * 2, SCREEN_HEIGHT), glm::vec2(0.25f, 0.25f), bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.625f, 0.6f));
+	sp->addKeyframe(0, glm::vec2(0.625f, 0.75f));
 	sp->changeAnimation(0);
 	sp->setPosition(glm::vec2(-SCREEN_WIDTH, 0));
 	Texture* richtAmbushed = new Texture();
@@ -362,8 +366,10 @@ void CoolIntro::initChild()
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
-	sp->addKeyframe(0, glm::vec2(0.875f, 0.6f));
+	sp->addKeyframe(0, glm::vec2(0.875f, 0.5f));
 	sp->changeAnimation(0);
+	sp->setColorPalette(bgPalette);
+	sp->setPaletteRow(0.375f);
 	Texture* hands = new Texture();
 	hands->loadFromFile("images/cinematics/intro_cool/hands.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("richtHands", hands);
@@ -377,13 +383,12 @@ void CoolIntro::initChild()
 	bg.id = RICHTER_ULT1;
 	film.push(bg);
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
-	sp->setNumberAnimations(2);
+	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 30);
-	sp->addKeyframe(0, glm::vec2(0.f, 0.8f));
-	sp->setAnimationSpeed(1, 30);
-	sp->animatorX(1, 4, 0.125f, 0.125f, 0.8f);
-	sp->setTransition(0, 1);
+	sp->addKeyframe(0, glm::vec2(0.75f, 0.25f));
 	sp->changeAnimation(0);
+	sp->setColorPalette(bgPalette);
+	sp->setPaletteRow(0.475f);
 	bg.bg = sp;
 	bg.time = 54.f;
 	bg.duration = 7.f;
@@ -446,12 +451,9 @@ void CoolIntro::filmUpdate(int deltaTime)
 		if (timeElapsed >= 17 && film.front().bg->animation() < 1) film.front().bg->changeAnimation(1);
 		else if (timeElapsed >= 19 && introQuads[SKELETON_CEMENTERY]->getPosition().y > 80) introQuads[SKELETON_CEMENTERY]->incPosition(glm::vec2(0, -2));
 	}
-	else if (filmId == GIANT && introQuads[GIANT_QUAD]->getPosition().y < -32)
+	else if (filmId == GIANT && film.front().bg->getPosition().y < 0)
 	{
-		introQuads[GIANT_QUAD]->incPosition(glm::vec2(0, 1.f));
-		glm::vec2 pos(introQuads[GIANT_QUAD]->getPosition());
-		pos.y += 48;
-		film.front().bg->setPosition(pos);
+		film.front().bg->incPosition(glm::vec2(0, 1));
 	}
 	else if (filmId == PEOPLE)
 	{
@@ -617,11 +619,6 @@ void CoolIntro::render()
 			film.front().bg->render();
 			introQuads[SKELETON_CEMENTERY]->render();
 			blackBar32px->render();
-		}
-		else if (filmId == GIANT)
-		{
-			film.front().bg->render();
-			introQuads[GIANT_QUAD]->render();
 		}
 		else if (filmId == PEOPLE)
 		{

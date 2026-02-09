@@ -10,6 +10,7 @@
 class GUI
 {
 public:
+
 	void init(ShaderProgram& shaderProgram, Player* player, bool secondPlayer);
 	void update(int deltaTime);
 	void render();

@@ -61,7 +61,8 @@ private:
 private:
 	Afterimages afterimages;
 
-	Texture whipTex;
+	Texture* whipTex;
+	Texture* palette;
 	Sprite* whip;
 	struct InputEvent {
 		int key;
