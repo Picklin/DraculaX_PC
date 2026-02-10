@@ -133,7 +133,16 @@ void CoolIntro::initChild()
 	sp->addKeyframe(0, glm::vec2(0.25f, 0.f));
 	sp->changeAnimation(0);
 	sp->setColorPalette(bgPalette);
-	sp->setPaletteRow(0.f);
+	sp->setNumberPaletteAnimations(3);
+	sp->setPaletteSpeed(0, 0);
+	sp->addPaletteKeyframe(0, 0.025f);
+	sp->setPaletteSpeed(1, 8);
+	sp->addPaletteKeyframe(1, 0.075f);
+	sp->addPaletteKeyframe(1, 0.125f);
+	sp->setPaletteSpeed(2, 0);
+	sp->addPaletteKeyframe(2, 0.175f);
+	sp->setPaletteTransition(1, 2);
+	sp->changePaletteAnimation(0);
 	bg.bg = sp;
 	bg.time = 15.5f;
 	bg.duration = 5.5f;
@@ -146,7 +155,12 @@ void CoolIntro::initChild()
 	sp->changeAnimation(0);
 	sp->setPosition(glm::vec2(0, -SCREEN_HEIGHT));
 	sp->setColorPalette(bgPalette);
-	sp->setPaletteRow(0.2f);
+	sp->setNumberPaletteAnimations(1);
+	sp->setPaletteSpeed(0, 8);
+	sp->addPaletteKeyframe(0, 0.225f);
+	sp->addPaletteKeyframe(0, 0.275f);
+	sp->addPaletteKeyframe(0, 0.325f);
+	sp->changePaletteAnimation(0);
 	bg.bg = sp;
 	bg.time = 21.f;
 	bg.duration = 3.75f;
@@ -369,7 +383,11 @@ void CoolIntro::initChild()
 	sp->addKeyframe(0, glm::vec2(0.875f, 0.5f));
 	sp->changeAnimation(0);
 	sp->setColorPalette(bgPalette);
-	sp->setPaletteRow(0.375f);
+	sp->setNumberPaletteAnimations(1);
+	sp->setPaletteSpeed(0, 15);
+	sp->addPaletteKeyframe(0, 0.375f);
+	sp->addPaletteKeyframe(0, 0.425f);
+	sp->changePaletteAnimation(0);
 	Texture* hands = new Texture();
 	hands->loadFromFile("images/cinematics/intro_cool/hands.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("richtHands", hands);
@@ -388,7 +406,27 @@ void CoolIntro::initChild()
 	sp->addKeyframe(0, glm::vec2(0.75f, 0.25f));
 	sp->changeAnimation(0);
 	sp->setColorPalette(bgPalette);
-	sp->setPaletteRow(0.475f);
+	sp->setNumberPaletteAnimations(2);
+	sp->setPaletteSpeed(0, 60);
+	sp->addPaletteKeyframe(0, 0.475f);
+	sp->setPaletteSpeed(1, 12);
+	sp->addPaletteKeyframe(1, 0.525f);
+	sp->addPaletteKeyframe(1, 0.575f);
+	sp->setPaletteTransition(0, 1);
+	sp->changePaletteAnimation(0);
+	Texture* elems = new Texture();
+	elems->loadFromFile("images/cinematics/intro_cool/ult_elements.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	TextureManager::instance().addTexture("ultElements", elems);
+	introSprites[PURPLE_FIRE2] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
+	introSprites[PURPLE_FIRE2]->setNumberAnimations(1);
+	introSprites[PURPLE_FIRE2]->setAnimationSpeed(0, 10);
+	introSprites[PURPLE_FIRE2]->animatorX(0, 3, 0.f, 0.25f, 0.5f);
+	introSprites[PURPLE_FIRE2]->changeAnimation(0);
+	introSprites[WHIRLWIND] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
+	introSprites[WHIRLWIND]->setNumberAnimations(1);
+	introSprites[WHIRLWIND]->setAnimationSpeed(0, 30);
+	introSprites[WHIRLWIND]->animatorX(0, 4, 0.25f, 0.25f, 0.f);
+	introSprites[WHIRLWIND]->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 54.f;
 	bg.duration = 7.f;
@@ -448,7 +486,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 	}
 	else if (filmId == CEMENTERY)
 	{
-		if (timeElapsed >= 17 && film.front().bg->animation() < 1) film.front().bg->changeAnimation(1);
+		if (timeElapsed >= 17 && film.front().bg->paletteAnimation() < 1) film.front().bg->changePaletteAnimation(1);
 		else if (timeElapsed >= 19 && introQuads[SKELETON_CEMENTERY]->getPosition().y > 80) introQuads[SKELETON_CEMENTERY]->incPosition(glm::vec2(0, -2));
 	}
 	else if (filmId == GIANT && film.front().bg->getPosition().y < 0)
@@ -568,10 +606,15 @@ void CoolIntro::filmUpdate(int deltaTime)
 		introQuads[RIGHT_HAND]->incPosition(glm::vec2(.5, -.5));
 		introQuads[LEFT_HAND]->incPosition(glm::vec2(-.5, -.5));
 	}
-	else if (filmId == RICHTER_ULT2 && timeElapsed >= 57.f && film.front().alpha > 0)
+	else if (filmId == RICHTER_ULT2)
 	{
-		blackScreenAlpha += deltaTime / 3000.f;
-		blackScreen->setAlpha(blackScreenAlpha);
+		if (timeElapsed >= 57.f && film.front().alpha > 0)
+		{
+			blackScreenAlpha += deltaTime / 3000.f;
+			blackScreen->setAlpha(blackScreenAlpha);
+		}
+		introSprites[PURPLE_FIRE2]->update(deltaTime);
+		introSprites[WHIRLWIND]->update(deltaTime);
 	}
 	boltTimer -= deltaTime / 1000.f;
 }
@@ -692,6 +735,12 @@ void CoolIntro::render()
 			introQuads[RIGHT_HAND]->render();
 			introQuads[LEFT_HAND]->render();
 			blackBar32px->render();
+		}
+		else if (filmId == RICHTER_ULT2)
+		{
+			film.front().bg->render();
+			introSprites[WHIRLWIND]->render();
+			introSprites[PURPLE_FIRE2]->render();
 		}
 		else film.front().bg->render();
 		if (blackScreenAlpha > 0) blackScreen->render();

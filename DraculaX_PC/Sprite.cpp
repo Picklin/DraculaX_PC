@@ -40,7 +40,11 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& sizeInSpritesheet, Te
 	center = glm::vec2(quadSize.x / 2, quadSize.y / 2);
 	currentAnimation = -1;
 	currentKeyframe = -1;
+	currentPaletteAnim = -1;
+	currentPaletteKeyframe = -1;
+	currentPaletteRow = -1.f;
 	timeAnimation = 0.f;
+	timePaletteAnimation = 0.f;
 	position = glm::vec2(0.f);
 }
 
@@ -65,7 +69,11 @@ Sprite::Sprite(const glm::vec2& quadSize, const glm::vec2& topLeft, const glm::v
 	center = glm::vec2(quadSize.x / 2, quadSize.y / 2);
 	currentAnimation = -1;
 	currentKeyframe = -1;
+	currentPaletteAnim = -1;
+	currentPaletteKeyframe = -1;
+	currentPaletteRow = -1.f;
 	timeAnimation = 0.f;
+	timePaletteAnimation = 0.f;
 	position = glm::vec2(0.f);
 }
 
@@ -85,6 +93,21 @@ void Sprite::update(int deltaTime)
 			changeAnimation(animations[currentAnimation].nextAnim);
 		}
 		texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
+	}
+	if (currentPaletteAnim >= 0)
+	{
+		timePaletteAnimation += deltaTime;
+		while (timePaletteAnimation > palettesAnims[currentPaletteAnim].millisecsPerKeyframe)
+		{
+			timePaletteAnimation -= palettesAnims[currentPaletteAnim].millisecsPerKeyframe;
+			paletteAnimationDoneOnce = (currentPaletteKeyframe + 1) == palettesAnims[currentPaletteAnim].paletteRows.size();
+			currentPaletteKeyframe = (currentPaletteKeyframe + 1) % palettesAnims[currentPaletteAnim].paletteRows.size();
+		}
+		if (palettesAnims[currentPaletteAnim].nextPaletteAnim != -1 && paletteAnimationEnded())
+		{
+			changePaletteAnimation(palettesAnims[currentPaletteAnim].nextPaletteAnim);
+		}
+		currentPaletteRow = palettesAnims[currentPaletteAnim].paletteRows[currentPaletteKeyframe];
 	}
 }
 
@@ -167,6 +190,40 @@ void Sprite::addKeyframe(int animId, const glm::vec2& displacement)
 		animations[animId].keyframeDispl.emplace_back(displacement);
 }
 
+void Sprite::setTransition(int animFrom, int animTo)
+{
+	if (animFrom < int(animations.size()) && animTo < int(animations.size()))
+	{
+		animations[animFrom].nextAnim = animTo;
+	}
+}
+
+void Sprite::setNumberPaletteAnimations(int nPaletteAnims)
+{
+	palettesAnims.clear();
+	palettesAnims.resize(nPaletteAnims);
+}
+
+void Sprite::setPaletteSpeed(int paletteAnimId, int rowsPerSec)
+{
+	if (paletteAnimId < int(palettesAnims.size()))
+		palettesAnims[paletteAnimId].millisecsPerKeyframe = 1000.f / rowsPerSec;
+}
+
+void Sprite::addPaletteKeyframe(int paletteAnimId, float paletteRow)
+{
+	if (paletteAnimId < int(palettesAnims.size()))
+		palettesAnims[paletteAnimId].paletteRows.emplace_back(paletteRow);
+}
+
+void Sprite::setPaletteTransition(int paletteAnimFrom, int paletteAnimTo)
+{
+	if (paletteAnimFrom < int(palettesAnims.size()) && paletteAnimTo < int(palettesAnims.size()))
+	{
+		palettesAnims[paletteAnimFrom].nextPaletteAnim = paletteAnimTo;
+	}
+}
+
 void Sprite::addAnimations(const vector<AnimKeyframes>& anims)
 {
 	this->animations = anims;
@@ -184,25 +241,18 @@ void Sprite::changeAnimation(int animId)
 	}
 }
 
-void Sprite::changeAnimation(int animId, int frame)
+void Sprite::changePaletteAnimation(int paletteAnimId)
 {
-	if (animId < int(animations.size()))
+	if (paletteAnimId < int(palettesAnims.size()))
 	{
-		currentAnimation = animId;
-		currentKeyframe = frame;
-		timeAnimation = 0.f;
-		texCoordDispl = animations[animId].keyframeDispl[0];
-		animationDoneOnce = false;
+		currentPaletteAnim = paletteAnimId;
+		currentPaletteKeyframe = 0;
+		timePaletteAnimation = 0.f;
+		currentPaletteRow = palettesAnims[paletteAnimId].paletteRows[0];
+		paletteAnimationDoneOnce = false;
 	}
 }
 
-void Sprite::setTransition(int animFrom, int animTo)
-{
-	if (animFrom < int(animations.size()) && animTo < int(animations.size()))
-	{
-		animations[animFrom].nextAnim = animTo;
-	}
-}
 
 void Sprite::setAngleDegrees(float angleDegrees)
 {
@@ -229,6 +279,11 @@ int Sprite::animation() const
 	return currentAnimation;
 }
 
+int Sprite::paletteAnimation() const
+{
+	return currentPaletteAnim;
+}
+
 void Sprite::setPosition(const glm::vec2& pos)
 {
 	position = pos;
@@ -239,24 +294,31 @@ void Sprite::incPosition(const glm::vec2& inc)
 	position += inc;
 }
 
-const bool Sprite::animationEnded()
+bool Sprite::animationEnded()
 {
 	bool ret = animationDoneOnce && currentKeyframe == 0;
 	//animationDoneOnce = false;
 	return ret;
 }
 
-const int Sprite::getCurrentKeyframe() const
+bool Sprite::paletteAnimationEnded()
+{
+	bool ret = paletteAnimationDoneOnce && currentPaletteKeyframe == 0;
+	//paletteAnimationDoneOnce = false;
+	return ret;
+}
+
+int Sprite::getCurrentKeyframe() const
 {
 	return currentKeyframe;
 }
 
-const int Sprite::getNumAnimations() const
+int Sprite::getNumAnimations() const
 {
 	return animations.size();
 }
 
-const int Sprite::getNumFrames(int animId) const
+int Sprite::getNumFrames(int animId) const
 {
 	return animations[animId].keyframeDispl.size();
 }
@@ -264,11 +326,6 @@ const int Sprite::getNumFrames(int animId) const
 float Sprite::getAngleDegrees() const
 {
 	return angleDegrees;
-}
-
-float Sprite::getTimeAnimation() const
-{
-	return timeAnimation;
 }
 
 const vector<AnimKeyframes>& Sprite::getAnimations() const

@@ -220,6 +220,9 @@
     <ClCompile Include="CoolIntro.cpp">
       <Filter>Archivos de código fuente\Cinematics</Filter>
     </ClCompile>
+    <ClCompile Include="PaletteKeyframes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">

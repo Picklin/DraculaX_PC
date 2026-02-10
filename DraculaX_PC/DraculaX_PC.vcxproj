@@ -175,6 +175,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="Orb.cpp" />
+    <ClCompile Include="PaletteKeyframes.h" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectileManager.cpp" />
