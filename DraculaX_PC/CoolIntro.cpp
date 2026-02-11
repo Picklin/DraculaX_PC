@@ -1,11 +1,18 @@
 #include "CoolIntro.h"
 #include "TextureManager.h"
 #include "Game.h"
+#define TIME_BETWEEN_CROSS_COLOR 64
 
 namespace {
+	const glm::vec2 crossOffsets[2] = {
+		glm::vec2(128,-32), glm::vec2(192,48)
+	};
 	const float redColors[3] = { 72 / 255.f, 108 / 255.f, 144 / 255.f };
 	const float amplitude = 16.f;
 	const float frequency = 5.f;
+	const int crossSpeeds[3] = { 8, 12, 16 };
+	const int crossYlimits[3] = { -76, -128, -176 };
+	bool crossBlack[3] = { false, false, false };
 }
 
 void CoolIntro::initChild()
@@ -427,6 +434,30 @@ void CoolIntro::initChild()
 	introSprites[WHIRLWIND]->setAnimationSpeed(0, 30);
 	introSprites[WHIRLWIND]->animatorX(0, 4, 0.25f, 0.25f, 0.f);
 	introSprites[WHIRLWIND]->changeAnimation(0);
+	introQuads[SMALL_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.5f), glm::vec2(0.8125f, 1.f), *elems, *shader);
+	introQuads[SMALL_CROSS]->setColorPalette(bgPalette);
+	introQuads[SMALL_CROSS]->setNumberPaletteAnimations(1);
+	introQuads[SMALL_CROSS]->setPaletteSpeed(0, 0);
+	introQuads[SMALL_CROSS]->addPaletteKeyframe(0, 0.475f);
+	introQuads[SMALL_CROSS]->changePaletteAnimation(0);
+	introQuads[SMALL_CROSS]->setPosition(glm::vec2(44, -16));
+	introQuads[CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.8125f, 0.5f), glm::vec2(0.875f, 1.f), *elems, *shader);
+	introQuads[CROSS]->setColorPalette(bgPalette);
+	introQuads[CROSS]->setNumberPaletteAnimations(1);
+	introQuads[CROSS]->setPaletteSpeed(0, 0);
+	introQuads[CROSS]->addPaletteKeyframe(0, 0.475f);
+	introQuads[CROSS]->changePaletteAnimation(0);
+	introQuads[CROSS]->setPosition(glm::vec2(0, -48));
+	introQuads[BIG_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.5f), glm::vec2(1.f, 1.f), *elems, *shader);
+	introQuads[BIG_CROSS]->setColorPalette(bgPalette);
+	introQuads[BIG_CROSS]->setNumberPaletteAnimations(1);
+	introQuads[BIG_CROSS]->setPaletteSpeed(0, 0);
+	introQuads[BIG_CROSS]->addPaletteKeyframe(0, 0.475f);
+	introQuads[BIG_CROSS]->changePaletteAnimation(0);
+	introQuads[BIG_CROSS]->setPosition(glm::vec2(96, -48));
+	crossColorTimer[0] = 64;
+	crossColorTimer[1] = 16;
+	crossColorTimer[2] = 0;
 	bg.bg = sp;
 	bg.time = 54.f;
 	bg.duration = 7.f;
@@ -615,6 +646,10 @@ void CoolIntro::filmUpdate(int deltaTime)
 		}
 		introSprites[PURPLE_FIRE2]->update(deltaTime);
 		introSprites[WHIRLWIND]->update(deltaTime);
+		for (int i = 0; i < 3; i++)
+		{
+			updateCross(deltaTime, i);
+		}
 	}
 	boltTimer -= deltaTime / 1000.f;
 }
@@ -738,9 +773,14 @@ void CoolIntro::render()
 		}
 		else if (filmId == RICHTER_ULT2)
 		{
+			renderCross(0);
 			film.front().bg->render();
 			introSprites[WHIRLWIND]->render();
 			introSprites[PURPLE_FIRE2]->render();
+			renderCross(1);
+			shader->setUniform1f("paletteIndexOffset", 0.f + crossBlack[2] * 0.5f);
+			introQuads[BIG_CROSS]->render();
+			shader->setUniform1f("paletteIndexOffset", 0.f);
 		}
 		else film.front().bg->render();
 		if (blackScreenAlpha > 0) blackScreen->render();
@@ -750,6 +790,37 @@ void CoolIntro::render()
 float CoolIntro::setEndTime() const
 {
 	return 64.f;
+}
+
+void CoolIntro::updateCross(int deltaTime, int crossNum)
+{
+	introQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, -crossSpeeds[crossNum]));
+	if (introQuads[SMALL_CROSS + crossNum]->getPosition().y <= crossYlimits[crossNum])
+	{
+		introQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, SCREEN_HEIGHT * 2));
+	}
+	crossColorTimer[crossNum] += deltaTime;
+	if (crossColorTimer[crossNum] > TIME_BETWEEN_CROSS_COLOR)
+	{
+		crossColorTimer[crossNum] = 0;
+		crossBlack[crossNum] = !crossBlack[crossNum];
+	}
+}
+
+void CoolIntro::renderCross(int crossNum)
+{
+	shader->setUniform1f("paletteIndexOffset", 0.f + crossBlack[crossNum] * 0.5f);
+	introQuads[SMALL_CROSS + crossNum]->render();
+	introQuads[SMALL_CROSS + crossNum]->incPosition(crossOffsets[crossNum]);
+	shader->setUniform1f("frameWidth", 0.0625f);
+	shader->setUniform2f("texCoordDispl", 0.5f + 0.125f*crossNum, 0.f);
+	shader->setUniform1i("flip", true);
+	if (crossColorTimer[crossNum] * 2 > TIME_BETWEEN_CROSS_COLOR) shader->setUniform1f("paletteIndexOffset", 0.f + !crossBlack[crossNum] * 0.5f);
+	introQuads[SMALL_CROSS + crossNum]->render();
+	introQuads[SMALL_CROSS + crossNum]->incPosition(-crossOffsets[crossNum]);
+	shader->setUniform2f("texCoordDispl",0.f, 0.f);
+	shader->setUniform1i("flip", false);
+	shader->setUniform1f("paletteIndexOffset", 0.f);
 }
 
 int CoolIntro::getColorIndex(int range, float freq)

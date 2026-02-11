@@ -4,6 +4,7 @@ uniform vec4 color;
 uniform sampler2D tex;
 uniform sampler2D paletteLUT;
 uniform float currentPaletteRow;
+uniform float paletteIndexOffset;
 uniform bool invert;
 uniform bool usePalette;
 
@@ -18,7 +19,7 @@ void main()
 	else if (usePalette)
 	{
 		float paletteIndex = texColor.r;
-		vec2 lutCoord = vec2(paletteIndex, currentPaletteRow);
+		vec2 lutCoord = vec2(paletteIndex + paletteIndexOffset, currentPaletteRow);
 		vec4 finalColor = texture(paletteLUT, lutCoord);
 		outColor = vec4(finalColor.rgb, texColor.a * color.a);
 	}

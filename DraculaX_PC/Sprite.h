@@ -39,6 +39,7 @@ public:
 	void setTransition(int animFrom, int animTo);
 	void setKeyframe(int frame) { currentKeyframe = frame; }
 	void changeAnimation(int animId);
+	//color palette animation methods
 	void setColorPalette(Texture* palette) { this->palette = palette; }
 	void setNumberPaletteAnimations(int nPaletteAnims);
 	void setPaletteSpeed(int paletteAnimId, int rowsPerSec);
@@ -46,6 +47,7 @@ public:
 	void setPaletteTransition(int paletteAnimFrom, int paletteAnimTo);
 	void setPaletteRow(float paletteRow) { currentPaletteRow = paletteRow; }
 	void changePaletteAnimation(int paletteAnimId);
+	//
 	void setAngleDegrees(float angleDegrees);
 	void setCenter(const glm::vec2& center);
 	void setColor(const glm::vec3 & color);

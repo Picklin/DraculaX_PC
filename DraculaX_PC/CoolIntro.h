@@ -14,6 +14,8 @@ protected:
 	float setEndTime() const override;
 
 private:
+	void updateCross(int deltaTime, int crossNum);
+	void renderCross(int crossNum);
 	int getColorIndex(int range, float freq);
 
 private:
@@ -25,7 +27,7 @@ private:
 	enum Quads
 	{
 		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, ANNETTE_EYES, ANNETTE_MOUTH,
-		BOOT, BOOT2, RICHTER2, RICHTER3, SKELETON_AMBUSH, RIGHT_HAND, LEFT_HAND, COUNT
+		BOOT, BOOT2, RICHTER2, RICHTER3, SKELETON_AMBUSH, RIGHT_HAND, LEFT_HAND, SMALL_CROSS, CROSS, BIG_CROSS, COUNT
 	};
 	enum Sprites
 	{
@@ -51,6 +53,7 @@ private:
 	int shakeAngleStep;
 	int shakeDist;
 	int shakeAngle = 0;
+	int crossColorTimer[3];
 	bool shaking = false;
 	bool shaked = false;
 	bool renderBigBolt = false;
