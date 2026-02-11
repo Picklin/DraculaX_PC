@@ -7,12 +7,14 @@
 
 void Intro::initChild()
 {
+	cinematicQuads.resize(COUNTQUADS);
+	cinematicSprites.resize(COUNTSPRITES);
 	Texture* introTexs1 = TextureManager::instance().getTexture("introTexs");
 	//Sprite* testSp = Sprite::createSprite(glm::vec2(0.f, 0.f), glm::vec2(0.2f, 0.2f), introTexs1, &shader);
 	glm::ivec2 fullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glm::vec2 offset(0.2f);
 	bool arr = Game::instance().isArranged();
-	coffin = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.2f), glm::vec2(0.2f, 0.4f), *introTexs1, *shader);
+	cinematicQuads[COFFIN] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.2f), glm::vec2(0.2f, 0.4f), *introTexs1, *shader);
 	Texture* boltsTex = new Texture();
 	boltsTex->loadFromFile("images/screens/bolts.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("bolts", boltsTex);
@@ -26,32 +28,32 @@ void Intro::initChild()
 	bolts[3]->setPosition(glm::vec2(145, 55));
 	blood[0] = TexturedQuad::createTexturedQuad(glm::vec2(0.6f, 0.2f), glm::vec2(0.8f, 0.4f), *introTexs1, *shader);
 	blood[1] = TexturedQuad::createTexturedQuad(glm::vec2(0.6f, 0.4f), glm::vec2(0.8f, 0.6f), *introTexs1, *shader);
-	lights = Sprite::createSprite(glm::ivec2(64, 128), glm::vec2(0.25f, 0.5f), TextureManager::instance().getTexture("introTexs2"), shader);
-	lights->setNumberAnimations(2);
-	lights->setAnimationSpeed(0, 8);
-	lights->addKeyframe(0, glm::vec2(0.75f, 0.5f));
-	lights->setAnimationSpeed(1, 0);
-	lights->addKeyframe(1, glm::vec2(0.5f, 0.5f));
-	lights->setTransition(0, 1);
-	lights->changeAnimation(0);
-	dracula = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.25f), TextureManager::instance().getTexture("dracula_intro"), shader);
-	dracula->setNumberAnimations(3);
-	dracula->setAnimationSpeed(0, 0);
-	dracula->addKeyframe(0, glm::vec2(0.f));
-	dracula->setAnimationSpeed(1, 30);
-	dracula->animatorY(1, 2, 0.25f, 0.25f, 0.f);
-	dracula->setAnimationSpeed(2, 0);
-	dracula->addKeyframe(2, glm::vec2(0.f, 0.75f));
-	dracula->changeAnimation(0);
-	dracula->setPosition(glm::vec2(0, SCREEN_HEIGHT / 2));
-	bat = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.125f), TextureManager::instance().getTexture("bat_intro"), shader);
-	bat->setNumberAnimations(2);
-	bat->setAnimationSpeed(0, 15);
-	bat->animatorY(0, 6, 0.f, 0.125f, 0.f);
-	bat->setAnimationSpeed(1, 15);
-	bat->animatorY(1, 2, 0.75f, 0.125f, 0.f);
-	bat->setTransition(0, 1);
-	bat->changeAnimation(0);
+	cinematicSprites[LIGHTS] = Sprite::createSprite(glm::ivec2(64, 128), glm::vec2(0.25f, 0.5f), TextureManager::instance().getTexture("introTexs2"), shader);
+	cinematicSprites[LIGHTS]->setNumberAnimations(2);
+	cinematicSprites[LIGHTS]->setAnimationSpeed(0, 8);
+	cinematicSprites[LIGHTS]->addKeyframe(0, glm::vec2(0.75f, 0.5f));
+	cinematicSprites[LIGHTS]->setAnimationSpeed(1, 0);
+	cinematicSprites[LIGHTS]->addKeyframe(1, glm::vec2(0.5f, 0.5f));
+	cinematicSprites[LIGHTS]->setTransition(0, 1);
+	cinematicSprites[LIGHTS]->changeAnimation(0);
+	cinematicSprites[DRACULA] = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.25f), TextureManager::instance().getTexture("dracula_intro"), shader);
+	cinematicSprites[DRACULA]->setNumberAnimations(3);
+	cinematicSprites[DRACULA]->setAnimationSpeed(0, 0);
+	cinematicSprites[DRACULA]->addKeyframe(0, glm::vec2(0.f));
+	cinematicSprites[DRACULA]->setAnimationSpeed(1, 30);
+	cinematicSprites[DRACULA]->animatorY(1, 2, 0.25f, 0.25f, 0.f);
+	cinematicSprites[DRACULA]->setAnimationSpeed(2, 0);
+	cinematicSprites[DRACULA]->addKeyframe(2, glm::vec2(0.f, 0.75f));
+	cinematicSprites[DRACULA]->changeAnimation(0);
+	cinematicSprites[DRACULA]->setPosition(glm::vec2(0, SCREEN_HEIGHT / 2));
+	cinematicSprites[BAT] = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.125f), TextureManager::instance().getTexture("bat_intro"), shader);
+	cinematicSprites[BAT]->setNumberAnimations(2);
+	cinematicSprites[BAT]->setAnimationSpeed(0, 15);
+	cinematicSprites[BAT]->animatorY(0, 6, 0.f, 0.125f, 0.f);
+	cinematicSprites[BAT]->setAnimationSpeed(1, 15);
+	cinematicSprites[BAT]->animatorY(1, 2, 0.75f, 0.125f, 0.f);
+	cinematicSprites[BAT]->setTransition(0, 1);
+	cinematicSprites[BAT]->changeAnimation(0);
 	Sprite* testSp = Sprite::createSprite(fullScreen, offset, introTexs1, shader);
 	testSp->setNumberAnimations(3);
 	testSp->setAnimationSpeed(0, 0);
@@ -173,35 +175,35 @@ void Intro::initChild()
 	Texture* titleTex = new Texture();
 	titleTex->loadFromFile("images/screens/titleOriginal.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("titleOriginal", titleTex);
-	titleBg = Sprite::createSprite(fullScreen, glm::vec2(0.5f, 0.25f), titleBgTex, shader);
-	titleBg->setNumberAnimations(4);
-	titleBg->setAnimationSpeed(0, 10);
-	titleBg->animatorY(0, 3, 0.f, 0.25f, 0.5f);
-	titleBg->setAnimationSpeed(1, 1);
-	titleBg->addKeyframe(1, glm::vec2(0.5f, 0.75f));
-	titleBg->setAnimationSpeed(2, 0);
-	titleBg->addKeyframe(2, glm::vec2(0.f, 0.f));
-	titleBg->setAnimationSpeed(3, 20);
-	titleBg->addKeyframe(3, glm::vec2(0.5f, 0.f));
-	titleBg->addKeyframe(3, glm::vec2(0.f, 0.f));
-	titleBg->addKeyframe(3, glm::vec2(0.5f, 0.f));
-	titleBg->setTransition(0, 1);
-	titleBg->setTransition(1, 2);
-	titleBg->setTransition(3, 2);
-	titleBg->changeAnimation(2);
-	title = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.125f), TextureManager::instance().getTexture("titleOriginal"), shader);
-	title->setNumberAnimations(4);
-	title->setAnimationSpeed(0, 5);
-	title->animatorY(0, 2, 0.f, 0.125f, 0.f);
-	title->setAnimationSpeed(1, 0);
-	title->addKeyframe(1, glm::vec2(0.f, 0.25f));
-	title->setAnimationSpeed(2, 3);
-	title->animatorY(2, 3, 0.375f, 0.125f, 0.f);
-	title->setAnimationSpeed(3, 0);
-	title->addKeyframe(3, glm::vec2(0.f, 0.75f));
-	title->setTransition(0, 1);
-	title->setTransition(2, 3);
-	title->changeAnimation(0);
+	cinematicSprites[TITLE_BG] = Sprite::createSprite(fullScreen, glm::vec2(0.5f, 0.25f), titleBgTex, shader);
+	cinematicSprites[TITLE_BG]->setNumberAnimations(4);
+	cinematicSprites[TITLE_BG]->setAnimationSpeed(0, 10);
+	cinematicSprites[TITLE_BG]->animatorY(0, 3, 0.f, 0.25f, 0.5f);
+	cinematicSprites[TITLE_BG]->setAnimationSpeed(1, 1);
+	cinematicSprites[TITLE_BG]->addKeyframe(1, glm::vec2(0.5f, 0.75f));
+	cinematicSprites[TITLE_BG]->setAnimationSpeed(2, 0);
+	cinematicSprites[TITLE_BG]->addKeyframe(2, glm::vec2(0.f, 0.f));
+	cinematicSprites[TITLE_BG]->setAnimationSpeed(3, 20);
+	cinematicSprites[TITLE_BG]->addKeyframe(3, glm::vec2(0.5f, 0.f));
+	cinematicSprites[TITLE_BG]->addKeyframe(3, glm::vec2(0.f, 0.f));
+	cinematicSprites[TITLE_BG]->addKeyframe(3, glm::vec2(0.5f, 0.f));
+	cinematicSprites[TITLE_BG]->setTransition(0, 1);
+	cinematicSprites[TITLE_BG]->setTransition(1, 2);
+	cinematicSprites[TITLE_BG]->setTransition(3, 2);
+	cinematicSprites[TITLE_BG]->changeAnimation(2);
+	cinematicSprites[TITLE] = Sprite::createSprite(fullScreen, glm::vec2(1.f, 0.125f), TextureManager::instance().getTexture("titleOriginal"), shader);
+	cinematicSprites[TITLE]->setNumberAnimations(4);
+	cinematicSprites[TITLE]->setAnimationSpeed(0, 5);
+	cinematicSprites[TITLE]->animatorY(0, 2, 0.f, 0.125f, 0.f);
+	cinematicSprites[TITLE]->setAnimationSpeed(1, 0);
+	cinematicSprites[TITLE]->addKeyframe(1, glm::vec2(0.f, 0.25f));
+	cinematicSprites[TITLE]->setAnimationSpeed(2, 3);
+	cinematicSprites[TITLE]->animatorY(2, 3, 0.375f, 0.125f, 0.f);
+	cinematicSprites[TITLE]->setAnimationSpeed(3, 0);
+	cinematicSprites[TITLE]->addKeyframe(3, glm::vec2(0.f, 0.75f));
+	cinematicSprites[TITLE]->setTransition(0, 1);
+	cinematicSprites[TITLE]->setTransition(2, 3);
+	cinematicSprites[TITLE]->changeAnimation(0);
 	testSp = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, 672), glm::vec2(0.5f, 0.75f), titleBgTex, shader);
 	testSp->setNumberAnimations(1);
 	testSp->setAnimationSpeed(0, 0);
@@ -254,8 +256,8 @@ void Intro::filmUpdate(int deltaTime)
 	}
 	else if (filmId == COFFIN_BREAK && film.front().bg->animation() != 0)
 	{
-		lights->update(deltaTime);
-		lights->setPosition(glm::vec2(184.f, 0.f));
+		cinematicSprites[LIGHTS]->update(deltaTime);
+		cinematicSprites[LIGHTS]->setPosition(glm::vec2(184.f, 0.f));
 	}
 	else if (filmId == DRACULA_APPEAR)
 	{
@@ -265,34 +267,34 @@ void Intro::filmUpdate(int deltaTime)
 		if (cameraY > 0)
 		{
 			cameraY--;
-			dracula->setPosition(glm::vec2(0, cameraY));
+			cinematicSprites[DRACULA]->setPosition(glm::vec2(0, cameraY));
 		}
 		else
 		{
-			dracula->update(deltaTime);
-			if (dracula->animation() != 1 && timeElapsed < 65)
+			cinematicSprites[DRACULA]->update(deltaTime);
+			if (cinematicSprites[DRACULA]->animation() != 1 && timeElapsed < 65)
 			{
-				dracula->changeAnimation(1);
+				cinematicSprites[DRACULA]->changeAnimation(1);
 			}
-			else if (timeElapsed >= 65.5 && dracula->animation() != 2)
+			else if (timeElapsed >= 65.5 && cinematicSprites[DRACULA]->animation() != 2)
 			{
-				dracula->changeAnimation(2);
+				cinematicSprites[DRACULA]->changeAnimation(2);
 			}
 			else if (timeElapsed >= 66.75f)
 			{
 				cameraY -= 1.25f;
-				dracula->setPosition(glm::vec2(0, cameraY+0.25f));
+				cinematicSprites[DRACULA]->setPosition(glm::vec2(0, cameraY+0.25f));
 				film.front().bg->setPosition(glm::vec2(0, -SCREEN_HEIGHT * 2 - cameraY));
 			}
 		}
 	}
 	else if (filmId == CASTLEVANIA_CLOSE && timeElapsed < 74.5f)
 	{
-		bat->update(deltaTime);
+		cinematicSprites[BAT]->update(deltaTime);
 		if (timeElapsed >= 74)
 		{
 			batPosition--;
-			bat->setPosition(glm::vec2(0, batPosition));
+			cinematicSprites[BAT]->setPosition(glm::vec2(0, batPosition));
 		}
 		cameraY = -391.f;
 	}
@@ -303,25 +305,25 @@ void Intro::filmUpdate(int deltaTime)
 			cameraY += 0.75f;
 			if (cameraY > 0) cameraY = 0.f;
 			film.front().bg->setPosition(glm::vec2(0, cameraY));
-			titleBg->setPosition(glm::vec2(0, cameraY));
+			cinematicSprites[TITLE_BG]->setPosition(glm::vec2(0, cameraY));
 			thunderCooldown = 1.f;
 		}
 		else
 		{
-			titleBg->update(deltaTime);
+			cinematicSprites[TITLE_BG]->update(deltaTime);
 			if (timeElapsed >= 97)
 			{
 				if (!titleShowed)
 				{
 					titleShowed = true;
-					titleBg->changeAnimation(0);
+					cinematicSprites[TITLE_BG]->changeAnimation(0);
 				}
-				if (timeElapsed >= 98) title->update(deltaTime);
-				if (timeElapsed >= 99.75f && title->animation() < 2) title->changeAnimation(2);
+				if (timeElapsed >= 98) cinematicSprites[TITLE]->update(deltaTime);
+				if (timeElapsed >= 99.75f && cinematicSprites[TITLE]->animation() < 2) cinematicSprites[TITLE]->changeAnimation(2);
 			}
 			if (thunderCooldown <= 0 && !titleShowed)
 			{
-				if (titleBg->animation() != 3) titleBg->changeAnimation(3);
+				if (cinematicSprites[TITLE_BG]->animation() != 3) cinematicSprites[TITLE_BG]->changeAnimation(3);
 				boltDuration -= deltaTime;
 				if (boltDuration < 0)
 				{
@@ -353,7 +355,7 @@ void Intro::render()
 		}
 		else if (filmId == GIRL_ON_COFFIN)
 		{
-			coffin->render();
+			cinematicQuads[COFFIN]->render();
 			film.front().bg->render();
 		}
 		else if (filmId == SOLDIERS)
@@ -378,17 +380,17 @@ void Intro::render()
 		{
 			if (film.front().bg->animation() == 0)
 			{
-				coffin->render();
+				cinematicQuads[COFFIN]->render();
 				film.front().bg->render();
 			}
 			else
 			{
 				film.front().bg->render();
-				lights->render();
-				lights->setPosition(glm::vec2(9.f, 0.f));
+				cinematicSprites[LIGHTS]->render();
+				cinematicSprites[LIGHTS]->setPosition(glm::vec2(9.f, 0.f));
 				shader->setUniform1f("frameWidth", 0.25f);
 				shader->setUniform1i("flip", true);
-				lights->render();
+				cinematicSprites[LIGHTS]->render();
 				shader->setUniform1i("flip", false);
 			}
 			cameraY = SCREEN_HEIGHT / 2;
@@ -396,21 +398,21 @@ void Intro::render()
 		else if (filmId == DRACULA_APPEAR)
 		{
 			film.front().bg->render();
-			dracula->render();
+			cinematicSprites[DRACULA]->render();
 		}
 		else if (filmId == CASTLEVANIA_CLOSE)
 		{
 			film.front().bg->render();
-			if (timeElapsed < 74.5f) bat->render();
+			if (timeElapsed < 74.5f) cinematicSprites[BAT]->render();
 		}
 		else if (filmId == CASTLEVANIA_FAR)
 		{
 			//cout << timeElapsed << endl;
 			if (cameraY >= 0)
 			{
-				titleBg->render();
+				cinematicSprites[TITLE_BG]->render();
 				if (thunderCooldown <= 0 && !titleShowed) bolts[2 + renderBigBolt]->render();
-				if (timeElapsed >= 98) title->render();
+				if (timeElapsed >= 98) cinematicSprites[TITLE]->render();
 			}
 			else film.front().bg->render();
 		}

@@ -47,13 +47,15 @@ protected:
 		float duration;
 		float alpha;
 	};
-	Text* dialogueTxt = nullptr;
 	queue<Line> script;
 	queue<Bg> film;
+	vector<TexturedQuad*> cinematicQuads;
+	vector<Sprite*> cinematicSprites;
 	//vector<Sprite*> movingElems;
 	//vector<TexturedQuad*> staticElems;
 	TexturedQuad* blackScreen = nullptr;
 	ShaderProgram* shader = nullptr;
+	Text* dialogueTxt = nullptr;
 	float timeElapsed = 0.f;
 	float endTime = 0.f;
 	bool renderSubtitles = false;

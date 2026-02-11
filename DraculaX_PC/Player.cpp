@@ -910,16 +910,16 @@ void Player::childUpdate(int deltaTime)
 					else if (((anim == CLIMB_IDLE_UP || (anim == UPSTAIRS && kf == 4)) || (anim == CLIMB_IDLE_DOWN || (anim == DOWNSTAIRS && kf == 4))) && (attackInStairs || useSubweaponInStairs))
 					{
 						sprite->changeAnimation(ATTACK_UPSTAIRS + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2 + useSubweaponInStairs * !hasKey);
-						if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey))
-						{
-							whipping = true;
-							SoundEngine::instance().playSFX(SoundEngine::WHIP);
-						}
-						else if (useSubweaponInStairs && !hasKey && canUseTrinket)
+						if (useSubweaponInStairs && !hasKey && canUseTrinket)
 						{
 							sprite->changeAnimation(ATTACK_UPSTAIRS_SUBWEAPON + (anim == CLIMB_IDLE_DOWN || anim == DOWNSTAIRS) * 2);
 							subweaponCooldown = SUBWEAPON_COOLDOWN;
 							throwSubweapon = true;
+						}
+						else if (!useSubweaponInStairs || (useSubweaponInStairs && !hasKey))
+						{
+							whipping = true;
+							SoundEngine::instance().playSFX(SoundEngine::WHIP);
 						}
 						attackInStairs = useSubweaponInStairs = false;
 						int correction = (anim == UPSTAIRS) + (anim == DOWNSTAIRS) * 2;

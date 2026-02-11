@@ -5,7 +5,7 @@
 41.0|7.25|A altas horas de la noche se reunieron\npara invocar los poderes de las tinieblas\ncon su sangre pecaminosa.
 48.5|2.75|Para redimirlos de su existencia mortal,
 51.25|3.0|con el comienzo de un\nnuevo mundo ante sus ojos.
-67.0|5.75|Y así sucedió que después de cien años,\nel mal volvió a hacerse carne.
+67.0|5.75|Y así sucedió que, después de cien años,\nel mal volvió a hacerse carne.
 73.25|4.5|Como criatura inmortal de la noche,\npuede tomar la forma de un lobo,
 78.0|1.5|un murciélago
 80.5|2.0|o la niebla.

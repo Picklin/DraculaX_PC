@@ -31,7 +31,7 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	playingGame = false;
+	playingGame = true;
 	twoPlayerMode = false;
 	currSubMode = 0;
 	currDubLang = JP_DUB;
@@ -47,8 +47,8 @@ void Game::init()
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
 	menus[Screen::OPTIONS] = currentMenu;
 	//SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
-	playCinematic(Cinematic::COOL_INTRO);
-	//start();		//comentar cuando se deje de testear
+	//playCinematic(Cinematic::COOL_INTRO);
+	start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 

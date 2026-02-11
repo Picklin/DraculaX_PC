@@ -27,19 +27,17 @@ private:
 	enum Quads
 	{
 		HAND, RICHTER1, SKY, TREES_FAR, TREES_CLOSE, CAR_TOP, CAR, GRASS, SKELETON_CEMENTERY, ANNETTE_EYES, ANNETTE_MOUTH,
-		BOOT, BOOT2, RICHTER2, RICHTER3, SKELETON_AMBUSH, RIGHT_HAND, LEFT_HAND, SMALL_CROSS, CROSS, BIG_CROSS, COUNT
+		BOOT, BOOT2, RICHTER2, RICHTER3, SKELETON_AMBUSH, RIGHT_HAND, LEFT_HAND, SMALL_CROSS, CROSS, BIG_CROSS, COUNTQUADS
 	};
 	enum Sprites
 	{
-		WHEELS, HORSES, RICHT_HANDS, RICHT_DUST, RICHT_WHIP, RICHT_FACE, PURPLE_FIRE, RICHTER_EYES, PURPLE_FIRE2, WHIRLWIND, COUNT2
+		WHEELS, HORSES, RICHT_HANDS, RICHT_DUST, RICHT_WHIP, RICHT_FACE, PURPLE_FIRE, RICHTER_EYES, PURPLE_FIRE2, WHIRLWIND, COUNTSPRITES
 	};
 	TexturedQuad* blackBar48px;
 	TexturedQuad* blackBar32px;
 	//TexturedQuad* blackBox128x112;
 	TexturedQuad* colorBackground;
 	TexturedQuad* bolts[2];
-	TexturedQuad* introQuads[COUNT];
-	Sprite* introSprites[COUNT2];
 	Texture* bgPalette;
 
 	float bgXScroll = 0.f;
@@ -54,6 +52,7 @@ private:
 	int shakeDist;
 	int shakeAngle = 0;
 	int crossColorTimer[3];
+	bool crossBlack[3] = { false, false, false };
 	bool shaking = false;
 	bool shaked = false;
 	bool renderBigBolt = false;

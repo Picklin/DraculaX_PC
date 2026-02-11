@@ -12,11 +12,12 @@ namespace {
 	const float frequency = 5.f;
 	const int crossSpeeds[3] = { 8, 12, 16 };
 	const int crossYlimits[3] = { -76, -128, -176 };
-	bool crossBlack[3] = { false, false, false };
 }
 
 void CoolIntro::initChild()
 {
+	cinematicQuads.resize(COUNTQUADS);
+	cinematicSprites.resize(COUNTSPRITES);
 	Texture* bgTex = TextureManager::instance().getTexture("coolIntroBg");
 	if (TextureManager::instance().exists("bgPalette"))
 	{
@@ -56,8 +57,8 @@ void CoolIntro::initChild()
 	Texture* handTex = new Texture();
 	handTex->loadFromFile("images/cinematics/intro_cool/cool_intro_texs.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("hand", handTex);
-	introQuads[HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 0.35f), *handTex, *shader);
-	introQuads[HAND]->setPosition(glm::vec2(-72, -128));
+	cinematicQuads[HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 0.35f), *handTex, *shader);
+	cinematicQuads[HAND]->setPosition(glm::vec2(-72, -128));
 	shakeAngleStep = 16;
 	shakeDist = 16;
 	Sprite* sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
@@ -72,7 +73,7 @@ void CoolIntro::initChild()
 	bg.alpha = 1.f;
 	bg.id = MAP;
 	film.push(bg);
-	introQuads[RICHTER1] = TexturedQuad::createTexturedQuad(glm::vec2(0.125f, 0.f), glm::vec2(0.25f,0.25f), *bgTex, *shader);
+	cinematicQuads[RICHTER1] = TexturedQuad::createTexturedQuad(glm::vec2(0.125f, 0.f), glm::vec2(0.25f,0.25f), *bgTex, *shader);
 	sp = Sprite::createSprite(glm::ivec2(64, 32), glm::vec2(0.125f, 0.125f), lvl0Tex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 15);
@@ -84,29 +85,29 @@ void CoolIntro::initChild()
 	Texture* treestex = new Texture();
 	treestex->loadFromFile("images/levels/lvl0/trees_far.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("treesPrologue", treestex);
-	introQuads[SKY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(8.f, 1.f), *skytex, *shader);
-	introQuads[TREES_FAR] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(16.f, 1.f), *treestex, *shader);
-	introQuads[TREES_CLOSE] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.3125f), glm::vec2(1.f, 0.5f), *lvl0Tex, *shader);
-	introQuads[CAR_TOP] = TexturedQuad::createTexturedQuad(glm::vec2(0.0625f, 0.25f), glm::vec2(0.125f, 0.3125f), *lvl0Tex, *shader);
-	introQuads[CAR] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.5f), glm::vec2(0.40625f, 0.71875f), *lvl0Tex, *shader);
-	introQuads[GRASS] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.84375f), glm::vec2(1.f, 1.f), *lvl0Tex, *shader);
-	introSprites[WHEELS] = Sprite::createSprite(glm::ivec2(32), glm::vec2(0.0625f, 0.125f), lvl0Tex, shader);
-	introSprites[WHEELS]->setNumberAnimations(1);
-	introSprites[WHEELS]->setAnimationSpeed(0, 30);
-	introSprites[WHEELS]->animatorX(0, 4, 0.f, 0.0625f, 0.71875f);
-	introSprites[WHEELS]->changeAnimation(0);
-	introSprites[HORSES] = Sprite::createSprite(glm::ivec2(128, 80), glm::vec2(0.25f, 0.3125f), lvl0Tex, shader);
-	introSprites[HORSES]->setNumberAnimations(1);
-	introSprites[HORSES]->setAnimationSpeed(0, 12);
-	introSprites[HORSES]->animatorX(0, 3, 0.125f, 0.25f, 0.f);
-	introSprites[HORSES]->animatorX(0, 2, 0.5f, 0.25f, 0.5f);
-	introSprites[HORSES]->changeAnimation(0);
-	introQuads[TREES_FAR]->setPosition(glm::vec2(0, 64));
-	introQuads[TREES_CLOSE]->setPosition(glm::vec2(0, 80));
-	introQuads[CAR_TOP]->setPosition(glm::vec2(16, 112));
-	introQuads[CAR]->setPosition(glm::vec2(0, 128));
-	introQuads[GRASS]->setPosition(glm::vec2(0, 224 - 40));
-	introSprites[HORSES]->setPosition(glm::vec2(120, 120));
+	cinematicQuads[SKY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(8.f, 1.f), *skytex, *shader);
+	cinematicQuads[TREES_FAR] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(16.f, 1.f), *treestex, *shader);
+	cinematicQuads[TREES_CLOSE] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.3125f), glm::vec2(1.f, 0.5f), *lvl0Tex, *shader);
+	cinematicQuads[CAR_TOP] = TexturedQuad::createTexturedQuad(glm::vec2(0.0625f, 0.25f), glm::vec2(0.125f, 0.3125f), *lvl0Tex, *shader);
+	cinematicQuads[CAR] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.5f), glm::vec2(0.40625f, 0.71875f), *lvl0Tex, *shader);
+	cinematicQuads[GRASS] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.84375f), glm::vec2(1.f, 1.f), *lvl0Tex, *shader);
+	cinematicSprites[WHEELS] = Sprite::createSprite(glm::ivec2(32), glm::vec2(0.0625f, 0.125f), lvl0Tex, shader);
+	cinematicSprites[WHEELS]->setNumberAnimations(1);
+	cinematicSprites[WHEELS]->setAnimationSpeed(0, 30);
+	cinematicSprites[WHEELS]->animatorX(0, 4, 0.f, 0.0625f, 0.71875f);
+	cinematicSprites[WHEELS]->changeAnimation(0);
+	cinematicSprites[HORSES] = Sprite::createSprite(glm::ivec2(128, 80), glm::vec2(0.25f, 0.3125f), lvl0Tex, shader);
+	cinematicSprites[HORSES]->setNumberAnimations(1);
+	cinematicSprites[HORSES]->setAnimationSpeed(0, 12);
+	cinematicSprites[HORSES]->animatorX(0, 3, 0.125f, 0.25f, 0.f);
+	cinematicSprites[HORSES]->animatorX(0, 2, 0.5f, 0.25f, 0.5f);
+	cinematicSprites[HORSES]->changeAnimation(0);
+	cinematicQuads[TREES_FAR]->setPosition(glm::vec2(0, 64));
+	cinematicQuads[TREES_CLOSE]->setPosition(glm::vec2(0, 80));
+	cinematicQuads[CAR_TOP]->setPosition(glm::vec2(16, 112));
+	cinematicQuads[CAR]->setPosition(glm::vec2(0, 128));
+	cinematicQuads[GRASS]->setPosition(glm::vec2(0, 224 - 40));
+	cinematicSprites[HORSES]->setPosition(glm::vec2(120, 120));
 	sp->setPosition(glm::vec2(72, 134));
 	bg.bg = sp;
 	bg.time = 2.75f;
@@ -132,8 +133,8 @@ void CoolIntro::initChild()
 	Texture* skelTex = new Texture();
 	skelTex->loadFromFile("images/cinematics/intro_cool/skeleton_cementery.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("skeleton_intro_cementery", skelTex);
-	introQuads[SKELETON_CEMENTERY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), *skelTex, *shader);
-	introQuads[SKELETON_CEMENTERY]->setPosition(glm::vec2(32, SCREEN_HEIGHT));
+	cinematicQuads[SKELETON_CEMENTERY] = TexturedQuad::createTexturedQuad(glm::vec2(0.f), glm::vec2(1.f), *skelTex, *shader);
+	cinematicQuads[SKELETON_CEMENTERY]->setPosition(glm::vec2(32, SCREEN_HEIGHT));
 	sp = Sprite::createSprite(fullScreen, offset, bgTex, shader);
 	sp->setNumberAnimations(1);
 	sp->setAnimationSpeed(0, 0);
@@ -190,10 +191,10 @@ void CoolIntro::initChild()
 	glm::vec2 annettePos(64, 64);
 	sp = Sprite::createSprite(glm::ivec2(128, 160), glm::vec2(0.f, 0.35f), glm::vec2(0.4f, 0.85f), handTex, shader);
 	sp->setPosition(annettePos);
-	introQuads[ANNETTE_EYES] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.65f, 0.05f), *handTex, *shader);
-	introQuads[ANNETTE_EYES]->setPosition(annettePos + glm::vec2(32 + 6, 48));
-	introQuads[ANNETTE_MOUTH] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.1f), glm::vec2(0.6f, 0.15f), *handTex, *shader);
-	introQuads[ANNETTE_MOUTH]->setPosition(annettePos + glm::vec2(32 + 6, 48 + 32));
+	cinematicQuads[ANNETTE_EYES] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(0.65f, 0.05f), *handTex, *shader);
+	cinematicQuads[ANNETTE_EYES]->setPosition(annettePos + glm::vec2(32 + 6, 48));
+	cinematicQuads[ANNETTE_MOUTH] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.1f), glm::vec2(0.6f, 0.15f), *handTex, *shader);
+	cinematicQuads[ANNETTE_MOUTH]->setPosition(annettePos + glm::vec2(32 + 6, 48 + 32));
 	bg.bg = sp;
 	bg.time = 27.5f;
 	bg.duration = 3.f;
@@ -214,8 +215,8 @@ void CoolIntro::initChild()
 	sp->setAnimationSpeed(0, 1);
 	sp->addKeyframe(0, glm::vec2(0.625f, 0.25f));
 	sp->changeAnimation(0);
-	introQuads[BOOT] = TexturedQuad::createTexturedQuad(glm::vec2(0.7f, 0.f), glm::vec2(1.f, 0.5f), *handTex, *shader);
-	introQuads[BOOT]->setPosition(glm::vec2(94, -160));
+	cinematicQuads[BOOT] = TexturedQuad::createTexturedQuad(glm::vec2(0.7f, 0.f), glm::vec2(1.f, 0.5f), *handTex, *shader);
+	cinematicQuads[BOOT]->setPosition(glm::vec2(94, -160));
 	bg.bg = sp;
 	bg.time = 33.f;
 	bg.duration = 1.f;
@@ -250,48 +251,48 @@ void CoolIntro::initChild()
 	richterParts->loadFromFile("images/cinematics/intro_cool/richter_parts.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("richterParts", richterParts);
 	glm::vec2 offset2(0.25f, 0.25f);
-	introSprites[RICHT_HANDS] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
-	introSprites[RICHT_HANDS]->setNumberAnimations(2);
-	introSprites[RICHT_HANDS]->setAnimationSpeed(0, 15);
-	introSprites[RICHT_HANDS]->animatorX(0, 3, 0.f, 0.25f, 0.f);
-	introSprites[RICHT_HANDS]->setAnimationSpeed(1, 15);
-	introSprites[RICHT_HANDS]->addKeyframe(1, glm::vec2(0.75f, 0.f));
-	introSprites[RICHT_HANDS]->animatorX(1, 2, 0.f, 0.25f, 0.25f);
-	introSprites[RICHT_HANDS]->changeAnimation(0);
-	introSprites[RICHT_DUST] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
-	introSprites[RICHT_DUST]->setNumberAnimations(2);
-	introSprites[RICHT_DUST]->setAnimationSpeed(0, 15);
-	introSprites[RICHT_DUST]->animatorX(0, 2, 0.5f, 0.25f, 0.25f);
-	introSprites[RICHT_DUST]->addKeyframe(0, glm::vec2(0.f, 0.5f));
-	introSprites[RICHT_DUST]->setAnimationSpeed(1, 0);
-	introSprites[RICHT_DUST]->addKeyframe(1, glm::vec2(0.5f, 0.75f));
-	introSprites[RICHT_DUST]->setTransition(0, 1);
-	introSprites[RICHT_DUST]->changeAnimation(0);
-	introSprites[RICHT_DUST]->setPosition(glm::vec2(0, 112));
-	introSprites[RICHT_WHIP] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
-	introSprites[RICHT_WHIP]->setNumberAnimations(2);
-	introSprites[RICHT_WHIP]->setAnimationSpeed(0, 0);
-	introSprites[RICHT_WHIP]->addKeyframe(0, glm::vec2(0.f, 0.75f));
-	introSprites[RICHT_WHIP]->setAnimationSpeed(1, 0);
-	introSprites[RICHT_WHIP]->addKeyframe(1, glm::vec2(0.25f, 0.75f));
-	introSprites[RICHT_WHIP]->changeAnimation(0);
-	introSprites[RICHT_WHIP]->setPosition(glm::vec2(128, 16));
-	introSprites[RICHT_FACE] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
-	introSprites[RICHT_FACE]->setNumberAnimations(3);
-	introSprites[RICHT_FACE]->setAnimationSpeed(0, 0);
-	introSprites[RICHT_FACE]->addKeyframe(0, glm::vec2(0.25f, 0.5f));
-	introSprites[RICHT_FACE]->setAnimationSpeed(1, 10);
-	introSprites[RICHT_FACE]->addKeyframe(1, glm::vec2(0.5f, 0.5f));
-	introSprites[RICHT_FACE]->setAnimationSpeed(2, 0);
-	introSprites[RICHT_FACE]->addKeyframe(2, glm::vec2(0.75f, 0.5f));
-	introSprites[RICHT_FACE]->setTransition(1, 2);
-	introSprites[RICHT_FACE]->changeAnimation(0);
-	introSprites[RICHT_FACE]->setPosition(glm::vec2(128, 112));
+	cinematicSprites[RICHT_HANDS] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	cinematicSprites[RICHT_HANDS]->setNumberAnimations(2);
+	cinematicSprites[RICHT_HANDS]->setAnimationSpeed(0, 15);
+	cinematicSprites[RICHT_HANDS]->animatorX(0, 3, 0.f, 0.25f, 0.f);
+	cinematicSprites[RICHT_HANDS]->setAnimationSpeed(1, 15);
+	cinematicSprites[RICHT_HANDS]->addKeyframe(1, glm::vec2(0.75f, 0.f));
+	cinematicSprites[RICHT_HANDS]->animatorX(1, 2, 0.f, 0.25f, 0.25f);
+	cinematicSprites[RICHT_HANDS]->changeAnimation(0);
+	cinematicSprites[RICHT_DUST] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	cinematicSprites[RICHT_DUST]->setNumberAnimations(2);
+	cinematicSprites[RICHT_DUST]->setAnimationSpeed(0, 15);
+	cinematicSprites[RICHT_DUST]->animatorX(0, 2, 0.5f, 0.25f, 0.25f);
+	cinematicSprites[RICHT_DUST]->addKeyframe(0, glm::vec2(0.f, 0.5f));
+	cinematicSprites[RICHT_DUST]->setAnimationSpeed(1, 0);
+	cinematicSprites[RICHT_DUST]->addKeyframe(1, glm::vec2(0.5f, 0.75f));
+	cinematicSprites[RICHT_DUST]->setTransition(0, 1);
+	cinematicSprites[RICHT_DUST]->changeAnimation(0);
+	cinematicSprites[RICHT_DUST]->setPosition(glm::vec2(0, 112));
+	cinematicSprites[RICHT_WHIP] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	cinematicSprites[RICHT_WHIP]->setNumberAnimations(2);
+	cinematicSprites[RICHT_WHIP]->setAnimationSpeed(0, 0);
+	cinematicSprites[RICHT_WHIP]->addKeyframe(0, glm::vec2(0.f, 0.75f));
+	cinematicSprites[RICHT_WHIP]->setAnimationSpeed(1, 0);
+	cinematicSprites[RICHT_WHIP]->addKeyframe(1, glm::vec2(0.25f, 0.75f));
+	cinematicSprites[RICHT_WHIP]->changeAnimation(0);
+	cinematicSprites[RICHT_WHIP]->setPosition(glm::vec2(128, 16));
+	cinematicSprites[RICHT_FACE] = Sprite::createSprite(fullScreen / 2, offset2, richterParts, shader);
+	cinematicSprites[RICHT_FACE]->setNumberAnimations(3);
+	cinematicSprites[RICHT_FACE]->setAnimationSpeed(0, 0);
+	cinematicSprites[RICHT_FACE]->addKeyframe(0, glm::vec2(0.25f, 0.5f));
+	cinematicSprites[RICHT_FACE]->setAnimationSpeed(1, 10);
+	cinematicSprites[RICHT_FACE]->addKeyframe(1, glm::vec2(0.5f, 0.5f));
+	cinematicSprites[RICHT_FACE]->setAnimationSpeed(2, 0);
+	cinematicSprites[RICHT_FACE]->addKeyframe(2, glm::vec2(0.75f, 0.5f));
+	cinematicSprites[RICHT_FACE]->setTransition(1, 2);
+	cinematicSprites[RICHT_FACE]->changeAnimation(0);
+	cinematicSprites[RICHT_FACE]->setPosition(glm::vec2(128, 112));
 	Texture* bootTex = new Texture();
 	bootTex->loadFromFile("images/cinematics/intro_cool/boot.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("boot", bootTex);
-	introQuads[BOOT2] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1.f), *bootTex, *shader);
-	introQuads[BOOT2]->setPosition(glm::vec2(-SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+	cinematicQuads[BOOT2] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1.f), *bootTex, *shader);
+	cinematicQuads[BOOT2]->setPosition(glm::vec2(-SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	//blackBox128x112 = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(128, 112), *pixTex, *shader);
 	//blackBox128x112->setColor(glm::vec3(0));
 	bg.bg = sp;
@@ -329,14 +330,14 @@ void CoolIntro::initChild()
 	Texture* pfire = new Texture();
 	pfire->loadFromFile("images/cinematics/intro_cool/purple_fire.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("pfire", pfire);
-	introSprites[PURPLE_FIRE] = Sprite::createSprite(glm::ivec2(80), glm::vec2(0.2f, 1.f), pfire, shader);
-	introSprites[PURPLE_FIRE]->setNumberAnimations(1);
-	introSprites[PURPLE_FIRE]->setAnimationSpeed(0, 10);
-	introSprites[PURPLE_FIRE]->animatorX(0, 5, 0.f, 0.2f, 0.f);
-	introSprites[PURPLE_FIRE]->changeAnimation(0);
-	introSprites[PURPLE_FIRE]->setPosition(glm::vec2(49, 48));
-	introQuads[RICHTER2] = TexturedQuad::createTexturedQuad(glm::vec2(0.4375f, 0.75f), glm::vec2(0.5f, 1.f), *bgTex, *shader);
-	introQuads[RICHTER2]->setPosition(glm::vec2(SCREEN_WIDTH * 2 + SCREEN_WIDTH/2, 0));
+	cinematicSprites[PURPLE_FIRE] = Sprite::createSprite(glm::ivec2(80), glm::vec2(0.2f, 1.f), pfire, shader);
+	cinematicSprites[PURPLE_FIRE]->setNumberAnimations(1);
+	cinematicSprites[PURPLE_FIRE]->setAnimationSpeed(0, 10);
+	cinematicSprites[PURPLE_FIRE]->animatorX(0, 5, 0.f, 0.2f, 0.f);
+	cinematicSprites[PURPLE_FIRE]->changeAnimation(0);
+	cinematicSprites[PURPLE_FIRE]->setPosition(glm::vec2(49, 48));
+	cinematicQuads[RICHTER2] = TexturedQuad::createTexturedQuad(glm::vec2(0.4375f, 0.75f), glm::vec2(0.5f, 1.f), *bgTex, *shader);
+	cinematicQuads[RICHTER2]->setPosition(glm::vec2(SCREEN_WIDTH * 2 + SCREEN_WIDTH/2, 0));
 	bg.bg = sp;
 	bg.time = 44.75f;
 	bg.duration = 3.25f;
@@ -350,14 +351,14 @@ void CoolIntro::initChild()
 	Texture* richtEyes = new Texture();
 	richtEyes->loadFromFile("images/cinematics/intro_cool/richter_sus.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("richtEyes", richtEyes);
-	introSprites[RICHTER_EYES] = Sprite::createSprite(fullScreen, glm::vec2(0.25f, 1.f), richtEyes, shader);
-	introSprites[RICHTER_EYES]->setNumberAnimations(2);
-	introSprites[RICHTER_EYES]->setAnimationSpeed(0, 10);
-	introSprites[RICHTER_EYES]->animatorX(0, 2, 0.f, 0.25f, 0.f);
-	introSprites[RICHTER_EYES]->setAnimationSpeed(1, 0);
-	introSprites[RICHTER_EYES]->addKeyframe(1, glm::vec2(0.5f, 0.f));
-	introSprites[RICHTER_EYES]->setTransition(0, 1);
-	introSprites[RICHTER_EYES]->changeAnimation(0);
+	cinematicSprites[RICHTER_EYES] = Sprite::createSprite(fullScreen, glm::vec2(0.25f, 1.f), richtEyes, shader);
+	cinematicSprites[RICHTER_EYES]->setNumberAnimations(2);
+	cinematicSprites[RICHTER_EYES]->setAnimationSpeed(0, 10);
+	cinematicSprites[RICHTER_EYES]->animatorX(0, 2, 0.f, 0.25f, 0.f);
+	cinematicSprites[RICHTER_EYES]->setAnimationSpeed(1, 0);
+	cinematicSprites[RICHTER_EYES]->addKeyframe(1, glm::vec2(0.5f, 0.f));
+	cinematicSprites[RICHTER_EYES]->setTransition(0, 1);
+	cinematicSprites[RICHTER_EYES]->changeAnimation(0);
 	bg.bg = sp;
 	bg.time = 48.f;
 	bg.duration = 2.f;
@@ -375,10 +376,10 @@ void CoolIntro::initChild()
 	Texture* skelAmbush = new Texture();
 	skelAmbush->loadFromFile("images/cinematics/intro_cool/skeleton.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("skelAmbush", skelAmbush);
-	introQuads[RICHTER3] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *richtAmbushed, *shader);
-	introQuads[SKELETON_AMBUSH] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *skelAmbush, *shader);
-	introQuads[RICHTER3]->setPosition(glm::vec2(79, 56));
-	introQuads[SKELETON_AMBUSH]->setPosition(glm::vec2(21, 109));
+	cinematicQuads[RICHTER3] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *richtAmbushed, *shader);
+	cinematicQuads[SKELETON_AMBUSH] = TexturedQuad::createTexturedQuad(glm::vec2(0), glm::vec2(1), *skelAmbush, *shader);
+	cinematicQuads[RICHTER3]->setPosition(glm::vec2(79, 56));
+	cinematicQuads[SKELETON_AMBUSH]->setPosition(glm::vec2(21, 109));
 	bg.bg = sp;
 	bg.time = 50.25f;
 	bg.duration = 2.25f;
@@ -398,10 +399,10 @@ void CoolIntro::initChild()
 	Texture* hands = new Texture();
 	hands->loadFromFile("images/cinematics/intro_cool/hands.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("richtHands", hands);
-	introQuads[RIGHT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), *hands, *shader);
-	introQuads[LEFT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(1.f, 1.f), *hands, *shader);
-	introQuads[RIGHT_HAND]->setPosition(glm::vec2(50, 142));
-	introQuads[LEFT_HAND]->setPosition(glm::vec2(142, 142));
+	cinematicQuads[RIGHT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.f, 0.f), glm::vec2(0.5f, 1.f), *hands, *shader);
+	cinematicQuads[LEFT_HAND] = TexturedQuad::createTexturedQuad(glm::vec2(0.5f, 0.f), glm::vec2(1.f, 1.f), *hands, *shader);
+	cinematicQuads[RIGHT_HAND]->setPosition(glm::vec2(50, 142));
+	cinematicQuads[LEFT_HAND]->setPosition(glm::vec2(142, 142));
 	bg.bg = sp;
 	bg.time = 52.75f;
 	bg.duration = 1.f;
@@ -424,37 +425,37 @@ void CoolIntro::initChild()
 	Texture* elems = new Texture();
 	elems->loadFromFile("images/cinematics/intro_cool/ult_elements.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	TextureManager::instance().addTexture("ultElements", elems);
-	introSprites[PURPLE_FIRE2] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
-	introSprites[PURPLE_FIRE2]->setNumberAnimations(1);
-	introSprites[PURPLE_FIRE2]->setAnimationSpeed(0, 10);
-	introSprites[PURPLE_FIRE2]->animatorX(0, 3, 0.f, 0.25f, 0.5f);
-	introSprites[PURPLE_FIRE2]->changeAnimation(0);
-	introSprites[WHIRLWIND] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
-	introSprites[WHIRLWIND]->setNumberAnimations(1);
-	introSprites[WHIRLWIND]->setAnimationSpeed(0, 30);
-	introSprites[WHIRLWIND]->animatorX(0, 4, 0.25f, 0.25f, 0.f);
-	introSprites[WHIRLWIND]->changeAnimation(0);
-	introQuads[SMALL_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.5f), glm::vec2(0.8125f, 1.f), *elems, *shader);
-	introQuads[SMALL_CROSS]->setColorPalette(bgPalette);
-	introQuads[SMALL_CROSS]->setNumberPaletteAnimations(1);
-	introQuads[SMALL_CROSS]->setPaletteSpeed(0, 0);
-	introQuads[SMALL_CROSS]->addPaletteKeyframe(0, 0.475f);
-	introQuads[SMALL_CROSS]->changePaletteAnimation(0);
-	introQuads[SMALL_CROSS]->setPosition(glm::vec2(44, -16));
-	introQuads[CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.8125f, 0.5f), glm::vec2(0.875f, 1.f), *elems, *shader);
-	introQuads[CROSS]->setColorPalette(bgPalette);
-	introQuads[CROSS]->setNumberPaletteAnimations(1);
-	introQuads[CROSS]->setPaletteSpeed(0, 0);
-	introQuads[CROSS]->addPaletteKeyframe(0, 0.475f);
-	introQuads[CROSS]->changePaletteAnimation(0);
-	introQuads[CROSS]->setPosition(glm::vec2(0, -48));
-	introQuads[BIG_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.5f), glm::vec2(1.f, 1.f), *elems, *shader);
-	introQuads[BIG_CROSS]->setColorPalette(bgPalette);
-	introQuads[BIG_CROSS]->setNumberPaletteAnimations(1);
-	introQuads[BIG_CROSS]->setPaletteSpeed(0, 0);
-	introQuads[BIG_CROSS]->addPaletteKeyframe(0, 0.475f);
-	introQuads[BIG_CROSS]->changePaletteAnimation(0);
-	introQuads[BIG_CROSS]->setPosition(glm::vec2(96, -48));
+	cinematicSprites[PURPLE_FIRE2] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
+	cinematicSprites[PURPLE_FIRE2]->setNumberAnimations(1);
+	cinematicSprites[PURPLE_FIRE2]->setAnimationSpeed(0, 10);
+	cinematicSprites[PURPLE_FIRE2]->animatorX(0, 3, 0.f, 0.25f, 0.5f);
+	cinematicSprites[PURPLE_FIRE2]->changeAnimation(0);
+	cinematicSprites[WHIRLWIND] = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(0.25f, 0.5f), elems, shader);
+	cinematicSprites[WHIRLWIND]->setNumberAnimations(1);
+	cinematicSprites[WHIRLWIND]->setAnimationSpeed(0, 30);
+	cinematicSprites[WHIRLWIND]->animatorX(0, 4, 0.25f, 0.25f, 0.f);
+	cinematicSprites[WHIRLWIND]->changeAnimation(0);
+	cinematicQuads[SMALL_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.75f, 0.5f), glm::vec2(0.8125f, 1.f), *elems, *shader);
+	cinematicQuads[SMALL_CROSS]->setColorPalette(bgPalette);
+	cinematicQuads[SMALL_CROSS]->setNumberPaletteAnimations(1);
+	cinematicQuads[SMALL_CROSS]->setPaletteSpeed(0, 0);
+	cinematicQuads[SMALL_CROSS]->addPaletteKeyframe(0, 0.475f);
+	cinematicQuads[SMALL_CROSS]->changePaletteAnimation(0);
+	cinematicQuads[SMALL_CROSS]->setPosition(glm::vec2(44, -16));
+	cinematicQuads[CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.8125f, 0.5f), glm::vec2(0.875f, 1.f), *elems, *shader);
+	cinematicQuads[CROSS]->setColorPalette(bgPalette);
+	cinematicQuads[CROSS]->setNumberPaletteAnimations(1);
+	cinematicQuads[CROSS]->setPaletteSpeed(0, 0);
+	cinematicQuads[CROSS]->addPaletteKeyframe(0, 0.475f);
+	cinematicQuads[CROSS]->changePaletteAnimation(0);
+	cinematicQuads[CROSS]->setPosition(glm::vec2(0, -48));
+	cinematicQuads[BIG_CROSS] = TexturedQuad::createTexturedQuad(glm::vec2(0.875f, 0.5f), glm::vec2(1.f, 1.f), *elems, *shader);
+	cinematicQuads[BIG_CROSS]->setColorPalette(bgPalette);
+	cinematicQuads[BIG_CROSS]->setNumberPaletteAnimations(1);
+	cinematicQuads[BIG_CROSS]->setPaletteSpeed(0, 0);
+	cinematicQuads[BIG_CROSS]->addPaletteKeyframe(0, 0.475f);
+	cinematicQuads[BIG_CROSS]->changePaletteAnimation(0);
+	cinematicQuads[BIG_CROSS]->setPosition(glm::vec2(96, -48));
 	crossColorTimer[0] = 64;
 	crossColorTimer[1] = 16;
 	crossColorTimer[2] = 0;
@@ -470,7 +471,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 	int filmId = film.front().id;
 	if (filmId == MAP)
 	{
-		if (introQuads[HAND]->getPosition().x < 16) introQuads[HAND]->incPosition(glm::vec2(4, 8));
+		if (cinematicQuads[HAND]->getPosition().x < 16) cinematicQuads[HAND]->incPosition(glm::vec2(4, 8));
 		else if (shaking)
 		{
 			shakeAngle += shakeAngleStep;
@@ -483,7 +484,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 			{
 				float positionY = startY + shakeDist * sin(glm::radians((float)shakeAngle));
 				film.front().bg->setPosition(glm::vec2(0, positionY));
-				introQuads[HAND]->setPosition(glm::vec2(introQuads[HAND]->getPosition().x, positionY + 48));
+				cinematicQuads[HAND]->setPosition(glm::vec2(cinematicQuads[HAND]->getPosition().x, positionY + 48));
 			}
 		}
 		else if (!shaked)
@@ -498,11 +499,11 @@ void CoolIntro::filmUpdate(int deltaTime)
 		if (timeElapsed >= 3.75f && richter1Alpha > 0)
 		{
 			richter1Alpha -= deltaTime / 3000.f;
-			introQuads[RICHTER1]->setAlpha(richter1Alpha);
+			cinematicQuads[RICHTER1]->setAlpha(richter1Alpha);
 		}
 		bgXScroll += 0.0125f;
-		introSprites[WHEELS]->update(deltaTime);
-		introSprites[HORSES]->update(deltaTime);
+		cinematicSprites[WHEELS]->update(deltaTime);
+		cinematicSprites[HORSES]->update(deltaTime);
 	}
 	else if (filmId == CASTLEVANIA && boltTimer <= 0)
 	{
@@ -518,7 +519,7 @@ void CoolIntro::filmUpdate(int deltaTime)
 	else if (filmId == CEMENTERY)
 	{
 		if (timeElapsed >= 17 && film.front().bg->paletteAnimation() < 1) film.front().bg->changePaletteAnimation(1);
-		else if (timeElapsed >= 19 && introQuads[SKELETON_CEMENTERY]->getPosition().y > 80) introQuads[SKELETON_CEMENTERY]->incPosition(glm::vec2(0, -2));
+		else if (timeElapsed >= 19 && cinematicQuads[SKELETON_CEMENTERY]->getPosition().y > 80) cinematicQuads[SKELETON_CEMENTERY]->incPosition(glm::vec2(0, -2));
 	}
 	else if (filmId == GIANT && film.front().bg->getPosition().y < 0)
 	{
@@ -534,11 +535,11 @@ void CoolIntro::filmUpdate(int deltaTime)
 	}
 	else if (filmId == ANNETTE)
 	{
-		if (introQuads[ANNETTE_EYES]->getPosition().y > 80)
+		if (cinematicQuads[ANNETTE_EYES]->getPosition().y > 80)
 		{
 			glm::vec2 inc(0, -.5f);
-			introQuads[ANNETTE_EYES]->incPosition(inc);
-			introQuads[ANNETTE_MOUTH]->incPosition(inc);
+			cinematicQuads[ANNETTE_EYES]->incPosition(inc);
+			cinematicQuads[ANNETTE_MOUTH]->incPosition(inc);
 			film.front().bg->incPosition(inc);
 		}
 		else
@@ -556,9 +557,9 @@ void CoolIntro::filmUpdate(int deltaTime)
 	{
 		film.front().bg->setPosition(glm::vec2(cameraX--, 0));
 	}
-	else if (filmId == RICHTER_BOOT && introQuads[BOOT]->getPosition().y < 32)
+	else if (filmId == RICHTER_BOOT && cinematicQuads[BOOT]->getPosition().y < 32)
 	{
-		introQuads[BOOT]->incPosition(glm::vec2(0, 8));
+		cinematicQuads[BOOT]->incPosition(glm::vec2(0, 8));
 	}
 	else if (filmId == RICHTER_ARRIVE)
 	{
@@ -568,43 +569,43 @@ void CoolIntro::filmUpdate(int deltaTime)
 	}
 	else if (filmId == RICHTER_READY)
 	{
-		introSprites[RICHT_HANDS]->update(deltaTime);
+		cinematicSprites[RICHT_HANDS]->update(deltaTime);
 		int anim = film.front().bg->animation();
-		float bootPosX = introQuads[BOOT2]->getPosition().x;
+		float bootPosX = cinematicQuads[BOOT2]->getPosition().x;
 		if (timeElapsed >= 37.f && bootPosX < 0)
 		{
-			if (introSprites[RICHT_HANDS]->animation() == 0)
+			if (cinematicSprites[RICHT_HANDS]->animation() == 0)
 			{
 				//cout << "cambio de animacion de las manos" << endl;
-				introSprites[RICHT_HANDS]->changeAnimation(1);
+				cinematicSprites[RICHT_HANDS]->changeAnimation(1);
 				cameraX = 0;
 				colorBackground->setColor(glm::vec3(0, 0, 36/255.f));
 			}
 			else
 			{
 				//cout << "apareciendo la bota" << endl;
-				introQuads[BOOT2]->incPosition(glm::vec2(4, 0));	
+				cinematicQuads[BOOT2]->incPosition(glm::vec2(4, 0));	
 			}
 		}
 		else if (timeElapsed >= 39.f)
 		{
 			//cout << "cara" << endl;
-			if (timeElapsed >= 39.5f && introSprites[RICHT_FACE]->animation() == 0) introSprites[RICHT_FACE]->changeAnimation(1);
+			if (timeElapsed >= 39.5f && cinematicSprites[RICHT_FACE]->animation() == 0) cinematicSprites[RICHT_FACE]->changeAnimation(1);
 			if (anim != 3) film.front().bg->changeAnimation(3);
-			else introSprites[RICHT_FACE]->update(deltaTime);
+			else cinematicSprites[RICHT_FACE]->update(deltaTime);
 		}	
 		else if (timeElapsed >= 38.f)
 		{
 			//cout << "whip ready" << endl;
-			if (introSprites[RICHT_WHIP]->getPosition().y > 0) introSprites[RICHT_WHIP]->incPosition(glm::vec2(0, -2));
-			else if (introSprites[RICHT_WHIP]->animation() != 1) introSprites[RICHT_WHIP]->changeAnimation(1);
+			if (cinematicSprites[RICHT_WHIP]->getPosition().y > 0) cinematicSprites[RICHT_WHIP]->incPosition(glm::vec2(0, -2));
+			else if (cinematicSprites[RICHT_WHIP]->animation() != 1) cinematicSprites[RICHT_WHIP]->changeAnimation(1);
 			if (anim != 2) film.front().bg->changeAnimation(2);
 		}
 		else if (bootPosX == 0)
 		{
 			//cout << "entro, aparece la bota, momento: " << timeElapsed << endl;
 			if (anim != 1) film.front().bg->changeAnimation(1);
-			introSprites[RICHT_DUST]->update(deltaTime);
+			cinematicSprites[RICHT_DUST]->update(deltaTime);
 		}
 	}
 	else if (filmId == RICHTER_WHIP1 && cameraX > -SCREEN_WIDTH * 2)
@@ -620,22 +621,22 @@ void CoolIntro::filmUpdate(int deltaTime)
 	{
 		Sprite* sp = film.front().bg;
 		if (sp->getPosition().x < 0) sp->incPosition(glm::vec2(2, 0));
-		if (introQuads[RICHTER2]->getPosition().x > 128) introQuads[RICHTER2]->incPosition(glm::vec2(-4, 0));
-		else if (timeElapsed >= 47.25f && !introSprites[PURPLE_FIRE]->animationEnded()) introSprites[PURPLE_FIRE]->update(deltaTime);
+		if (cinematicQuads[RICHTER2]->getPosition().x > 128) cinematicQuads[RICHTER2]->incPosition(glm::vec2(-4, 0));
+		else if (timeElapsed >= 47.25f && !cinematicSprites[PURPLE_FIRE]->animationEnded()) cinematicSprites[PURPLE_FIRE]->update(deltaTime);
 	}
 	else if (filmId == RICHTER_SUS && timeElapsed >= 48.75f)
 	{
-		introSprites[RICHTER_EYES]->update(deltaTime);
+		cinematicSprites[RICHTER_EYES]->update(deltaTime);
 	}
 	else if (filmId == RICHTER_AMBUSHED && film.front().bg->getPosition().x < 0)
 	{
-		introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-1, 0));
+		cinematicQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-1, 0));
 		film.front().bg->incPosition(glm::vec2(2, 0));
 	}
-	else if (filmId == RICHTER_ULT1 && introQuads[RIGHT_HAND]->getPosition().y > (SCREEN_HEIGHT - 32 - 64))
+	else if (filmId == RICHTER_ULT1 && cinematicQuads[RIGHT_HAND]->getPosition().y > (SCREEN_HEIGHT - 32 - 64))
 	{
-		introQuads[RIGHT_HAND]->incPosition(glm::vec2(.5, -.5));
-		introQuads[LEFT_HAND]->incPosition(glm::vec2(-.5, -.5));
+		cinematicQuads[RIGHT_HAND]->incPosition(glm::vec2(.5, -.5));
+		cinematicQuads[LEFT_HAND]->incPosition(glm::vec2(-.5, -.5));
 	}
 	else if (filmId == RICHTER_ULT2)
 	{
@@ -644,8 +645,8 @@ void CoolIntro::filmUpdate(int deltaTime)
 			blackScreenAlpha += deltaTime / 3000.f;
 			blackScreen->setAlpha(blackScreenAlpha);
 		}
-		introSprites[PURPLE_FIRE2]->update(deltaTime);
-		introSprites[WHIRLWIND]->update(deltaTime);
+		cinematicSprites[PURPLE_FIRE2]->update(deltaTime);
+		cinematicSprites[WHIRLWIND]->update(deltaTime);
 		for (int i = 0; i < 3; i++)
 		{
 			updateCross(deltaTime, i);
@@ -662,30 +663,30 @@ void CoolIntro::render()
 		if (filmId == MAP)
 		{
 			film.front().bg->render();
-			introQuads[HAND]->render();
+			cinematicQuads[HAND]->render();
 			blackBar48px->render();
 		}
 		else if (filmId == HORSES)
 		{
 			shader->setUniform1f("xOffset", bgXScroll * 0.25f);
-			introQuads[SKY]->render();
+			cinematicQuads[SKY]->render();
 			shader->setUniform1f("xOffset", bgXScroll);
-			introQuads[TREES_FAR]->render();
+			cinematicQuads[TREES_FAR]->render();
 			shader->setUniform1f("xOffset", bgXScroll * 0.5f);
-			introQuads[TREES_CLOSE]->render();
+			cinematicQuads[TREES_CLOSE]->render();
 			shader->setUniform1f("xOffset", 0.f);
-			introQuads[CAR_TOP]->render();
-			introQuads[CAR]->render();
-			introSprites[WHEELS]->setPosition(glm::vec2(16, 168));
-			introSprites[WHEELS]->render();
-			introSprites[WHEELS]->setPosition(glm::vec2(78, 168));
-			introSprites[WHEELS]->render();
-			introSprites[HORSES]->render();
+			cinematicQuads[CAR_TOP]->render();
+			cinematicQuads[CAR]->render();
+			cinematicSprites[WHEELS]->setPosition(glm::vec2(16, 168));
+			cinematicSprites[WHEELS]->render();
+			cinematicSprites[WHEELS]->setPosition(glm::vec2(78, 168));
+			cinematicSprites[WHEELS]->render();
+			cinematicSprites[HORSES]->render();
 			shader->setUniform1f("xOffset", bgXScroll);
-			introQuads[GRASS]->render();
+			cinematicQuads[GRASS]->render();
 			shader->setUniform1f("xOffset", 0.f);
 			film.front().bg->render();
-			introQuads[RICHTER1]->render();
+			cinematicQuads[RICHTER1]->render();
 		}
 		else if (filmId == CASTLEVANIA)
 		{
@@ -695,7 +696,7 @@ void CoolIntro::render()
 		else if (filmId == CEMENTERY)
 		{
 			film.front().bg->render();
-			introQuads[SKELETON_CEMENTERY]->render();
+			cinematicQuads[SKELETON_CEMENTERY]->render();
 			blackBar32px->render();
 		}
 		else if (filmId == PEOPLE)
@@ -707,12 +708,12 @@ void CoolIntro::render()
 		{
 			colorBackground->render();
 			film.front().bg->render();
-			if (introQuads[ANNETTE_EYES]->getPosition().y > 80)
+			if (cinematicQuads[ANNETTE_EYES]->getPosition().y > 80)
 			{
-				introQuads[ANNETTE_EYES]->render();
-				introQuads[ANNETTE_MOUTH]->render();
+				cinematicQuads[ANNETTE_EYES]->render();
+				cinematicQuads[ANNETTE_MOUTH]->render();
 			}
-			else if (annetteEyesDuration > 0) introQuads[ANNETTE_EYES]->render();
+			else if (annetteEyesDuration > 0) cinematicQuads[ANNETTE_EYES]->render();
 			blackBar32px->setPosition(glm::vec2(0, 0));
 			blackBar32px->render();
 			blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
@@ -721,7 +722,7 @@ void CoolIntro::render()
 		else if (filmId == RICHTER_BOOT)
 		{
 			film.front().bg->render();
-			introQuads[BOOT]->render();
+			cinematicQuads[BOOT]->render();
 			blackBar32px->setPosition(glm::vec2(0, 0));
 			blackBar32px->render();
 			blackBar32px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 32));
@@ -730,18 +731,18 @@ void CoolIntro::render()
 		else if (filmId == RICHTER_READY)
 		{
 			film.front().bg->render();
-			introSprites[RICHT_HANDS]->render();
-			if (introQuads[BOOT2]->getPosition().x < 0) introQuads[BOOT2]->render();
-			else if (timeElapsed < 38.f) introSprites[RICHT_DUST]->render();
-			if (timeElapsed >= 38.f) introSprites[RICHT_WHIP]->render();
-			if (film.front().bg->animation() == 3) introSprites[RICHT_FACE]->render();
+			cinematicSprites[RICHT_HANDS]->render();
+			if (cinematicQuads[BOOT2]->getPosition().x < 0) cinematicQuads[BOOT2]->render();
+			else if (timeElapsed < 38.f) cinematicSprites[RICHT_DUST]->render();
+			if (timeElapsed >= 38.f) cinematicSprites[RICHT_WHIP]->render();
+			if (film.front().bg->animation() == 3) cinematicSprites[RICHT_FACE]->render();
 		}
 		else if (filmId == RICHTER_WHIP3)
 		{
 			colorBackground->render();
 			film.front().bg->render();
-			if (timeElapsed >= 47.25f && !introSprites[PURPLE_FIRE]->animationEnded()) introSprites[PURPLE_FIRE]->render();
-			introQuads[RICHTER2]->render();
+			if (timeElapsed >= 47.25f && !cinematicSprites[PURPLE_FIRE]->animationEnded()) cinematicSprites[PURPLE_FIRE]->render();
+			cinematicQuads[RICHTER2]->render();
 			blackBar48px->setPosition(glm::vec2(0));
 			blackBar48px->render();
 			blackBar48px->setPosition(glm::vec2(0, SCREEN_HEIGHT - 48));
@@ -750,36 +751,36 @@ void CoolIntro::render()
 		else if (filmId == RICHTER_SUS)
 		{
 			film.front().bg->render();
-			introSprites[RICHTER_EYES]->render();
+			cinematicSprites[RICHTER_EYES]->render();
 		}
 		else if (filmId == RICHTER_AMBUSHED)
 		{
-			introQuads[SKELETON_AMBUSH]->render();
-			introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(164, 0));
+			cinematicQuads[SKELETON_AMBUSH]->render();
+			cinematicQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(164, 0));
 			shader->setUniform1f("frameWidth", 1.f);
 			shader->setUniform1i("flip", true);
-			introQuads[SKELETON_AMBUSH]->render();
-			introQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-164, 0));
+			cinematicQuads[SKELETON_AMBUSH]->render();
+			cinematicQuads[SKELETON_AMBUSH]->incPosition(glm::vec2(-164, 0));
 			shader->setUniform1i("flip", false);
-			introQuads[RICHTER3]->render();
+			cinematicQuads[RICHTER3]->render();
 			film.front().bg->render();
 		}
 		else if (filmId == RICHTER_ULT1)
 		{
 			film.front().bg->render();
-			introQuads[RIGHT_HAND]->render();
-			introQuads[LEFT_HAND]->render();
+			cinematicQuads[RIGHT_HAND]->render();
+			cinematicQuads[LEFT_HAND]->render();
 			blackBar32px->render();
 		}
 		else if (filmId == RICHTER_ULT2)
 		{
 			renderCross(0);
 			film.front().bg->render();
-			introSprites[WHIRLWIND]->render();
-			introSprites[PURPLE_FIRE2]->render();
+			cinematicSprites[WHIRLWIND]->render();
+			cinematicSprites[PURPLE_FIRE2]->render();
 			renderCross(1);
 			shader->setUniform1f("paletteIndexOffset", 0.f + crossBlack[2] * 0.5f);
-			introQuads[BIG_CROSS]->render();
+			cinematicQuads[BIG_CROSS]->render();
 			shader->setUniform1f("paletteIndexOffset", 0.f);
 		}
 		else film.front().bg->render();
@@ -794,10 +795,10 @@ float CoolIntro::setEndTime() const
 
 void CoolIntro::updateCross(int deltaTime, int crossNum)
 {
-	introQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, -crossSpeeds[crossNum]));
-	if (introQuads[SMALL_CROSS + crossNum]->getPosition().y <= crossYlimits[crossNum])
+	cinematicQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, -crossSpeeds[crossNum]));
+	if (cinematicQuads[SMALL_CROSS + crossNum]->getPosition().y <= crossYlimits[crossNum])
 	{
-		introQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, SCREEN_HEIGHT * 2));
+		cinematicQuads[SMALL_CROSS + crossNum]->incPosition(glm::vec2(0, SCREEN_HEIGHT * 2));
 	}
 	crossColorTimer[crossNum] += deltaTime;
 	if (crossColorTimer[crossNum] > TIME_BETWEEN_CROSS_COLOR)
@@ -810,14 +811,14 @@ void CoolIntro::updateCross(int deltaTime, int crossNum)
 void CoolIntro::renderCross(int crossNum)
 {
 	shader->setUniform1f("paletteIndexOffset", 0.f + crossBlack[crossNum] * 0.5f);
-	introQuads[SMALL_CROSS + crossNum]->render();
-	introQuads[SMALL_CROSS + crossNum]->incPosition(crossOffsets[crossNum]);
+	cinematicQuads[SMALL_CROSS + crossNum]->render();
+	cinematicQuads[SMALL_CROSS + crossNum]->incPosition(crossOffsets[crossNum]);
 	shader->setUniform1f("frameWidth", 0.0625f);
 	shader->setUniform2f("texCoordDispl", 0.5f + 0.125f*crossNum, 0.f);
 	shader->setUniform1i("flip", true);
 	if (crossColorTimer[crossNum] * 2 > TIME_BETWEEN_CROSS_COLOR) shader->setUniform1f("paletteIndexOffset", 0.f + !crossBlack[crossNum] * 0.5f);
-	introQuads[SMALL_CROSS + crossNum]->render();
-	introQuads[SMALL_CROSS + crossNum]->incPosition(-crossOffsets[crossNum]);
+	cinematicQuads[SMALL_CROSS + crossNum]->render();
+	cinematicQuads[SMALL_CROSS + crossNum]->incPosition(-crossOffsets[crossNum]);
 	shader->setUniform2f("texCoordDispl",0.f, 0.f);
 	shader->setUniform1i("flip", false);
 	shader->setUniform1f("paletteIndexOffset", 0.f);
