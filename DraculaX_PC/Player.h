@@ -39,7 +39,6 @@ protected:
 	const glm::vec2 getSizeInSpritesheet() const;
 	const glm::ivec2 getQuadSize() const;
 	void setAnimations();
-	void setHitboxes();
 	void childUpdate(int deltaTime);
 
 private:

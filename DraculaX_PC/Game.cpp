@@ -31,21 +31,16 @@ void Game::init()
 	Esto se podrá cambiar en la configuración del juego más adelante.
 	*/
 	bPlay = true;
-	playingGame = true;
 	twoPlayerMode = false;
 	currSubMode = 0;
 	currDubLang = JP_DUB;
 	currTxtLang = EN_TXT;
 	currentLevel = STAGE1;
-	currentScene = 0;
+	currentScene = 2;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
-	player.init(MAP_OFFSET, spriteShader);
-	gui.init(guiShader, &player, false && twoPlayerMode);
-	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	basicShader.use();
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
-	menus[Screen::OPTIONS] = currentMenu;
 	//SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
 	//playCinematic(Cinematic::COOL_INTRO);
 	start();		//comentar cuando se deje de testear
@@ -165,6 +160,9 @@ void Game::win()
 void Game::start()
 {
 	playingGame = true;
+	player.init(MAP_OFFSET, spriteShader);
+	gui.init(guiShader, &player, false && twoPlayerMode);
+	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
 	gui.reset();
@@ -213,7 +211,6 @@ void Game::stopCinematic(int cinematicId)
 	{
 		basicShader.use();
 		currentMenu = Screen::createScreen(basicShader, Screen::TITLE);
-		menus[Screen::TITLE] = currentMenu;
 	}
 	else if (cinematicId == Cinematic::COOL_INTRO)
 	{

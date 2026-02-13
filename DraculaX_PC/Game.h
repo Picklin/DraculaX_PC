@@ -78,7 +78,6 @@ private:
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
 	Screen* currentMenu;
-	Screen* menus[Screen::NUM_SCREENS];
 	Cinematic* cinematic;
 
 	float timeBeforeCinematic;

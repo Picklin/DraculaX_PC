@@ -469,10 +469,6 @@ void Player::setAnimations()
 	sprite->changeAnimation(IDLE);
 }
 
-void Player::setHitboxes()
-{
-}
-
 void Player::childUpdate(int deltaTime)
 {
 	sprite->update(deltaTime);
@@ -973,12 +969,12 @@ void Player::childUpdate(int deltaTime)
 	}
 	if (wounded())
 	{
-		if ((timeWounded / (deltaTime * 2)) % 4 == 0)
-			sprite->setColor(glm::vec3(1.f, 0.5f, 0.5f));
+		if ((timeWounded / (deltaTime * 2)) % 2 == 0)
+			sprite->setPaletteRow(colorPalettesRows[DAMAGED]);
 		else
-			sprite->setColor(glm::vec3(1.f));
+			sprite->setPaletteRow(colorPalettesRows[DEFAULT]);
 		timeWounded -= deltaTime;
-		if (timeWounded < 0) sprite->setColor(glm::vec3(1.f));
+		if (timeWounded < 0) sprite->setPaletteRow(colorPalettesRows[DEFAULT]);
 	}
 	subweaponCooldown -= deltaTime / 1000.f;
 	setPosition(position);

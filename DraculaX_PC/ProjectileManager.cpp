@@ -27,9 +27,9 @@ void ProjectileManager::createGolemProjectile(const glm::vec2& pos, const glm::v
 Projectile* ProjectileManager::getGolemProjectile(const glm::vec2& pos, const glm::vec2& dir)
 {
     GolemProjectile* gp = new GolemProjectile();
-    gp->init(tileMapDispl, *program);
+    gp->init(tileMapDispl, *program, dir);
     gp->setTileMap(map);
-    gp->setPosition(pos, dir);
+    gp->setPosition(pos);
     return gp;
 }
 

@@ -3,7 +3,6 @@
 #define _ENEMY_INCLUDE
 
 #include "EffectsManager.h"
-#include "Hitbox.h"
 #include "Entity.h"
 
 class Enemy : public Entity

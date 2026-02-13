@@ -18,11 +18,10 @@ public:
 	void setTileMap(TileMap* tilemap);
 	void setPlatforms(TileMap* platforms) { this->platforms = platforms; }
 	virtual void setPosition(const glm::vec2& pos);
-	void setPivotPoint(const glm::vec2& pivotPoint);
 	virtual const glm::vec2 myCenter() const;
 	glm::vec2 getPosition() const { return position; }
 	glm::vec2* getPointerPos() { return &position; }
-	const virtual Hitbox getHitbox() const;
+	const virtual Hitbox getHitbox() const = 0;
 	bool isEnded() const { return ended; }
 	bool getsRemoved() const { return endTimer <= 0; }
 	void rotate(float angle);
@@ -37,12 +36,14 @@ protected:
 	virtual void setAnimations() = 0;
 	virtual int setEndAnimation() { return 0; }
 	virtual int setEndTime() { return 0; } //en milisegundos
-	virtual void setHitboxes() {}
+	void setPivotPoint(const glm::vec2& pivotPoint);
 	virtual void makeEndSound() const {}
 	virtual void makeEndEffect() const {}
 	virtual void childUpdate(int deltaTime) = 0;
 	virtual void endUpdate(int deltaTime) {};
 	Hitbox getRotatedHitbox(Hitbox& hitbox, float angle) const;
+
+private:
 	glm::vec2 rotatePoint(const glm::vec2& point, const glm::vec2& pivotPoint, float angle) const;
 
 protected:

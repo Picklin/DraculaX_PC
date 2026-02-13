@@ -1,22 +1,75 @@
 #include "Projectile.h"
+#include "TextureManager.h"
 
-void Projectile::setPosition(const glm::vec2& pos, const glm::vec2& dir)
+void Projectile::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const glm::vec2& dir)
 {
-	position = pos;
+	this->tileMapDispl = tileMapDispl;
 	this->dir = dir;
 	speed = setSpeed();
-	setPivotPoint(myCenter());
-	Entity::setPosition(position);
-}
-
-void Projectile::childUpdate(int deltaTime)
-{
-	sprite->update(deltaTime);
-	if (tileMap->collisionMoveLeft(getHitbox(), &position.x) || tileMap->collisionMoveRight(getHitbox(), &position.x) || tileMap->collisionMoveDown(getHitbox(), &position.y, quadSize.y) || tileMap->collisionMoveUp(getHitbox(), &position.y)) end();
+	endTimer = setEndTime();
+	ended = false;
+	string name = getSpritesheet();
+	if (TextureManager::instance().exists(name))
+	{
+		spritesheet = TextureManager::instance().getTexture(name);
+	}
 	else
 	{
-		position.x += dir.x * speed;
-		position.y += dir.y * speed;
-		Entity::setPosition(position);
+		spritesheet = new Texture();
+		spritesheet->loadFromFile(getSpritesheet(), TEXTURE_PIXEL_FORMAT_RGBA);
+		spritesheet->setMagFilter(GL_NEAREST);
+		TextureManager::instance().addTexture(name, spritesheet);
 	}
+	sprite = Sprite::createSprite(getQuadSize(), getSizeInSpritesheet(), spritesheet, &shaderProgram);
+	setAnimations();
+}
+
+void Projectile::update(int deltaTime)
+{	
+	sprite->update(deltaTime);
+	if (!ended)
+	{
+		position += speed * dir;
+		setPosition(position);
+		childUpdate(deltaTime);
+	}
+	else endTimer -= deltaTime / 1000.f;
+}
+
+void Projectile::render() 
+{ 
+	sprite->render(); 
+} 
+
+void Projectile::setPosition(const glm::vec2& pos) 
+{ 
+	this->position = pos; 
+	sprite->setPosition(pos + glm::vec2(tileMapDispl)); 
+} 
+
+void Projectile::end() 
+{ 
+	ended = true; 
+	endTimer = setEndTime();
+	sprite->changeAnimation(setEndAnimation());
+}
+
+const glm::vec2& Projectile::getPosition() const
+{
+	return position; 
+}
+
+float Projectile::setEndTime() 
+{ 
+	return 0.f;
+}
+
+bool Projectile::isEnded() const 
+{ 
+	return ended; 
+} 
+
+bool Projectile::getsRemoved() const
+{ 
+	return endTimer <= 0; 
 }

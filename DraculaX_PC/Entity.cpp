@@ -37,7 +37,6 @@ void Entity::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram)
 	else
 	{
 		setAnimations();
-		setHitboxes();
 		SpriteManager::instance().addAnimations(name, sprite->getAnimations());
 	}
 	ended = false;
@@ -83,21 +82,6 @@ void Entity::update(int deltaTime)
 void Entity::render()
 {
 	sprite->render();
-}
-
-const Hitbox Entity::getHitbox() const
-{
-	Hitbox frame_hitbox = hitboxes[sprite->animation()][sprite->getCurrentKeyframe()];
-	
-	float angle = sprite->getAngleDegrees();
-	if (angle != 0.f)
-	{
-		frame_hitbox = getRotatedHitbox(frame_hitbox, angle);
-	}
-	frame_hitbox.min += position;
-	frame_hitbox.max += position;
-	
-	return frame_hitbox;
 }
 
 void Entity::rotate(float angle)

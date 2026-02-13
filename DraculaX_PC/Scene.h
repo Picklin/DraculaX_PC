@@ -57,6 +57,7 @@ protected:
 private:
 	bool isInArea(const Hitbox& area, const glm::vec2& pos);
 	bool oobProjectile(const glm::vec2& pos) const;
+	bool oobSubweapon(const glm::vec2& pos) const;
 	bool oobEnemy(const glm::vec2& pos) const;
 	void updateSpawnPoints(int deltaTime);
 	void updateTriggerAreas();

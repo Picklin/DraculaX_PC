@@ -286,7 +286,7 @@ void Scene::updateActors(int deltaTime)
 					destroyCandle(*candle);
 				}
 			}
-			if (subweapons[i]->getsRemoved())
+			if (oobSubweapon(subweapons[i]->getPosition()) || subweapons[i]->getsRemoved())
 			{
 				delete subweapons[i];
 				subweapons.erase(subweapons.begin() + i);
@@ -386,6 +386,11 @@ bool Scene::collision(const Hitbox& hitbox1, const Hitbox& hitbox2)
 bool Scene::oobProjectile(const glm::vec2& pos) const
 {
 	return pos.x < minX - CAMERA_X || pos.y < minY - CAMERA_Y || pos.x > maxX || pos.y > maxY;
+}
+
+bool Scene::oobSubweapon(const glm::vec2& pos) const
+{
+	return pos.x < minX - CAMERA_X || pos.x >(maxX - CAMERA_X - 16) || pos.y > (maxY - CAMERA_Y - 16);
 }
 
 bool Scene::oobEnemy(const glm::vec2& pos) const

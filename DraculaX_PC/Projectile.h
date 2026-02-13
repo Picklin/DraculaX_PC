@@ -2,20 +2,42 @@
 #ifndef _PROJECTILE_INCLUDE
 #define _PROJECTILE_INCLUDE
 
-#include "Entity.h"
-class Projectile : public Entity
+#include "Sprite.h"
+#include "Hitbox.h"
+
+class Projectile
 {
 public:
-	virtual void setPosition(const glm::vec2& pos, const glm::vec2& dir);
+	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const glm::vec2& dir);
+	void update(int deltaTime);
+	void render();
+	void setPosition(const glm::vec2& pos);
+	void end();
 	virtual int getDamage() const = 0;
+	virtual const Hitbox getHitbox() const = 0;
+	const glm::vec2& getPosition() const;
+	bool isEnded() const;
+	virtual bool getsRemoved() const;
 
 protected:
-	virtual int setSpeed() { return 8; }
-	virtual void childUpdate(int deltaTime);
+	virtual const string getSpritesheet() const = 0;
+	virtual const glm::vec2 getSizeInSpritesheet() const = 0;
+	virtual const glm::ivec2 getQuadSize() const = 0;
+	virtual void childUpdate(int deltaTime) = 0;
+	virtual void setAnimations() = 0;
+	virtual glm::vec2 setSpeed() = 0;
+	virtual float setEndTime();
+	virtual int setEndAnimation() const = 0;
 
 protected:
-	int speed;
+	glm::ivec2 tileMapDispl;
+	glm::vec2 position;
 	glm::vec2 dir;
+	glm::vec2 speed;
+	Texture* spritesheet;
+	Sprite* sprite;
+	float endTimer;
+	bool ended = false;
 };
 
 #endif _PROJECTILE
