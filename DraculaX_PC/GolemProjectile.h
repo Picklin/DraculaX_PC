@@ -8,7 +8,7 @@
 class GolemProjectile : public Projectile
 {
 public:
-	void setTileMap(TileMap* tileMap);
+	void setTileMap(TileMap& tileMap);
 	int getDamage() const override;
 	const virtual Hitbox getHitbox() const;
 	bool getsRemoved() const override;

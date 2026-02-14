@@ -10,7 +10,7 @@ class Projectile
 public:
 	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const glm::vec2& dir);
 	void update(int deltaTime);
-	void render();
+	virtual void render();
 	void setPosition(const glm::vec2& pos);
 	void end();
 	virtual int getDamage() const = 0;
@@ -27,7 +27,7 @@ protected:
 	virtual void setAnimations() = 0;
 	virtual glm::vec2 setSpeed() = 0;
 	virtual float setEndTime();
-	virtual int setEndAnimation() const = 0;
+	virtual int setEndAnimation() const;
 
 protected:
 	glm::ivec2 tileMapDispl;

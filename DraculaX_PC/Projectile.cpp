@@ -29,8 +29,6 @@ void Projectile::update(int deltaTime)
 	sprite->update(deltaTime);
 	if (!ended)
 	{
-		position += speed * dir;
-		setPosition(position);
 		childUpdate(deltaTime);
 	}
 	else endTimer -= deltaTime / 1000.f;
@@ -38,7 +36,7 @@ void Projectile::update(int deltaTime)
 
 void Projectile::render() 
 { 
-	sprite->render(); 
+	sprite->render();
 } 
 
 void Projectile::setPosition(const glm::vec2& pos) 
@@ -51,7 +49,8 @@ void Projectile::end()
 { 
 	ended = true; 
 	endTimer = setEndTime();
-	sprite->changeAnimation(setEndAnimation());
+	int endAnim = setEndAnimation();
+	if (endAnim >= 0) sprite->changeAnimation(endAnim);
 }
 
 const glm::vec2& Projectile::getPosition() const
@@ -72,4 +71,9 @@ bool Projectile::isEnded() const
 bool Projectile::getsRemoved() const
 { 
 	return endTimer <= 0; 
+}
+
+int Projectile::setEndAnimation() const
+{
+	return -1;
 }

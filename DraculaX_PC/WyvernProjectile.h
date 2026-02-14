@@ -3,10 +3,15 @@
 #define _WYVERNPROJECTILE_INCLUDE
 
 #include "Projectile.h"
+#include "TileMap.h"
 
 class WyvernProjectile : public Projectile
 {
 public:
+	WyvernProjectile();
+	void setTileMap(TileMap& tileMap);
+	void setShader(ShaderProgram& shader);
+	void render() override;
 	int getDamage() const override;
 	const Hitbox getHitbox() const override;
 
@@ -18,14 +23,19 @@ protected:
 	void setAnimations() override;
 	glm::vec2 setSpeed() override;
 	float setEndTime() override;
-	int setEndAnimation() const override;
 
 private:
+	TileMap* tileMap;
+	ShaderProgram* shader;
 	Hitbox hitboxes[2];
 	int bounceAngle;
 	int bounceYDist;
+	const int bounceYDists[5];
+	int startY;
 	float bounceXSpeed;
+	const float xSpeeds[5];
 	bool bouncing = false;
+	bool renderAlternate = true;
 };
 
 #endif // !_WYVERNPROJECTILE_INCLUDE

@@ -1,5 +1,7 @@
 #include "Wyvern.h"
 #include "SoundEngine.h"
+#include "TextureManager.h"
+#include "ProjectileManager.h"
 #include <iostream>
 
 #define MAX_HP 92
@@ -10,15 +12,18 @@ namespace
 {
     enum WyvernAnims
     {
-        APPEAR, APPEAR_FINAL, IDLE, TURN, ATTACK, ATTACK_FINAL, FIRE, FIRE_FINAL, DIE
+        APPEAR, APPEAR_FINAL, IDLE, TURN, ATTACK, ATTACK_FINAL, COOLFIRE, COOLFIRE_FINAL, DIE
     };
+    enum  WyvernAttacks
+    {
+		GRAB, SHOOT_FIRE, SHOOT_COOLFIRE
+	};
     const int leftBound = 32 * 16;
     const int rightBound = 42 * 16;
 }
 
 Wyvern::~Wyvern()
 {
-    tex.free();
     sprite->free();
     delete sprite;
 }
@@ -27,9 +32,21 @@ void Wyvern::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const g
 {
     this->tileMapDispl = tileMapDispl;
     this->shader = &shader;
-    tex.loadFromFile("images/bosses/wyvern/wyvern.png", TEXTURE_PIXEL_FORMAT_RGBA);
-    tex.setMagFilter(GL_NEAREST);
-    sprite = Sprite::createSprite(glm::ivec2(128), glm::vec2(0.1f, 0.5f), &tex, &shader);
+    if (TextureManager::instance().exists("wyvern"))
+    {
+        tex = TextureManager::instance().getTexture("wyvern");
+		headTex = TextureManager::instance().getTexture("wyvern_head");
+    }
+    else
+    {
+        tex = new Texture();
+        headTex = new Texture();
+        tex->loadFromFile("images/bosses/wyvern/wyvern.png", TEXTURE_PIXEL_FORMAT_RGBA);
+		headTex->loadFromFile("images/bosses/wyvern/wyvernHead.png", TEXTURE_PIXEL_FORMAT_RGBA);
+        TextureManager::instance().addTexture("wyvern", tex);
+		TextureManager::instance().addTexture("wyvern_head", headTex);
+	}
+    sprite = Sprite::createSprite(glm::ivec2(128), glm::vec2(0.1f, 0.5f), tex, &shader);
     sprite->setNumberAnimations(9);
     sprite->setAnimationSpeed(APPEAR, 8);
     sprite->animatorX(APPEAR, 3, 0.f, 0.1f, 0.f);
@@ -43,21 +60,37 @@ void Wyvern::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, const g
     sprite->addKeyframe(ATTACK, glm::vec2(0.f, 0.5f));
     sprite->setAnimationSpeed(ATTACK_FINAL, 1);
     sprite->addKeyframe(ATTACK_FINAL, glm::vec2(0.1f, 0.5f));
-    sprite->setAnimationSpeed(FIRE, 8);
-    sprite->animatorX(FIRE, 2, 0.f, 0.1f, 0.5f);
-    sprite->setAnimationSpeed(FIRE_FINAL, 1);
-    sprite->addKeyframe(FIRE_FINAL, glm::vec2(0.2f, 0.5f));
+    sprite->setAnimationSpeed(COOLFIRE, 8);
+    sprite->animatorX(COOLFIRE, 2, 0.f, 0.1f, 0.5f);
+    sprite->setAnimationSpeed(COOLFIRE_FINAL, 1);
+    sprite->addKeyframe(COOLFIRE_FINAL, glm::vec2(0.2f, 0.5f));
     sprite->setAnimationSpeed(DIE, 0);
     sprite->addKeyframe(DIE, glm::vec2(0.5f, 0.5f));
     sprite->setTransition(APPEAR, APPEAR_FINAL);
     //sprite->setTransition(TURN, IDLE);
     sprite->setTransition(ATTACK, ATTACK_FINAL);
-    sprite->setTransition(FIRE, FIRE_FINAL);
+    sprite->setTransition(COOLFIRE, COOLFIRE_FINAL);
     sprite->setTransition(ATTACK_FINAL, IDLE);
-    sprite->setTransition(FIRE_FINAL, IDLE);
+    sprite->setTransition(COOLFIRE_FINAL, IDLE);
     sprite->changeAnimation(APPEAR);
+	head = Sprite::createSprite(glm::ivec2(64), glm::vec2(0.25f, 1.f), headTex, &shader);
+	head->setNumberAnimations(4);
+	head->setAnimationSpeed(0, 10);
+	head->addKeyframe(0, glm::vec2(0.f, 0.f));
+    head->setAnimationSpeed(1, 2);
+	head->addKeyframe(1, glm::vec2(0.25f, 0.f));
+	head->setAnimationSpeed(2, 15);
+	head->addKeyframe(2, glm::vec2(0.5f, 0.f));
+	head->addKeyframe(2, glm::vec2(0.75f, 0.f));
+	head->setAnimationSpeed(3, 0);
+	head->addKeyframe(3, glm::vec2(0.75f, 0.f));
+	head->setTransition(0, 1);
+    head->setTransition(1, 2);
+	head->setTransition(2, 3);
+	head->changeAnimation(0);
     setPosition(pos);
     currentHP = MAX_HP;
+	currentAttack = GRAB;
     appeared = attacking = firing = ended = removed = false;
     lungeAngle = 0.f;
     lungeAngleStep = 2.f;
@@ -126,7 +159,7 @@ void Wyvern::update(int deltaTime)
                 position.y += 1.f;
                 position.x += moveSpeed * (!flip - flip);
             }
-            else if (attackCooldown == 0 && anim == IDLE)
+            else if (attackCooldown == 0 && anim == IDLE && !firing)
             {
                 if ((position.x < leftBound && flip) || (position.x > rightBound && !flip))
                 {
@@ -144,14 +177,27 @@ void Wyvern::update(int deltaTime)
             }
             else if (attackCooldown < 0)
             {
-                sprite->changeAnimation(ATTACK);
-                lunging = true;
-                startY = position.y;
-                attackCooldown = 0.f;
-                attacking = true;
-                moveSpeed = 3.f;
-                SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
-                SoundEngine::instance().playSFX(SoundEngine::WYVERN_ATTACK);
+                if (currentAttack == GRAB)
+                {
+                    sprite->changeAnimation(ATTACK);
+                    lunging = true;
+                    startY = position.y;
+                    attackCooldown = 0.f;
+                    attacking = true;
+                    moveSpeed = 3.f;
+					currentAttack = SHOOT_FIRE;
+                    SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
+                    SoundEngine::instance().playSFX(SoundEngine::WYVERN_ATTACK);
+                }
+                else if (currentAttack == SHOOT_FIRE)
+                {
+                    sprite->changeAnimation(COOLFIRE);
+                    attackCooldown = 0.f;
+					firingTimeElapsed = 0;
+                    firing = true;
+                    currentAttack = GRAB;
+                    SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
+                }
             }
             else if (attacking)
             {
@@ -163,6 +209,25 @@ void Wyvern::update(int deltaTime)
                 }
                 position.x += moveSpeed * (!flip - flip);
             }
+            else if (firing)
+            {
+                if (sprite->animation() == COOLFIRE_FINAL && firingTimeElapsed < 576)
+                {
+                    if (firingTimeElapsed >= 128 && firingTimeElapsed <= 512 && firingTimeElapsed % 64 == 0)
+                    {
+                        if (firingTimeElapsed == 128) SoundEngine::instance().playSFX(SoundEngine::WYVERN_FIRE);
+                        ProjectileManager::instance().createEnemyProjectile(position + glm::vec2(112 * !flip - 129 * flip, 48), glm::vec2(!flip - flip, 1), ProjectileManager::WYVERN);
+                    }
+                    firingTimeElapsed += deltaTime;
+                }
+                else if (sprite->animation() == IDLE)
+                {
+                    firing = false;
+					SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
+                }
+                
+            }
+            //cout << anim << endl;
             if (attackCooldown > 0) attackCooldown -= deltaTime / 1000.f;
         }
         if (woundedCooldown > 0) woundedCooldown -= deltaTime / 1000.f;
@@ -177,7 +242,11 @@ void Wyvern::update(int deltaTime)
             sprite->changeAnimation(DIE);
         }
         else colorValue -= deltaTime / 1000.f;
-        if (deathTimeElapsed >= 6) alpha -= deltaTime / 1000.f;
+        if (deathTimeElapsed >= 6)
+        {
+            alpha -= deltaTime / 1000.f;
+			sprite->setAlpha(alpha);
+        }
         position.y += 0.25f;
         removed = alpha <= 0;
     }
@@ -242,6 +311,11 @@ bool Wyvern::isEnded() const
 bool Wyvern::isRemoved() const
 {
     return removed;
+}
+
+void Wyvern::setHeadPosition()
+{
+	head->setPosition(glm::vec2(tileMapDispl) + position + glm::vec2(64 - flip, 16));
 }
 
 void Wyvern::calcIncrement(float& valToInc, float targetVal, float factor)

@@ -1,4 +1,6 @@
 #include "ProjectileManager.h"
+#include "GolemProjectile.h"
+#include "WyvernProjectile.h"
 
 ProjectileManager& ProjectileManager::instance()
 {
@@ -9,6 +11,7 @@ ProjectileManager& ProjectileManager::instance()
 ProjectileManager::ProjectileManager() : map(nullptr), program(nullptr), projectiles(nullptr)
 {
     enemyProjectiles.push_back([this](const glm::vec2& pos, const glm::vec2& dir) {return getGolemProjectile(pos, dir); });
+	enemyProjectiles.push_back([this](const glm::vec2& pos, const glm::vec2& dir) {return getWyvernProjectile(pos, dir); });
 }
 
 void ProjectileManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& program, TileMap* map, vector<Projectile*>* projectiles)
@@ -19,18 +22,28 @@ void ProjectileManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& prog
     this->projectiles = projectiles;
 }
 
-void ProjectileManager::createGolemProjectile(const glm::vec2& pos, const glm::vec2& dir)
+void ProjectileManager::createEnemyProjectile(const glm::vec2& pos, const glm::vec2& dir, int projNum)
 {
-    projectiles->push_back(getGolemProjectile(pos, dir  ));
+	projectiles->push_back(getEnemyProjectile(pos, dir, projNum));
 }
 
 Projectile* ProjectileManager::getGolemProjectile(const glm::vec2& pos, const glm::vec2& dir)
 {
     GolemProjectile* gp = new GolemProjectile();
     gp->init(tileMapDispl, *program, dir);
-    gp->setTileMap(map);
+    gp->setTileMap(*map);
     gp->setPosition(pos);
     return gp;
+}
+
+Projectile* ProjectileManager::getWyvernProjectile(const glm::vec2& pos, const glm::vec2& dir)
+{
+	WyvernProjectile* wp = new WyvernProjectile();
+	wp->init(tileMapDispl, *program, dir);
+	wp->setTileMap(*map);
+	wp->setShader(*program);
+	wp->setPosition(pos);
+	return wp;
 }
 
 Projectile* ProjectileManager::getEnemyProjectile(const glm::vec2& pos, const glm::vec2& dir, int projNum)

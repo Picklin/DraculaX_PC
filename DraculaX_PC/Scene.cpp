@@ -259,8 +259,8 @@ void Scene::updateActors(int deltaTime)
 				delete projectiles[i];
 				projectiles.erase(projectiles.begin() + i);
 			}
-			
 		}
+		cout << projectiles.size() << endl;
 		for (unsigned int i = 0; i < candles.size(); i++)
 		{
 			if (player->isAttacking() && !candles[i]->isDestroyed() && collision(candles[i]->getHitbox(), player->getWhipHitbox()))
@@ -292,7 +292,7 @@ void Scene::updateActors(int deltaTime)
 				subweapons.erase(subweapons.begin() + i);
 			}
 		}
-		
+		//cout << subweapons.size() << endl;
 	}
 
 }

@@ -77,27 +77,27 @@ void EffectsManager::createFuegote(const glm::vec2& pos, const glm::vec3& color,
 	(background) ? backgroundEffects.push_back(fue) : effects.push_back(fue);
 }
 
-void EffectsManager::createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
+void EffectsManager::createExplosions(const glm::vec2& pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
 {
 	ExplosionClusterSettings explSettings;
 	explSettings.numExplosions = numExplosions;
 	explSettings.offset = area;
 	explSettings.bigExplosion = true;
 	explSettings.explosionColor = color;
-	explSettings.entityPos = pos;
+	explSettings.entityPos = &pos;
 	explSettings.entityOffset = entityOffset;
 	explSettings.timeBetweenExplosions = timeBetweenExplosions;
 	explSet.push_back(explSettings);
 }
 
-void EffectsManager::createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
+void EffectsManager::createMiniExplosions(const glm::vec2& pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color)
 {
 	ExplosionClusterSettings miniExplSettings;
 	miniExplSettings.numExplosions = numExplosions;
 	miniExplSettings.offset = area;
 	miniExplSettings.bigExplosion = false;
 	miniExplSettings.explosionColor = color;
-	miniExplSettings.entityPos = pos;
+	miniExplSettings.entityPos = &pos;
 	miniExplSettings.entityOffset = entityOffset;
 	miniExplSettings.timeBetweenExplosions = timeBetweenExplosions;
 	explSet.push_back(miniExplSettings);

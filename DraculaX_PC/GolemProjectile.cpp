@@ -2,12 +2,14 @@
 
 void GolemProjectile::childUpdate(int deltaTime)
 {
+    position += speed * dir;
+    setPosition(position);
     if (tileMap->collisionMoveDown(getHitbox())) end();
 }
 
-void GolemProjectile::setTileMap(TileMap* tileMap)
+void GolemProjectile::setTileMap(TileMap& tileMap)
 {
-    this->tileMap = tileMap; 
+    this->tileMap = &tileMap; 
 }
 
 const Hitbox GolemProjectile::getHitbox() const

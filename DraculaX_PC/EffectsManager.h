@@ -19,8 +19,8 @@ public:
 	void freeTextures();
 	void createFueguito(const glm::vec2& pos, const glm::vec3& color, bool background);
 	void createFuegote(const glm::vec2& pos, const glm::vec3& color, bool background);
-	void createExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
-	void createMiniExplosions(const glm::vec2* pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
+	void createExplosions(const glm::vec2& pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
+	void createMiniExplosions(const glm::vec2& pos, const glm::vec2& entityOffset, int numExplosions, int timeBetweenExplosions, int area, const glm::vec3& color);
 	const vector<Effect*>& getBackgroundEffectsList() const { return backgroundEffects; }
 
 private:

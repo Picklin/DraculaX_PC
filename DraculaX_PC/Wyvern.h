@@ -20,18 +20,23 @@ public:
 	bool isWounded() const;
 	bool isEnded() const;
 	bool isRemoved() const;
-	glm::vec2* getPosition() { return &position; }
+	glm::vec2& getPosition() { return position; }
 
 private:
+	void setHeadPosition();
 	void calcIncrement(float& valToInc, float targetVal, float factor);
 
 private:
-	Texture tex;
 	glm::ivec2 tileMapDispl;
 	glm::vec2 position;
-	Sprite* sprite;
 	ShaderProgram* shader;
+	Texture* tex;
+	Texture* headTex;
+	Sprite* sprite;
+	Sprite* head;
 	int currentHP;
+	int currentAttack;
+	int firingTimeElapsed;
 	float startY;
 	float lungeAngle;
 	float lungeAngleStep;
@@ -46,6 +51,7 @@ private:
 	bool lunging;
 	bool attacking;
 	bool firing;
+	bool coolfiring;
 	bool ended;
 	bool removed;
 	bool flip;

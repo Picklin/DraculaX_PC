@@ -184,8 +184,8 @@ void Golem::makeEndSound() const
 
 void Golem::makeEndEffect() const
 {
-	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec3(1.f));
-	EffectsManager::instance().createExplosions(&position, myCenter(), 8, 125, 64, glm::vec3(1.f));
+	EffectsManager::instance().createExplosions(position, myCenter(), 8, 125, 64, glm::vec3(1.f));
+	EffectsManager::instance().createExplosions(position, myCenter(), 8, 125, 64, glm::vec3(1.f));
 }
 
 void Golem::childUpdate(int deltaTime)
@@ -227,7 +227,7 @@ void Golem::childUpdate(int deltaTime)
 		glm::vec2 projDir = getPointDirection();
 		for (int i = 0; i < 3; i++)
 		{
-			ProjectileManager::instance().createGolemProjectile(projPos, getRotatedDirection(projDir, 30.f - 30.f * i));
+			ProjectileManager::instance().createEnemyProjectile(projPos, getRotatedDirection(projDir, 30.f - 30.f * i), ProjectileManager::GOLEM);
 		}
 		if (!soundmade)
 		{

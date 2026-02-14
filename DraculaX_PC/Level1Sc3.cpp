@@ -112,6 +112,7 @@ void Level1Sc3::render()
 	spriteShader->setUniformMatrix4f("projection", projections[3]);
 	for (auto axe : subweapons) axe->render();
 	if (wyvern != nullptr) wyvern->render();
+	for (auto proj : projectiles) proj->render();
 	player->render();
 	gui->render();
 	renderTransition();
@@ -173,10 +174,10 @@ void Level1Sc3::updateCamera()
 				SoundEngine::instance().fadeOutMusic(5000);
 			}
 			cameraPos.x *= multipliers[i];
-			float minX = cameraPos.x + CAMERA_X;
-			float minY = CAMERA_Y;
-			float maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
-			float maxY = SCREEN_HEIGHT + CAMERA_Y;
+			minX = cameraPos.x + CAMERA_X;
+			minY = CAMERA_Y;
+			maxX = cameraPos.x + SCREEN_WIDTH + CAMERA_X;
+			maxY = SCREEN_HEIGHT + CAMERA_Y;
 			projections[i] = glm::ortho(minX, maxX, maxY, minY);
 		}
 	}
