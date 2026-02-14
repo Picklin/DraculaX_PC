@@ -223,6 +223,9 @@
     <ClCompile Include="PaletteKeyframes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClCompile>
+    <ClCompile Include="WyvernProjectile.cpp">
+      <Filter>Archivos de código fuente\Projectiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="CoolIntro.h">
       <Filter>Archivos de encabezado\Cinematics</Filter>
+    </ClInclude>
+    <ClInclude Include="WyvernProjectile.h">
+      <Filter>Archivos de encabezado\Projectiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

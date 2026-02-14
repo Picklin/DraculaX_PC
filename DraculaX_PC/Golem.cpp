@@ -195,7 +195,7 @@ void Golem::childUpdate(int deltaTime)
 	if (anim == IDLE && xDist < 256)
 	{
 		attacking = false;
-		
+		shot = false;
 		//if (xDist < 112.f) position.x += SPEED;
 		//else if (xDist > 112.f && xDist < 144.f) position.x -= SPEED;
 		float yDist = playerPos->y - position.y;
@@ -221,10 +221,9 @@ void Golem::childUpdate(int deltaTime)
 		SoundEngine::instance().playSFX(SoundEngine::ENEMY_SWIPE);
 		soundmade = true;
 	}
-	shot = (anim == SHOOT && sprite->getCurrentKeyframe() == 8 && !shot);
-	if (shot)
+	if (anim == SHOOT && sprite->getCurrentKeyframe() == 8 && !shot)
 	{
-		glm::vec2 projPos = position + glm::vec2(105.f, 26.f);
+		glm::vec2 projPos = position + glm::vec2(94.f, 14.f);
 		glm::vec2 projDir = getPointDirection();
 		for (int i = 0; i < 3; i++)
 		{
@@ -235,6 +234,7 @@ void Golem::childUpdate(int deltaTime)
 			SoundEngine::instance().playSFX(SoundEngine::ENEMY_SHOOT1);
 			soundmade = true;
 		}
+		shot = true;
 	}
 	if (wounded())
 	{
