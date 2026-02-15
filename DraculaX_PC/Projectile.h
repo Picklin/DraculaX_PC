@@ -21,6 +21,7 @@ public:
 	const glm::vec2& getPosition() const;
 	bool isEnded() const;
 	virtual bool getsRemoved() const;
+	virtual bool destroyable() const { return true; }
 
 protected:
 	virtual const string getSpritesheet() const = 0;

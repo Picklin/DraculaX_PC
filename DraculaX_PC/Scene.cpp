@@ -251,7 +251,11 @@ void Scene::updateActors(int deltaTime)
 			if (!projectiles[i]->isEnded() && !player->wounded() && collision(projectiles[i]->getHitbox(), player->getHitbox()))
 			{
 					gui->takeDmg(projectiles[i]->getDamage());
-					projectiles[i]->end();
+					if (projectiles[i]->destroyable()) projectiles[i]->end();
+			}
+			else if (!projectiles[i]->isEnded() && projectiles[i]->destroyable() && player->isAttacking() && collision(projectiles[i]->getHitbox(), player->getWhipHitbox()))
+			{
+				projectiles[i]->end();
 			}
 			if (oobProjectile(projectiles[i]->getPosition()) || projectiles[i]->getsRemoved())
 			{

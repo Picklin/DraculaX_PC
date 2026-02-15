@@ -195,7 +195,7 @@ void Wyvern::update(int deltaTime)
                     attackCooldown = 0.f;
                     attacking = true;
                     moveSpeed = 3.f;
-					currentAttack = attacks[rand() % 3];
+					currentAttack = SHOOT_FIRE;
                     SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
                     SoundEngine::instance().playSFX(SoundEngine::WYVERN_ATTACK);
                 }
@@ -205,7 +205,7 @@ void Wyvern::update(int deltaTime)
                     attackCooldown = 0.f;
 					firingTimeElapsed = 0;
                     firing = true;
-                    currentAttack = attacks[rand() % 3];
+                    currentAttack = SHOOT_COOLFIRE;
                     SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
                 }
                 else if (currentAttack == SHOOT_COOLFIRE)
@@ -213,7 +213,7 @@ void Wyvern::update(int deltaTime)
                     sprite->changeAnimation(COOLFIRE);
                     attackCooldown = 0.f;
                     coolfiring = true;
-                    currentAttack = attacks[rand() % 3];
+                    currentAttack = GRAB;
                     SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
                 }
             }

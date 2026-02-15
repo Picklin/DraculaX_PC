@@ -11,6 +11,7 @@ public:
 	void render() override;
 	int getDamage() const override;
 	const Hitbox getHitbox() const override;
+	bool destroyable() const override { return false; }
 
 protected:
 	const string getSpritesheet() const override;
