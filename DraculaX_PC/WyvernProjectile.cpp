@@ -1,7 +1,7 @@
 #include "WyvernProjectile.h"
 #define BOUNCE_ANGLE_STEP 2
 
-WyvernProjectile::WyvernProjectile() : xSpeeds{ .25f, .5f, .75f, 1.f, 1.25f }, bounceYDists{ 112, 96, 80, 64, 48 }
+WyvernProjectile::WyvernProjectile() : xSpeeds{ .25f, .5f, .75f, 1.f, 1.25f, 1.5f, 1.75f, 2.f}, bounceYDists{ 128, 112, 96, 80, 64 }
 {
     Hitbox hb;
     hb.min = glm::vec2(12 - 8 * (dir.x < 0), 26);
@@ -10,16 +10,6 @@ WyvernProjectile::WyvernProjectile() : xSpeeds{ .25f, .5f, .75f, 1.f, 1.25f }, b
     hb.min = glm::vec2(16 * (dir.x < 0), 32);
     hb.max = hb.min + glm::vec2(15);
     hitboxes[1] = hb;
-}
-
-void WyvernProjectile::setTileMap(TileMap& tileMap)
-{
-    this->tileMap = &tileMap; 
-}
-
-void WyvernProjectile::setShader(ShaderProgram& shader)
-{
-	this->shader = &shader;
 }
 
 void WyvernProjectile::render()
@@ -68,12 +58,11 @@ void WyvernProjectile::childUpdate(int deltaTime)
     if (!bouncing)
     {
         position += speed * dir;
-        setPosition(position);
         if (tileMap->collisionMoveDown(getHitbox()))
         {
             bouncing = true;
 			bounceYDist = bounceYDists[rand() % 5];
-			bounceXSpeed = xSpeeds[rand() % 5] * dir.x;
+			bounceXSpeed = xSpeeds[rand() % 8] * dir.x;
 			startY = (int)position.y;
 		}
     }
@@ -82,7 +71,6 @@ void WyvernProjectile::childUpdate(int deltaTime)
         bounceAngle += BOUNCE_ANGLE_STEP;
         position.x += bounceXSpeed;
         position.y = startY - bounceYDist * sin(glm::radians((float)bounceAngle));
-        setPosition(position);
         if (bounceAngle >= 180)
         {
             bouncing = false;
@@ -91,6 +79,7 @@ void WyvernProjectile::childUpdate(int deltaTime)
             end();
 		}
     }
+    setPosition(position);
 }
 
 void WyvernProjectile::setAnimations()

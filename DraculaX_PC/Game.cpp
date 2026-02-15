@@ -36,14 +36,14 @@ void Game::init()
 	currDubLang = JP_DUB;
 	currTxtLang = EN_TXT;
 	currentLevel = STAGE1;
-	currentScene = 2;
+	currentScene = 0;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	basicShader.use();
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
-	//SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
+	SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
 	//playCinematic(Cinematic::COOL_INTRO);
-	start();		//comentar cuando se deje de testear
+	//start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 

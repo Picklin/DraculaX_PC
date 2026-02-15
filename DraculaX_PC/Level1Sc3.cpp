@@ -135,7 +135,7 @@ TileMap* Level1Sc3::setStairsMap()
 
 void Level1Sc3::initItems()
 {
-	Candle* candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(7 * map->getTileSize(), 11 * map->getTileSize()), GUI::CAT);
+	Candle* candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(7 * map->getTileSize(), 11 * map->getTileSize()), ItemManager::HEART);
 	candles.push_back(candle1);
 	candle1 = Candle::createPilarCandle(*basicShader, glm::vec2(12 * map->getTileSize(), 11 * map->getTileSize()), ItemManager::FOUR_HUNDRED);
 	candles.push_back(candle1);

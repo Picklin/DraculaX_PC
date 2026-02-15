@@ -50,7 +50,7 @@ void Level1Sc1::init(Player& player, GUI& gui, ShaderProgram& spriteShader, Shad
 
 	projections.resize(3);
 
-	//SoundEngine::instance().playStageSong(BLOODLINES);
+	SoundEngine::instance().playStageSong(BLOODLINES);
 	player.lockInput();
 	gui.newLevel();
 }

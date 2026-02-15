@@ -4,10 +4,13 @@
 
 #include "Sprite.h"
 #include "Hitbox.h"
+#include "TileMap.h"
 
 class Projectile
 {
 public:
+	void setTileMap(TileMap& tileMap);
+	void setShader(ShaderProgram& shader);
 	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const glm::vec2& dir);
 	void update(int deltaTime);
 	virtual void render();
@@ -36,6 +39,8 @@ protected:
 	glm::vec2 speed;
 	Texture* spritesheet;
 	Sprite* sprite;
+	TileMap* tileMap;
+	ShaderProgram* shader;
 	float endTimer;
 	bool ended = false;
 };

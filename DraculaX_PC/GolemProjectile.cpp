@@ -22,7 +22,7 @@ const Hitbox GolemProjectile::getHitbox() const
 
 bool GolemProjectile::getsRemoved() const
 {
-    return sprite->animationEnded();
+    return sprite->animation() == 1 && sprite->animationEnded();
 }
 
 int GolemProjectile::getDamage() const

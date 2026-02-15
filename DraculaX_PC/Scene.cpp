@@ -248,8 +248,7 @@ void Scene::updateActors(int deltaTime)
 		for (unsigned int i = 0; i < projectiles.size(); i++)
 		{
 			projectiles[i]->update(deltaTime);
-
-			if (!player->wounded() && collision(projectiles[i]->getHitbox(), player->getHitbox()))
+			if (!projectiles[i]->isEnded() && !player->wounded() && collision(projectiles[i]->getHitbox(), player->getHitbox()))
 			{
 					gui->takeDmg(projectiles[i]->getDamage());
 					projectiles[i]->end();
@@ -260,7 +259,7 @@ void Scene::updateActors(int deltaTime)
 				projectiles.erase(projectiles.begin() + i);
 			}
 		}
-		cout << projectiles.size() << endl;
+		//cout << projectiles.size() << endl;
 		for (unsigned int i = 0; i < candles.size(); i++)
 		{
 			if (player->isAttacking() && !candles[i]->isDestroyed() && collision(candles[i]->getHitbox(), player->getWhipHitbox()))

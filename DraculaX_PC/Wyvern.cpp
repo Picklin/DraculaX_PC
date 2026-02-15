@@ -18,6 +18,7 @@ namespace
     {
 		GRAB, SHOOT_FIRE, SHOOT_COOLFIRE
 	};
+	const int attacks[3] = { GRAB, SHOOT_FIRE, SHOOT_COOLFIRE };
     const int leftBound = 32 * 16;
     const int rightBound = 42 * 16;
 }
@@ -151,6 +152,15 @@ void Wyvern::update(int deltaTime)
                 flip = true;
             }
         }
+        else if (restCooldown > 0)
+        {
+            restCooldown -= deltaTime / 1000.f;
+            if (restCooldown <= 0)
+            {
+                restCooldown = 0.f;
+                SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
+			}
+		}
         else
         {
             int anim = sprite->animation();
@@ -185,7 +195,7 @@ void Wyvern::update(int deltaTime)
                     attackCooldown = 0.f;
                     attacking = true;
                     moveSpeed = 3.f;
-					currentAttack = SHOOT_FIRE;
+					currentAttack = attacks[rand() % 3];
                     SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
                     SoundEngine::instance().playSFX(SoundEngine::WYVERN_ATTACK);
                 }
@@ -195,40 +205,57 @@ void Wyvern::update(int deltaTime)
                     attackCooldown = 0.f;
 					firingTimeElapsed = 0;
                     firing = true;
-                    currentAttack = GRAB;
+                    currentAttack = attacks[rand() % 3];
+                    SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
+                }
+                else if (currentAttack == SHOOT_COOLFIRE)
+                {
+                    sprite->changeAnimation(COOLFIRE);
+                    attackCooldown = 0.f;
+                    coolfiring = true;
+                    currentAttack = attacks[rand() % 3];
                     SoundEngine::instance().stopLoopedSFX(SoundEngine::WYVERN_WINGS);
                 }
             }
-            else if (attacking)
+			else if (attackCooldown == 0)
             {
-                calcIncrement(moveSpeed, 0.f, 0.05f);
-                if (moveSpeed <= .3f)
+                if (attacking)
                 {
-                    attacking = false;
-                    moveSpeed = 1.f;
-                }
-                position.x += moveSpeed * (!flip - flip);
-            }
-            else if (firing)
-            {
-                if (sprite->animation() == COOLFIRE_FINAL && firingTimeElapsed < 576)
-                {
-                    if (firingTimeElapsed >= 128 && firingTimeElapsed <= 512 && firingTimeElapsed % 64 == 0)
+                    calcIncrement(moveSpeed, 0.f, 0.05f);
+                    if (moveSpeed <= .3f)
                     {
-                        if (firingTimeElapsed == 128) SoundEngine::instance().playSFX(SoundEngine::WYVERN_FIRE);
-                        ProjectileManager::instance().createEnemyProjectile(position + glm::vec2(112 * !flip - 129 * flip, 48), glm::vec2(!flip - flip, 1), ProjectileManager::WYVERN);
+                        attacking = false;
+                        moveSpeed = 1.f;
                     }
-                    firingTimeElapsed += deltaTime;
+                    position.x += moveSpeed * (!flip - flip);
                 }
-                else if (sprite->animation() == IDLE)
+                else if (firing)
                 {
-                    firing = false;
-					SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
+                    if (sprite->animation() == COOLFIRE_FINAL && firingTimeElapsed < 576)
+                    {
+                        if (firingTimeElapsed >= 128 && firingTimeElapsed <= 512 && firingTimeElapsed % 64 == 0)
+                        {
+                            if (firingTimeElapsed == 128) SoundEngine::instance().playSFX(SoundEngine::WYVERN_FIRE);
+                            ProjectileManager::instance().createEnemyProjectile(position + glm::vec2(112 - 129 * flip, 48), glm::vec2(!flip - flip, 1), ProjectileManager::WYVERN);
+                        }
+                        firingTimeElapsed += deltaTime;
+                    }
+                    else if (sprite->animation() == IDLE)
+                    {
+                        firing = false;
+                        SoundEngine::instance().playLoopedSFX(SoundEngine::WYVERN_WINGS);
+                    }
                 }
-                
+                else if (coolfiring && anim == COOLFIRE_FINAL)
+                {
+                    ProjectileManager::instance().createEnemyProjectile(position + glm::vec2(112 - 129 * flip, 40), glm::vec2(!flip - flip, 1), ProjectileManager::WYVERN_COOL);
+                    coolfiring = false;
+                    SoundEngine::instance().playSFX(SoundEngine::WYVERN_ROAR);
+                    restCooldown = 1.f;
+                }
             }
+            else attackCooldown -= deltaTime / 1000.f;
             //cout << anim << endl;
-            if (attackCooldown > 0) attackCooldown -= deltaTime / 1000.f;
         }
         if (woundedCooldown > 0) woundedCooldown -= deltaTime / 1000.f;
     }

@@ -44,6 +44,7 @@ private:
 	float moveSpeed;
 	float woundedCooldown;
 	float attackCooldown;
+	float restCooldown;
 	float alpha;
 	float colorValue;
 	float deathTimeElapsed;

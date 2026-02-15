@@ -1,6 +1,16 @@
 #include "Projectile.h"
 #include "TextureManager.h"
 
+void Projectile::setTileMap(TileMap& tileMap) 
+{ 
+	this->tileMap = &tileMap;
+}
+
+void Projectile::setShader(ShaderProgram& shader) 
+{ 
+	this->shader = &shader;  
+}
+
 void Projectile::init(const glm::ivec2& tileMapDispl, ShaderProgram& shaderProgram, const glm::vec2& dir)
 {
 	this->tileMapDispl = tileMapDispl;
@@ -70,7 +80,7 @@ bool Projectile::isEnded() const
 
 bool Projectile::getsRemoved() const
 { 
-	return endTimer <= 0; 
+	return endTimer < 0; 
 }
 
 int Projectile::setEndAnimation() const

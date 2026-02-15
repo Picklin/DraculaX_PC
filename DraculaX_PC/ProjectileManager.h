@@ -3,7 +3,6 @@
 #define _PROJECTILEMANAGER_INCLUDE
 
 #include "Projectile.h"
-#include "TileMap.h"
 #include <functional>
 
 class ProjectileManager
@@ -15,12 +14,13 @@ public:
 	Projectile* getEnemyProjectile(const glm::vec2& pos, const glm::vec2& dir, int projNum);
 
 public:
-	enum typeProj { GOLEM, WYVERN };
-
+	enum typeProj { GOLEM, WYVERN, WYVERN_COOL};
+		
 private:
 	ProjectileManager();
 	Projectile* getGolemProjectile(const glm::vec2& pos, const glm::vec2& dir);
 	Projectile* getWyvernProjectile(const glm::vec2& pos, const glm::vec2& dir);
+	Projectile* getWyvernProjectileCool(const glm::vec2& pos, const glm::vec2& dir);
 
 private:
 	vector<Projectile*>* projectiles;

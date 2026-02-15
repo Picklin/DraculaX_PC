@@ -198,6 +198,7 @@
     <ClCompile Include="Trinket.cpp" />
     <ClCompile Include="Wyvern.cpp" />
     <ClCompile Include="WyvernProjectile.cpp" />
+    <ClCompile Include="WyvernProjectileCool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Afterimage.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="Trinket.h" />
     <ClInclude Include="Wyvern.h" />
     <ClInclude Include="WyvernProjectile.h" />
+    <ClInclude Include="WyvernProjectileCool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
