@@ -211,11 +211,11 @@ void Level1Sc2::initActors(Player* player)
 	int tileSize = map->getTileSize();
 	player->setPosition(glm::vec2(0 * tileSize, 22 * tileSize));
 
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(14 * tileSize, 14 * tileSize), EnemyManager::SKELETON1));
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(32 * tileSize, 5 * tileSize), EnemyManager::SKELETON1));
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(48 * tileSize, 5 * tileSize), EnemyManager::SKELETON1));
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(86 * tileSize, 18 * tileSize + 8), EnemyManager::GOLEM));
-	enemies.push_back(EnemyManager::instance().getEnemy(glm::vec2(120 * tileSize, 18 * tileSize + 8), EnemyManager::GOLEM));
+	enemies.push_back(EnemyFactory::instance().getEnemy(glm::vec2(14 * tileSize, 14 * tileSize), EnemyFactory::SKELETON1));
+	enemies.push_back(EnemyFactory::instance().getEnemy(glm::vec2(32 * tileSize, 5 * tileSize), EnemyFactory::SKELETON1));
+	enemies.push_back(EnemyFactory::instance().getEnemy(glm::vec2(48 * tileSize, 5 * tileSize), EnemyFactory::SKELETON1));
+	enemies.push_back(EnemyFactory::instance().getEnemy(glm::vec2(86 * tileSize, 18 * tileSize + 8), EnemyFactory::GOLEM));
+	enemies.push_back(EnemyFactory::instance().getEnemy(glm::vec2(120 * tileSize, 18 * tileSize + 8), EnemyFactory::GOLEM));
 
 	triggerAreas.push_back(new TriggerArea(glm::vec2(145 * tileSize, 0), glm::vec2(148 * tileSize, 26 * tileSize), Scene::NEXT_SCENE));
 }

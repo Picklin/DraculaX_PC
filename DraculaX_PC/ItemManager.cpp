@@ -1,38 +1,25 @@
 #include <map>
 #include "ItemManager.h"
+#include "TileMap.h"
+#include "ShaderProgram.h"
+#include "Food.h"
+#include "Heart.h"
+#include "Bag.h"
+#include "Orb.h"
 #include "TextureManager.h"
 
-namespace
+const pair<glm::vec2, glm::vec2> RichterFoodCoords[3]
 {
-    const int foodEquivalents[12]
-    {
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::HALF_ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::ROAST,
-        GUI::foodIds::BIG_ROAST
-    };
-    const pair<glm::vec2, glm::vec2> RichterFoodCoords[3]
-    {
-        pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.875f), glm::vec2(0.0625f, 0.9375f)),
-        pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.9375f), glm::vec2(0.0625f, 1.f)),
-        pair<glm::vec2, glm::vec2>(glm::vec2(0.0625f, 0.875f), glm::vec2(0.1875f, 1.f))
-    };
-}
-
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.875f), glm::vec2(0.0625f, 0.9375f)),
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.f, 0.9375f), glm::vec2(0.0625f, 1.f)),
+    pair<glm::vec2, glm::vec2>(glm::vec2(0.0625f, 0.875f), glm::vec2(0.1875f, 1.f))
+};
 
 ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
 {
-    initializeRandom();
-    itemsDist = std::discrete_distribution<int>(itemWeights.begin(), itemWeights.end());
-    commonItemsDist = std::discrete_distribution<int>(commonItemWeights.begin(), commonItemWeights.end());
+    //initializeRandom();
+    //itemsDist = std::discrete_distribution<int>(itemWeights.begin(), itemWeights.end());
+    //commonItemsDist = std::discrete_distribution<int>(commonItemWeights.begin(), commonItemWeights.end());
 
     heartsMoneyBags =
     {
@@ -49,10 +36,10 @@ ItemManager::ItemManager() : map(nullptr), platforms(nullptr), shader(nullptr)
     orbTex = TextureManager::instance().getTexture("orb");
 }
 
-void ItemManager::initializeRandom()
+/*void ItemManager::initializeRandom()
 {
     randomEngine.seed((unsigned int)std::chrono::high_resolution_clock::now().time_since_epoch().count());
-}
+}*/
 
 void ItemManager::initItem(Item* item, const glm::vec2& pos, const glm::vec2& topLeft, const glm::vec2& bottomRight)
 {
@@ -78,17 +65,17 @@ void ItemManager::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, Ti
 
 
 
-Item* ItemManager::getRandomItem(const glm::vec2& position)
+/*Item* ItemManager::getRandomItem(const glm::vec2& position)
 {
     int randomIndex = itemsDist(randomEngine);
     return randomItem[randomIndex](position);
-}
+}*/
 
-Item* ItemManager::getCommonRandomItem(const glm::vec2& position)
+/*Item* ItemManager::getCommonRandomItem(const glm::vec2& position)
 {
     int randomIndex = commonItemsDist(randomEngine);
     return commonRandomItem[randomIndex](position);
-}
+}*/
 
 Item* ItemManager::getHeartsOrMoneyBag(const glm::vec2& position, int id)
 {
@@ -110,7 +97,7 @@ Item* ItemManager::getFood(const glm::vec2& position, int foodID, const GUI& gui
     bool isRichter = !gui.isMaria();
     if (isRichter && foodID >= GUI::foodIds::PARFAIT)
     {
-        foodID = foodEquivalents[foodID - 3];
+        foodID = foodEquivalents[foodID - GUI::foodIds::PARFAIT];
     }
     Food* food = new Food();
     if (foodID < GUI::foodIds::PARFAIT)

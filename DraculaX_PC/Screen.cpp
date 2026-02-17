@@ -1,18 +1,21 @@
 #include "Options.h"
 #include "TitleScreen.h"
 #include "Game.h"
-#include <functional>
-
-using ScreenCreator = function<Screen* ()>;
-static const ScreenCreator screenCreator[Screen::NUM_SCREENS] =
-{
-	[]() {return new Options(); },
-	[]() {return new TitleScreen(); },
-};
 
 Screen* Screen::createScreen(ShaderProgram& program, int screenId)
 {
-	Screen* currentMenu = screenCreator[screenId]();
+	Screen* currentMenu;
+	switch (screenId)
+	{
+	case OPTIONS:
+		currentMenu = new Options();
+		break;
+	case TITLE:
+		currentMenu = new TitleScreen();
+		break;
+	default:
+		currentMenu = nullptr;
+	}
 	currentMenu->init(program);
 	return currentMenu;
 }

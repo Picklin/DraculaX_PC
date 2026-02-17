@@ -155,7 +155,7 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectsManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="EnemyFactory.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="Fuegote.cpp" />
@@ -211,7 +211,7 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectsManager.h" />
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="EnemyFactory.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Food.h" />
     <ClInclude Include="Fuegote.h" />

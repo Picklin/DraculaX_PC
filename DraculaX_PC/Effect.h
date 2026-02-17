@@ -22,7 +22,6 @@ public:
 	void setPosition(const glm::vec2& pos);
 	bool isEnded() const { return ended; }
 	void setColor(const glm::vec3& color) { sprite->setColor(color); }
-	void setFlicker();
 	void free();
 
 protected:
@@ -34,15 +33,13 @@ protected:
 	virtual void childUpdate(int deltaTime) = 0;
 
 protected:
-	Texture* spritesheet;
-	Sprite* sprite;
 	glm::ivec2 quadSize;
 	glm::ivec2 tileMapDispl;
 	glm::vec2 position;
-	bool ended = false;
-	bool flicker = false;
-	bool renderAltern = true;
+	Texture* spritesheet;
+	Sprite* sprite;
 	ShaderProgram* shader;
+	bool ended = false;
 };
 
 #endif // !_EFFECT_INCLUDE

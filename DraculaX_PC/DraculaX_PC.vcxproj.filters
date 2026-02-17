@@ -112,7 +112,7 @@
     <ClCompile Include="SoundEngine.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
+    <ClCompile Include="EnemyFactory.cpp">
       <Filter>Archivos de código fuente\Managers</Filter>
     </ClCompile>
     <ClCompile Include="ItemManager.cpp">
@@ -227,7 +227,7 @@
       <Filter>Archivos de código fuente\Projectiles</Filter>
     </ClCompile>
     <ClCompile Include="WyvernProjectileCool.cpp">
-      <Filter>Archivos de código fuente</Filter>
+      <Filter>Archivos de código fuente\Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -270,7 +270,7 @@
     <ClInclude Include="EffectsManager.h">
       <Filter>Archivos de encabezado\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyManager.h">
+    <ClInclude Include="EnemyFactory.h">
       <Filter>Archivos de encabezado\Managers</Filter>
     </ClInclude>
     <ClInclude Include="ItemManager.h">
@@ -390,6 +390,8 @@
     <ClInclude Include="WyvernProjectile.h">
       <Filter>Archivos de encabezado\Projectiles</Filter>
     </ClInclude>
-    <ClInclude Include="WyvernProjectileCool.h" />
+    <ClInclude Include="WyvernProjectileCool.h">
+      <Filter>Archivos de encabezado\Projectiles</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

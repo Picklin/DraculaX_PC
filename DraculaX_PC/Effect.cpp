@@ -56,19 +56,13 @@ void Effect::update(int deltaTime)
 
 void Effect::render()
 {
-	if (flicker) renderAltern = !renderAltern;
-	if (renderAltern) sprite->render();
+	sprite->render();
 }
 
 void Effect::setPosition(const glm::vec2& pos)
 {
 	this->position = pos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)) - myCenter());
-}
-
-void Effect::setFlicker()
-{
-	flicker = true;
 }
 
 void Effect::free()

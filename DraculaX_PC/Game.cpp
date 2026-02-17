@@ -41,9 +41,9 @@ void Game::init()
 	initShaders();
 	basicShader.use();
 	currentMenu = Screen::createScreen(basicShader, Screen::OPTIONS);
-	SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
+	//SoundEngine::instance().playNonStageSong(SoundEngine::REQUIEM, true);
 	//playCinematic(Cinematic::COOL_INTRO);
-	//start();		//comentar cuando se deje de testear
+	start();		//comentar cuando se deje de testear
 	//st.init(player, gui, spriteShader, basicShader);
 }
 
@@ -162,7 +162,7 @@ void Game::start()
 	playingGame = true;
 	player.init(MAP_OFFSET, spriteShader);
 	gui.init(guiShader, &player, false && twoPlayerMode);
-	EnemyManager::instance().setPlayer(player.getPointerPos(), player.myCenter());
+	EnemyFactory::instance().setPlayer(player.getPointerPos(), player.myCenter());
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
 	gui.reset();

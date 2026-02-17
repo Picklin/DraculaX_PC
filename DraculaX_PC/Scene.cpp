@@ -409,7 +409,7 @@ void Scene::updateSpawnPoints(int deltaTime)
 	{
 		if (sp.spawnTime <= 0 && isInArea(sp.area, playerPos))
 		{
-			enemies.push_back(EnemyManager::instance().getEnemy(sp.spawnPos, sp.enemyId));
+			enemies.push_back(EnemyFactory::instance().getEnemy(sp.spawnPos, sp.enemyId));
 			sp.spawnTime = sp.millisecsBetweenSpawns;
 		}
 		sp.spawnTime -= deltaTime;
@@ -418,7 +418,7 @@ void Scene::updateSpawnPoints(int deltaTime)
 	{
 		if (isInArea(spawnPoints[i]->area, playerPos))
 		{
-			enemies.push_back(EnemyManager::instance().getEnemy(spawnPoints[i]->spawnPos, spawnPoints[i]->enemyId));
+			enemies.push_back(EnemyFactory::instance().getEnemy(spawnPoints[i]->spawnPos, spawnPoints[i]->enemyId));
 			delete spawnPoints[i];
 			spawnPoints.erase(spawnPoints.begin() + i);
 		}
@@ -482,6 +482,6 @@ void Scene::initManagers()
 {
 	ItemManager::instance().init(MAP_OFFSET, *basicShader, map, platforms, *gui);
 	EffectsManager::instance().init(MAP_OFFSET, *basicShader);
-	EnemyManager::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
+	EnemyFactory::instance().init(MAP_OFFSET, *spriteShader, map, platforms);
 	ProjectileManager::instance().init(MAP_OFFSET, *spriteShader, map, &projectiles);
 }

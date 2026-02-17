@@ -9,7 +9,7 @@
 #include "GUI.h"
 #include "SpawnPoint.h"
 #include "EffectsManager.h"
-#include "EnemyManager.h"
+#include "EnemyFactory.h"
 #include "ItemManager.h"
 #include "ProjectileManager.h"
 #include "Candle.h"

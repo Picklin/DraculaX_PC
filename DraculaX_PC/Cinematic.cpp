@@ -3,22 +3,26 @@
 #include "CoolIntro.h"
 #include "Game.h"
 #include "TextureManager.h"
-#include <functional>
 #include <fstream>
 #include <sstream>
 #include <codecvt>
 #include <locale>
 
-using CinematicCreator = function<Cinematic* ()>;
-static const CinematicCreator cinematicCreator[Cinematic::COUNT] =
-{
-    []() {return new Intro(); },
-    []() {return new CoolIntro(); }
-};
 
 Cinematic* Cinematic::createCinematic(ShaderProgram& shader, const string& scriptPath, int cinematicId)
 {
-    Cinematic* cinematic = cinematicCreator[cinematicId]();
+    Cinematic* cinematic;
+    switch (cinematicId)
+    {
+        case INTRO:
+            cinematic = new Intro();
+		    break;
+        case COOL_INTRO:
+			cinematic = new CoolIntro();
+            break;
+        default:
+			return nullptr;
+    }
     cinematic->dialogueTxt = Text::CreateDialogueText(shader);
     cinematic->init(shader);
     cinematic->loadScript(scriptPath);
@@ -27,9 +31,20 @@ Cinematic* Cinematic::createCinematic(ShaderProgram& shader, const string& scrip
 
 Cinematic* Cinematic::createCinematic(ShaderProgram& shader, int cinematicId)
 {
-    Cinematic* cinematic = cinematicCreator[cinematicId]();
+	Cinematic* cinematic;
+    switch (cinematicId)
+    {
+        case INTRO:
+			cinematic = new Intro();
+			break;
+		case COOL_INTRO:
+            cinematic = new CoolIntro();
+            break;
+        default:
+            return nullptr;
+    }
     cinematic->init(shader);
-    return cinematic;
+	return cinematic;
 }
 
 void Cinematic::update(int deltaTime)
