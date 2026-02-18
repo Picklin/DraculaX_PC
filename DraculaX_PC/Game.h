@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #include "GUI.h"
 #include "SceneTesting.h"
+#include "CinematicFactory.h"
 #include "Screen.h"
-#include "Cinematic.h"
 
 #define SCREEN_WIDTH 256
 #define SCREEN_HEIGHT 224
@@ -78,7 +78,7 @@ private:
 	vector<vector<SceneCreator>> scenesFactory;
 	Scene* scene;
 	Screen* currentMenu;
-	Cinematic* cinematic;
+	Cinematic* currentCinematic;
 
 	float timeBeforeCinematic;
 

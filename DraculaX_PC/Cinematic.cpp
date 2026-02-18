@@ -1,6 +1,5 @@
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
-#include "Intro.h"
-#include "CoolIntro.h"
+#include "Cinematic.h"
 #include "Game.h"
 #include "TextureManager.h"
 #include <fstream>
@@ -8,43 +7,28 @@
 #include <codecvt>
 #include <locale>
 
-
-Cinematic* Cinematic::createCinematic(ShaderProgram& shader, const string& scriptPath, int cinematicId)
+Cinematic::~Cinematic()
 {
-    Cinematic* cinematic;
-    switch (cinematicId)
+    for (TexturedQuad* q : cinematicQuads)
     {
-        case INTRO:
-            cinematic = new Intro();
-		    break;
-        case COOL_INTRO:
-			cinematic = new CoolIntro();
-            break;
-        default:
-			return nullptr;
+        q->free();
+        delete q;
     }
-    cinematic->dialogueTxt = Text::CreateDialogueText(shader);
-    cinematic->init(shader);
-    cinematic->loadScript(scriptPath);
-    return cinematic;
-}
-
-Cinematic* Cinematic::createCinematic(ShaderProgram& shader, int cinematicId)
-{
-	Cinematic* cinematic;
-    switch (cinematicId)
+    for (Sprite* s : cinematicSprites)
     {
-        case INTRO:
-			cinematic = new Intro();
-			break;
-		case COOL_INTRO:
-            cinematic = new CoolIntro();
-            break;
-        default:
-            return nullptr;
+        s->free();
+        delete s;
+	}
+    if (blackScreen)
+    {
+        blackScreen->free();
+        delete blackScreen;
     }
-    cinematic->init(shader);
-	return cinematic;
+    if (dialogueTxt)
+    {
+        dialogueTxt->free();
+        delete dialogueTxt;
+	}
 }
 
 void Cinematic::update(int deltaTime)
@@ -80,6 +64,8 @@ void Cinematic::update(int deltaTime)
         else if (timeElapsed > (film.front().time + film.front().duration))
         {
             renderBg = false;
+			film.front().bg->free();
+			delete film.front().bg;
             film.pop();
         }
     }
@@ -142,4 +128,5 @@ void Cinematic::loadScript(const string& scriptPath)
         script.push(lineInfo);
     }
     file.close();
+	dialogueTxt = Text::CreateDialogueText(*shader);
 }

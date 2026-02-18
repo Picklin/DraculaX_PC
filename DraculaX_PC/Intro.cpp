@@ -343,6 +343,20 @@ float Intro::setEndTime() const
 	return 103.0f;
 }
 
+Intro::~Intro()
+{
+	for (TexturedQuad* bolt : bolts)
+	{
+		bolt->free();
+		delete bolt;
+	}
+	for (TexturedQuad* bloodQuad : blood)
+	{
+		bloodQuad->free();
+		delete bloodQuad;
+	}
+}
+
 void Intro::render()
 {
 	if (renderBg)

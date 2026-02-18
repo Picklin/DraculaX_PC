@@ -8,9 +8,6 @@
     <Filter Include="Archivos de encabezado">
       <UniqueIdentifier>{d35962c8-00a4-474e-844b-036ce7d3ae2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Archivos de código fuente\Managers">
-      <UniqueIdentifier>{660e3fc4-2e81-4028-8b83-625ec80da425}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Archivos de encabezado\Managers">
       <UniqueIdentifier>{9fa60d76-852b-4ed8-978c-ec6b8528841f}</UniqueIdentifier>
     </Filter>
@@ -68,6 +65,9 @@
     <Filter Include="Archivos de encabezado\Cinematics">
       <UniqueIdentifier>{5a2ec1fa-4ba9-4853-b02f-5724cfabb2de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de código fuente\Managers&amp;Factories">
+      <UniqueIdentifier>{660e3fc4-2e81-4028-8b83-625ec80da425}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -101,22 +101,22 @@
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="SpriteManager.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="EffectsManager.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="SoundEngine.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
     <ClCompile Include="EnemyFactory.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="ItemManager.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="SceneTesting.cpp">
       <Filter>Archivos de código fuente\Scenes</Filter>
@@ -200,7 +200,7 @@
       <Filter>Archivos de código fuente\Projectiles</Filter>
     </ClCompile>
     <ClCompile Include="ProjectileManager.cpp">
-      <Filter>Archivos de código fuente\Managers</Filter>
+      <Filter>Archivos de código fuente\Managers&amp;Factories</Filter>
     </ClCompile>
     <ClCompile Include="GolemProjectile.cpp">
       <Filter>Archivos de código fuente\Projectiles</Filter>
@@ -228,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="WyvernProjectileCool.cpp">
       <Filter>Archivos de código fuente\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CinematicFactory.cpp">
+      <Filter>Archivos de código fuente</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -393,5 +396,6 @@
     <ClInclude Include="WyvernProjectileCool.h">
       <Filter>Archivos de encabezado\Projectiles</Filter>
     </ClInclude>
+    <ClInclude Include="CinematicFactory.h" />
   </ItemGroup>
 </Project>

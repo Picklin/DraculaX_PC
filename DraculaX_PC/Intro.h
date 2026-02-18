@@ -7,6 +7,7 @@
 class Intro : public Cinematic
 {
 public:
+	~Intro();
 	void render() override;
 
 protected:

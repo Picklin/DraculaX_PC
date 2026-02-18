@@ -151,6 +151,7 @@
     <ClCompile Include="Bag.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Cinematic.cpp" />
+    <ClCompile Include="CinematicFactory.cpp" />
     <ClCompile Include="CoolIntro.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectsManager.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Bag.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="Cinematic.h" />
+    <ClInclude Include="CinematicFactory.h" />
     <ClInclude Include="CoolIntro.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectsManager.h" />

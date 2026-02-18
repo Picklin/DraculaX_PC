@@ -6,6 +6,7 @@
 class CoolIntro : public Cinematic
 {
 public:
+	~CoolIntro();
 	void render() override;
 
 protected:

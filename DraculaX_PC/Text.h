@@ -20,6 +20,10 @@ public:
     void setColor(const glm::vec3& color) {
         currentColor = color;  
 	}
+    void free() {
+        glDeleteBuffers(1, &vbo);
+        glDeleteVertexArrays(1, &vao);
+	}
 
 private:
     void init(ShaderProgram& shader, const string & fontName, const glm::ivec2 & size, int maxChars);

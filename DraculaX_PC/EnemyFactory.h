@@ -9,7 +9,7 @@ class EnemyFactory
 public:
 	static EnemyFactory& instance();
 	void init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, TileMap* map, TileMap* platforms);
-	void setPlayer(glm::vec2* playerPos, const glm::vec2& playerCenter);
+	void setPlayerCenter(glm::vec2* playerPos, const glm::vec2& playerCenter);
 	Enemy* getEnemy(const glm::vec2& pos, int id);
 
 private:

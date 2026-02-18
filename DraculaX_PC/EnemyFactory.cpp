@@ -20,7 +20,7 @@ void EnemyFactory::init(const glm::ivec2& tileMapDispl, ShaderProgram& shader, T
     this->platforms = platforms;
 }
 
-void EnemyFactory::setPlayer(glm::vec2* playerPos, const glm::vec2& playerCenter)
+void EnemyFactory::setPlayerCenter(glm::vec2* playerPos, const glm::vec2& playerCenter)
 {
     this->playerPos = playerPos;
     this->playerCenter = playerCenter;
@@ -39,7 +39,13 @@ Enemy* EnemyFactory::getEnemy(const glm::vec2& pos, int id)
         return e;
     case GOLEM:
         e = new Golem();
-		initEnemy(*e, pos);
+        {
+            Golem* g = static_cast<Golem*>(e);
+            g->init(tileMapDispl, *shader);
+            g->setPosition(pos);
+            g->setPlayerPos(playerPos);
+            g->setPlayerCenter(playerCenter);
+        }
         return e;
     default:
         return nullptr;

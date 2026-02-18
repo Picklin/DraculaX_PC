@@ -655,6 +655,21 @@ void CoolIntro::filmUpdate(int deltaTime)
 	boltTimer -= deltaTime / 1000.f;
 }
 
+CoolIntro::~CoolIntro()
+{
+	blackBar32px->free();
+	blackBar48px->free();
+	colorBackground->free();
+	delete blackBar32px;
+	delete blackBar48px;
+	delete colorBackground;
+	for (TexturedQuad* bolts : bolts)
+	{
+		bolts->free();
+		delete bolts;
+	}
+}
+
 void CoolIntro::render()
 {
 	if (renderBg)

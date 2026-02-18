@@ -36,7 +36,7 @@ void Game::init()
 	currDubLang = JP_DUB;
 	currTxtLang = EN_TXT;
 	currentLevel = STAGE1;
-	currentScene = 0;
+	currentScene = 1;
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	initShaders();
 	basicShader.use();
@@ -96,8 +96,8 @@ bool Game::update(int deltaTime)
 	}
 	else if (playingCinematic)
 	{
-		cinematic->update(deltaTime);
-		playingCinematic = !cinematic->ended();
+		currentCinematic->update(deltaTime);
+		playingCinematic = !currentCinematic->ended();
 		if (!playingCinematic)
 		{
 			stopCinematic(currentCinematicId);
@@ -130,7 +130,7 @@ void Game::render()
 	}
 	else if (playingCinematic)
 	{
-		cinematic->render();
+		currentCinematic->render();
 	}
 	else if (timeBeforeCinematic <= 0) currentMenu->render();
 }
@@ -162,7 +162,10 @@ void Game::start()
 	playingGame = true;
 	player.init(MAP_OFFSET, spriteShader);
 	gui.init(guiShader, &player, false && twoPlayerMode);
-	EnemyFactory::instance().setPlayer(player.getPointerPos(), player.myCenter());
+	EnemyFactory::instance().setPlayerCenter(player.getPointerPos(), player.myCenter());
+	scene = scenesFactory[currentLevel][currentScene]();
+	scene->init(player, gui, spriteShader, basicShader);
+	delete scene;
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
 	gui.reset();
@@ -188,16 +191,16 @@ void Game::playCinematic(int cinematicId)
 	if (cinematicId == Cinematic::INTRO)
 	{
 		if (currSubMode != NONE)
-			cinematic = Cinematic::createCinematic(cinematicShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
+			currentCinematic = CinematicFactory::instance().createCinematic(cinematicShader, arranged ? ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[2007_EN] Intro.txt" : "Dialogues/Scripts/[2007_ES] Intro.txt")
 				: ((currSubMode == EN_SUB) ? "Dialogues/Scripts/[1993_EN] Intro.txt" : "Dialogues/Scripts/[1993_ES] Intro.txt"), Cinematic::INTRO);
-		else cinematic = Cinematic::createCinematic(cinematicShader, Cinematic::INTRO);
+		else currentCinematic = CinematicFactory::instance().createCinematic(cinematicShader, Cinematic::INTRO);
 		SoundEngine::instance().setMusicMode(arranged);
 		SoundEngine::instance().loadGermanIntro();
 		SoundEngine::instance().playIntro();
 	}
 	else if (cinematicId == Cinematic::COOL_INTRO)
 	{
-		cinematic = Cinematic::createCinematic(cinematicShader, Cinematic::COOL_INTRO);
+		currentCinematic = CinematicFactory::instance().createCinematic(cinematicShader, Cinematic::COOL_INTRO);
 		SoundEngine::instance().playOverture();
 	}
 	currentCinematicId = cinematicId;
@@ -220,6 +223,8 @@ void Game::stopCinematic(int cinematicId)
 	{
 		resume();
 	}
+	delete currentCinematic;
+	currentCinematic = nullptr;
 }
 
 void Game::applyConfig(int lang, int dub, int sub, bool mus)
@@ -442,6 +447,6 @@ Game::Game()
 	lvl1SC.emplace_back([this]() { return new Level1Sc3(); });
 	scenesFactory[1] = lvl1SC;
 	scene = nullptr;
-	cinematic = nullptr;
+	currentCinematic = nullptr;
 	currentMenu = nullptr;
 }

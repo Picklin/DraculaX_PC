@@ -10,8 +10,9 @@
 class Cinematic
 {
 public:
-	static Cinematic* createCinematic(ShaderProgram& shader, const string& scriptPath, int cinematicId);
-	static Cinematic* createCinematic(ShaderProgram& shader, int cinematicId);
+	virtual ~Cinematic();
+	void init(ShaderProgram& shader);
+	void loadScript(const string& scriptPath);
 	void update(int deltaTime);
 	virtual void render() = 0;
 	bool ended() const;
@@ -20,11 +21,6 @@ protected:
 	virtual void initChild() = 0;
 	virtual void filmUpdate(int deltaTime) = 0;
 	virtual float setEndTime() const = 0;
-	Cinematic() {}
-
-private:
-	void init(ShaderProgram& shader);
-	void loadScript(const string& scriptPath);
 
 public:
 	enum CinematicType
