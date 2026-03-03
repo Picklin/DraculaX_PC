@@ -45,6 +45,7 @@ void TileMap::render() const
 
 void TileMap::free()
 {
+	tilesheet.free();
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 }

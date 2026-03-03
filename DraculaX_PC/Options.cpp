@@ -101,13 +101,13 @@ void Options::update(int deltaTime)
 	if (bgYoffset < 0.f) bgYoffset = 0.975f;
 	sprites[0]->update(deltaTime);
 	sprites[1]->update(deltaTime);
-	bool up, down, right, left, a;
-	a = Game::instance().getKey(GLFW_KEY_Z);
+	bool up, down, right, left, south;
+	south = Game::instance().getKey(GLFW_KEY_Z);
 	up = Game::instance().getKey(GLFW_KEY_UP);
 	down = Game::instance().getKey(GLFW_KEY_DOWN);
-	right = Game::instance().getKey(GLFW_KEY_RIGHT) || a;
+	right = Game::instance().getKey(GLFW_KEY_RIGHT) || south;
 	left = Game::instance().getKey(GLFW_KEY_LEFT);
-	if (a && !aPressed)
+	if (south && !aPressed)
 	{
 		if (currentFlamePos == 8) apply();
 		else if (currentFlamePos == 10) Game::instance().setNextCinematic(Cinematic::INTRO, 2000, 3.f);
@@ -133,7 +133,7 @@ void Options::update(int deltaTime)
 		currentOptions[currentFlamePos / 2] -= 1;
 		currentOptions[currentFlamePos / 2] %= ConfigOptions[currentFlamePos / 2].size() / numLang;
 	}
-	aPressed = a;
+	aPressed = south;
 	upPressed = up;
 	downPressed = down;
 	rightPressed = right;

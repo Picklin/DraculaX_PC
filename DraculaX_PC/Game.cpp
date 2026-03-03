@@ -165,9 +165,6 @@ void Game::start()
 	EnemyFactory::instance().setPlayerCenter(player.getPointerPos(), player.myCenter());
 	scene = scenesFactory[currentLevel][currentScene]();
 	scene->init(player, gui, spriteShader, basicShader);
-	delete scene;
-	scene = scenesFactory[currentLevel][currentScene]();
-	scene->init(player, gui, spriteShader, basicShader);
 	gui.reset();
 }
 

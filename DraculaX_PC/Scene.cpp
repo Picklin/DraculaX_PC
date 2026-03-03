@@ -55,6 +55,38 @@ Scene::~Scene()
 		delete platforms;
 	}
 
+	if (stairs != NULL)
+	{
+		stairs->free();
+		delete stairs;
+	}
+
+	if (stage != NULL)
+	{
+		stage->free();
+		delete stage;
+	}
+	if (lvlnum != NULL)
+	{
+		lvlnum->free();
+		delete lvlnum;
+	}
+	if (triangle != NULL)
+	{
+		triangle->free();
+		delete triangle;
+	}
+	if (blackScreen != NULL)
+	{
+		blackScreen->free();
+		delete blackScreen;
+	}
+	if (stageTitle != NULL)
+	{
+		stageTitle->free();
+		delete stageTitle;
+	}
+
 	for (auto enemy : enemies)
 		delete enemy;
 	enemies.clear();
@@ -62,6 +94,22 @@ Scene::~Scene()
 	for (auto item : items)
 		delete item;
 	items.clear();
+
+	for (auto candle : candles)
+		delete candle;
+	candles.clear();
+
+	for (auto projectile : projectiles)
+		delete projectile;
+	projectiles.clear();
+
+	for (auto subweapon : subweapons)
+		delete subweapon;
+	subweapons.clear();
+
+	for (auto triggerArea : triggerAreas)
+		delete triggerArea;
+	triggerAreas.clear();
 
 	EffectsManager::instance().free();
 
